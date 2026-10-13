@@ -48,7 +48,7 @@ init flags =
     let
         -- 1. 完全にデータがない、またはデコード失敗時のデフォルトデータ（AppState）
         defaultAppState =
-            { shelves = [ { id = "default-shelf", name = "My Shelf", books = [] } ]
+            { shelves = [ { id = "default-shelf", name = "New Shelf", books = [] } ]
             , currentShelfId = "default-shelf"
             , currentBookId = Nothing
             , currentPageIndex = 0

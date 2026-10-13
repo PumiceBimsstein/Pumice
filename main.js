@@ -5849,7 +5849,7 @@ var $author$project$Main$init = function (flags) {
 		Z: 'default-shelf',
 		w: _List_fromArray(
 			[
-				{J: _List_Nil, y: 'default-shelf', cH: 'My Shelf'}
+				{J: _List_Nil, y: 'default-shelf', cH: 'New Shelf'}
 			])
 	};
 	var initialModel = function () {
