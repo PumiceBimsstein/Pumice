@@ -1,0 +1,31 @@
+/* Whiteテーマ */
+.theme-White .hljs-keyword { color: #2D3A8C; font-weight: bold; }
+.theme-White .hljs-string  { color: #38803a; } /* 落ち着いた緑 */
+.theme-White .hljs-comment { color: #7A7870; font-style: italic; } /* textMutedを使用 */
+.theme-White .hljs-title { color: #b35900; } /* 控えめなオレンジ */
+
+highlight-code .theme-White {
+    background-color: #FAFAF8; /* surfaceを使用 */
+    color: #1A1917; /* textを使用 */
+}
+
+
+
+
+/* Darkテーマ */
+.theme-Dark .hljs-keyword { color: #41d497; font-weight: bold; }
+.theme-Dark .hljs-string { color: #e07130; } /* 枯草色に近い緑 */
+.theme-Dark .hljs-comment { color: #6B6960; font-style: italic; } /* textMutedを使用 */
+.theme-Dark .hljs-title { color: #C9A84C; } /* より明るいゴールド */
+.theme-Dark .hljs-variable { color: #E8E6E0; } /* textを使用 */
+
+.theme-Dark .hljs-type,
+.theme-Dark .hljs-built_in { 
+    color: #51a3e6; /* accentと統一、または少し明度を上げた色 */
+}
+highlight-code .theme-Dark {
+    background-color: #171716; /* surfaceを使用 */
+    color: #E8E6E0; /* textを使用 */
+}
+
+

@@ -1,0 +1,6 @@
+/* CSS Custom Highlight API で登録した識別子にスタイルを設定 */
+::highlight(code-search-highlight) {
+  background-color: #fde047; /* 黄色の背景（Tailwindの bg-yellow-300 相当） */
+  color: #000000;            /* ハイライト部分の文字色 */
+  border-radius: 2px;
+}

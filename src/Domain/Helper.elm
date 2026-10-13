@@ -1,0 +1,940 @@
+module Domain.Helper exposing (..)
+
+import Type exposing (..)
+import Browser.Dom
+import Task
+import Html.Attributes exposing (..)
+import Html.Events exposing (on, preventDefaultOn)
+import Html exposing (Attribute)
+import Json.Decode as Decode
+import JsonConverter exposing (decodeBook, decodeShelf)
+import Ports exposing (saveToStorage)
+
+-- MARK: 基本的な処理を行う関数
+
+-- 全ての本棚から特定のIDを持つ本を探索
+findBookById : String -> List Shelf -> Maybe Book
+findBookById targetId shelves =
+    shelves
+        |> List.concatMap .books -- 全ての本棚の本をフラットな1つのリストにする
+        |> List.filter (\b -> b.id == targetId)
+        |> List.head
+
+-- 現在選択されている本棚を取得
+getCurrentShelf : AppState -> Maybe Shelf
+getCurrentShelf state =
+    state.shelves
+        |> List.filter (\shelf -> shelf.id == state.currentShelfId)
+        |> List.head
+
+-- 現在選択されている本を取得
+getCurrentBook : AppState -> Maybe Book
+getCurrentBook state =
+    state.currentBookId
+        |> Maybe.andThen (\id -> findBookById id state.shelves)
+
+-- 現在表示されているページを取得
+getCurrentPage : AppState -> Maybe Page
+getCurrentPage state =
+    getCurrentBook state
+        |> Maybe.andThen
+            (\book ->
+                book.pages
+                    |> List.drop state.currentPageIndex
+                    |> List.head
+            )
+
+
+-- MARK:検索
+-- 検索ワードが含まれているかを判定
+isHit : String -> String -> Bool
+isHit searchText target =
+    if String.isEmpty searchText then
+        False
+    else
+        String.contains (String.toLower searchText) (String.toLower target)
+
+
+-- 本の中にヒットするページがあるか
+hasHitInBook : String -> Book -> Bool
+hasHitInBook searchText book =
+    List.any (\page -> isHit searchText page.content) book.pages
+
+
+-- 本棚の中にヒットする本があるか
+hasHitInShelf : String -> Shelf -> Bool
+hasHitInShelf searchText shelf =
+    List.any (\book -> hasHitInBook searchText book) shelf.books
+
+
+-- 特定のIDを持つブックを探し、指定された更新関数（updater）を適用します
+updateBookInShelves : String -> (Book -> Book) -> List Shelf -> List Shelf
+updateBookInShelves bookId updater shelves =
+    List.map
+        (\shelf ->
+            { shelf
+                | books =
+                    List.map
+                        (\book ->
+                            if book.id == bookId then
+                                updater book
+
+                            else
+                                book
+                        )
+                        shelf.books
+            }
+        )
+        shelves
+
+-- MARK:splitContent
+-- コンテンツを条件に従って再帰的に分割する補助関数
+-- この機能は削除される予定で、現在は無効化されています
+-- splitContent : String -> List String
+-- splitContent remaining =
+--     if String.length remaining <= 5000 then
+--         [ remaining ]
+--     else
+--         let
+--             initialSearchIdx = 2000
+            
+--             -- まずコードブロックの中であれば、ブロックが終わるまで分割位置をずらす
+--             safeStartIdx = findSafeSplitIndex remaining initialSearchIdx
+            
+--             searchArea = String.dropLeft safeStartIdx remaining
+--             limitArea = String.left 1000 searchArea
+
+--             splitOffset =
+--                 if String.contains "#" limitArea || String.contains "---" limitArea then
+--                     let
+--                         idxHash = String.indices "#" limitArea |> List.head |> Maybe.withDefault 9999
+--                         idxDash = String.indices "---" limitArea |> List.head |> Maybe.withDefault 9999
+--                     in
+--                     Basics.min idxHash idxDash
+--                 else
+--                     case String.indices "\n\n" searchArea |> List.head of
+--                         Just idx -> idx
+--                         Nothing ->
+--                             case String.indices "\n" searchArea |> List.head of
+--                                 Just idx -> idx
+--                                 Nothing -> 0
+
+--             actualSplitIdx = safeStartIdx + splitOffset
+            
+--             head = String.left actualSplitIdx remaining
+--             tail = String.dropLeft actualSplitIdx remaining |> String.trim
+--         in
+--         if String.isEmpty tail then
+--             [ head ]
+--         else
+--             head :: splitContent tail
+
+-- findSafeSplitIndex : String -> Int -> Int
+-- findSafeSplitIndex content targetIdx =
+--     let
+--         before =
+--             String.left targetIdx content
+
+--         -- バッククォート3つの出現回数を数える
+--         backtickCount =
+--             List.length (String.indices "```" before)
+--     in
+--     if modBy 2 backtickCount /= 0 then
+--         -- 奇数ならコードブロックの途中なので、次の "```" の後ろまでスキップ
+--         case String.indices "```" (String.dropLeft targetIdx content) |> List.head of
+--             Just nextEnd ->
+--                 targetIdx + nextEnd + 3
+
+--             Nothing ->
+--                 targetIdx
+--     else
+--         targetIdx
+
+
+extractHeadings : Int -> String -> List Heading
+extractHeadings pageIdx content =
+    let
+        -- 行ごとに分割し、コードブロックの外側にある見出し行のみを取り出す
+        parseLines lines inCodeBlock acc =
+            case lines of
+                [] ->
+                    List.reverse acc
+
+                line :: rest ->
+                    let
+                        trimmed =
+                            String.trim line
+                    in
+                    if String.startsWith "```" trimmed then
+                        -- コードブロックの開始/終了を切り替え
+                        parseLines rest (not inCodeBlock) acc
+
+                    else if inCodeBlock then
+                        -- コードブロック内部の行は無視
+                        parseLines rest True acc
+
+                    else
+                        -- コードブロック外部の行で見出しを判定
+                        let
+                            maybeHeading =
+                                if String.startsWith "### " line then
+                                    Just { level = 3, text = String.trim (String.dropLeft 4 line), pageIndex = pageIdx }
+
+                                else if String.startsWith "## " line then
+                                    Just { level = 2, text = String.trim (String.dropLeft 3 line), pageIndex = pageIdx }
+
+                                else if String.startsWith "# " line then
+                                    Just { level = 1, text = String.trim (String.dropLeft 2 line), pageIndex = pageIdx }
+
+                                else
+                                    Nothing
+                        in
+                        case maybeHeading of
+                            Just h ->
+                                parseLines rest False (h :: acc)
+
+                            Nothing ->
+                                parseLines rest False acc
+
+        raw =
+            parseLines (String.lines content) False []
+    in
+    if List.isEmpty raw then
+        [ { level = 1
+          , text = "Page " ++ String.fromInt (pageIdx + 1)
+          , pageIndex = pageIdx
+          }
+        ]
+
+    else
+        raw
+
+
+--MARK:scrollDecoder
+scrollDecoder : Decode.Decoder Browser.Dom.Viewport
+scrollDecoder =
+    Decode.at [ "target" ] <|
+        Decode.map4
+            (\y height sceneHeight sceneWidth ->
+                { scene = { width = sceneWidth, height = sceneHeight }
+                , viewport = { x = 0, y = y, width = 0, height = height }
+                }
+            )
+            (Decode.field "scrollTop" Decode.float)
+            (Decode.field "clientHeight" Decode.float)
+            (Decode.field "scrollHeight" Decode.float)
+            (Decode.field "scrollWidth" Decode.float)
+
+
+takeWhile : (Char -> Bool) -> String -> String
+takeWhile predicate str =
+    str
+        |> String.toList
+        |> takeWhileList predicate
+        |> String.fromList
+
+
+dropWhile : (Char -> Bool) -> String -> String
+dropWhile predicate str =
+    str
+        |> String.toList
+        |> dropWhileList predicate
+        |> String.fromList
+
+
+takeWhileList : (a -> Bool) -> List a -> List a
+takeWhileList predicate list =
+    case list of
+        [] ->
+            []
+
+        x :: xs ->
+            if predicate x then
+                x :: takeWhileList predicate xs
+
+            else
+                []
+
+
+dropWhileList : (a -> Bool) -> List a -> List a
+dropWhileList predicate list =
+    case list of
+        [] ->
+            []
+
+        x :: xs ->
+            if predicate x then
+                dropWhileList predicate xs
+
+            else
+                list
+
+
+-- MARK:マウス操作イベント
+onDragStart : Msg -> Attribute Msg
+onDragStart msg =
+    Html.Events.on "dragstart" (Decode.succeed msg)
+
+onDragOver : Msg -> Attribute Msg
+onDragOver msg =
+    preventDefaultOn "dragover" (Decode.succeed ( msg, True ))
+
+onDrop : Msg -> Attribute Msg
+onDrop msg =
+    preventDefaultOn "drop" (Decode.succeed ( msg, True ))
+
+onDragEnd : Msg -> Attribute Msg
+onDragEnd msg =
+    Html.Events.on "dragend" (Decode.succeed msg)
+
+reorderList : Int -> Int -> List a -> List a
+reorderList fromIndex toIndex list =
+    let
+        element =
+            list
+                |> List.drop fromIndex
+                |> List.head
+    in
+    case element of
+        Just item ->
+            let
+                remaining =
+                    List.take fromIndex list ++ List.drop (fromIndex + 1) list
+            in
+            List.take toIndex remaining ++ (item :: List.drop toIndex remaining)
+
+        Nothing ->
+            list
+
+calcProgress : Int -> Int -> Float
+calcProgress current total =
+    if total > 1 then
+        (toFloat current / toFloat (total - 1)) * 100
+    else
+        0
+
+
+stripEmphasis : String -> String
+stripEmphasis input =
+    input
+        |> String.replace "**" ""
+
+
+-- MARK:目次一覧(サイドバー)
+-- viewHeadingList関連関数
+
+toHeadingData : List Heading -> HeadingData
+toHeadingData headings =
+    { headings = headings
+    , allHeadingTexts = List.map .text headings
+    }
+
+
+filterHeadingsData : HeadingLevel -> HeadingData -> HeadingData
+filterHeadingsData level data =
+    { data | headings = List.filter (\h -> h.level <= headingLevelToInt level) data.headings }
+
+
+headingLevelToInt : HeadingLevel -> Int
+headingLevelToInt level =
+    case level of
+        H1 -> 1
+        H2 -> 2
+        H3 -> 3
+
+
+-- checkSectionHit : String -> String -> String -> List String -> Bool
+-- checkSectionHit searchText headingText content allHeadingTexts =
+--     if String.isEmpty searchText then
+--         False
+
+--     else
+--         isHit searchText headingText || isSectionContentHit searchText headingText content allHeadingTexts
+
+
+checkSectionHit : String -> String -> String -> List String -> Bool
+checkSectionHit searchText headingText content allHeadingTexts =
+    if String.isEmpty searchText then
+        False
+
+    else if isHit searchText headingText then
+        True
+
+    else
+        let
+            sectionText =
+                extractSectionContent headingText (String.lines content)
+        in
+        isHit searchText sectionText
+
+
+-- 該当する見出し行を見つけ、次の見出し行（#）が現れるまでの本文行だけを抽出する
+extractSectionContent : String -> List String -> String
+extractSectionContent targetHeading lines =
+    let
+        -- 行が指定の見出し（例: "### 見出し名"）と合致するか
+        isTargetHeading line =
+            let
+                trimmed = String.trim line
+            in
+            trimmed == "# " ++ targetHeading
+                || trimmed == "## " ++ targetHeading
+                || trimmed == "### " ++ targetHeading
+
+        -- 行がいずれかの見出し行（# で始まる行）かどうか
+        isAnyHeading line =
+            let
+                trimmed = String.trim line
+            in
+            String.startsWith "# " trimmed
+                || String.startsWith "## " trimmed
+                || String.startsWith "### " trimmed
+
+        -- 状態を持って行をパースする補助関数
+        -- searching: 目的の見出しを探している最中かどうか
+        collect linesAcc searching =
+            case linesAcc of
+                [] ->
+                    []
+
+                line :: rest ->
+                    if searching then
+                        if isTargetHeading line then
+                            collect rest False
+
+                        else
+                            collect rest True
+
+                    else
+                        -- 目的の見出しを発見した後の処理
+                        if isAnyHeading line then
+                            -- 次の見出しが現れたら抽出終了
+                            []
+
+                        else
+                            line :: collect rest False
+    in
+    String.join "\n" (collect lines True)
+
+
+isSectionContentHit : String -> String -> String -> List String -> Bool
+isSectionContentHit searchText headingText content allHeadingTexts =
+    case List.drop 1 (String.split headingText content) of
+        nextPart :: _ ->
+            List.foldl extractFirstPart nextPart allHeadingTexts
+                |> isHit searchText
+
+        [] ->
+            False
+
+
+extractFirstPart : String -> String -> String
+extractFirstPart headingText acc =
+    List.head (String.split headingText acc)
+        |> Maybe.withDefault acc
+
+
+
+
+isCurrentHeading : Heading -> Int -> List String -> Bool
+isCurrentHeading h currentPageIndex currentHeading =
+    (h.pageIndex == currentPageIndex)
+        && List.member (stripEmphasis h.text) (List.map stripEmphasis currentHeading)
+
+
+getSiblingExportFormat : ExportFormat -> ( ExportFormat, ExportFormat )
+getSiblingExportFormat format =
+    case format of
+        FormatTxt ->
+            ( FormatMd, FormatMd )
+
+        FormatMd ->
+            ( FormatTxt, FormatTxt )
+
+
+-- ブックを ZIP ペイロードに変換する
+bookZipPayload : Book -> ZipPayload
+bookZipPayload book =
+    { zipName = book.title
+    , entries = bookToAllEntries "" book
+    }
+
+
+-- 特定の本棚を ZIP ペイロードに変換する
+shelfZipPayload : Shelf -> ZipPayload
+shelfZipPayload shelf =
+    { zipName = shelf.name
+    , entries = toZipEntries [ shelf ]
+    }
+
+-- ZIPエクスポート用のペイロードを作成する
+fullLibraryPayload : List Shelf -> ZipPayload
+fullLibraryPayload shelves =
+    { zipName = "Full_Library_Backup"
+    , entries = toZipEntries shelves
+    }
+
+-- 本棚のリストを ZIP 用のエントリーリストに変換する
+toZipEntries : List Shelf -> List ZipEntry
+toZipEntries shelves =
+    shelves
+        |> List.concatMap (\shelf ->
+            let
+                pathPrefix = sanitizePath shelf.name
+            in
+            List.concatMap (bookToAllEntries pathPrefix) shelf.books
+        )
+
+-- AppStateの更新（データの追加と選択）
+appendBook : String -> AppState -> AppState
+appendBook newId state =
+    state
+        |> addBookToCurrentShelf newId
+        |> (\s -> { s | currentBookId = Just newId })
+
+-- 次のメッセージを発行するコマンド
+nextMsg : msg -> Cmd msg
+nextMsg msg =
+    Task.perform identity (Task.succeed msg)
+
+-- ファイル名として安全な文字列に変換する
+sanitizePath : String -> String
+sanitizePath name =
+    let
+        forbidden =
+            ['/', '\\', ':', '*', '?', '"', '<', '>', '|']
+    in
+    String.map (\c -> if List.member c forbidden then '-' else c) name
+
+-- パスを安全に結合する（先頭に / を入れない）
+combinePath : String -> String -> String
+combinePath parent child =
+    if String.isEmpty parent then
+        child
+    else
+        parent ++ "/" ++ child
+
+
+-- ページ単体をファイルエントリーに変換
+pageToFileEntry : String -> String -> Int -> Page -> ZipEntry
+pageToFileEntry extension folderPath index page =
+    let
+        -- 提示されたロジックでタイトルを動的に決定
+        extractedTitle =
+            extractTitleFromContent index page.content
+
+        prefix =
+            String.fromInt (index + 1) |> String.padLeft 2 '0'
+
+        -- 「01_タイトル.md」のような形式
+        fileName =
+            (prefix ++ "_" ++ extractedTitle) 
+                |> sanitizePath
+                |> (\name -> name ++ "." ++ extension)
+    in
+    { path = combinePath folderPath fileName
+    , content = page.content
+    }
+
+bookToAllEntries : String -> Book -> List ZipEntry
+bookToAllEntries parentPath book =
+    let
+        -- 本のタイトルをフォルダ名にする（サニタイズ済み）
+        bookFolder = 
+            combinePath parentPath (sanitizePath book.title)
+        
+        -- text_files と markdown_files フォルダのパス
+        txtPath = combinePath bookFolder "text_files"
+        mdPath = combinePath bookFolder "markdown_files"
+        
+        -- pageToFileEntry は前述の通り index と 拡張子を受け取るものを使用
+        txtEntries = 
+            List.indexedMap (pageToFileEntry "txt" txtPath) book.pages
+            
+        mdEntries = 
+            List.indexedMap (pageToFileEntry "md" mdPath) book.pages
+    in
+    txtEntries ++ mdEntries
+
+-- JavaScriptからの[ファイル名, 内容]をデコードする
+decodeDropPayload : Decode.Value -> Result Decode.Error ( String, String )
+decodeDropPayload value =
+    let
+        decoder =
+            Decode.map2 Tuple.pair
+                (Decode.index 0 Decode.string)
+                (Decode.index 1 Decode.string)
+    in
+    Decode.decodeValue decoder value
+
+
+
+
+applyPageChange : Int -> AppState -> AppState
+applyPageChange index present =
+    let
+        cleared = { present | currentHeading = [] }
+        maybeBook = getCurrentBook cleared
+
+        pageContent =
+            case maybeBook of
+                Just book ->
+                    book.pages
+                        |> List.drop index
+                        |> List.head
+                        |> Maybe.map .content
+                        |> Maybe.withDefault ""
+
+                Nothing ->
+                    ""
+
+        newHeadings =
+            extractHeadings index pageContent
+    in
+    { present
+        | currentPageIndex = index
+        , currentHeading = List.map .text newHeadings
+    }
+
+focusInput : String -> Cmd Msg
+focusInput id =
+    Task.attempt (\_ -> NoOp) (Browser.Dom.focus id)
+
+focusEditor : Cmd Msg
+focusEditor =
+    Task.attempt (\_ -> NoOp) (Browser.Dom.focus "editor-area")
+
+
+-- 並べ替え(Reorder)
+applyReorder : DragTarget -> Int -> Int -> Model -> Model
+applyReorder target from to model =
+    let
+        oldState = model.present
+        newState =
+            case target of
+                DragShelf ->
+                    reorderShelves from to oldState
+
+                DragBook ->
+                    reorderBooksInShelf from to oldState
+
+                DragPage ->
+                    reorderPagesInBook from to oldState
+    in
+    { model | present = newState, draggingState = Nothing }
+
+-- 本棚リスト並べ替え
+reorderShelves : Int -> Int -> AppState -> AppState
+reorderShelves from to state =
+    { state | shelves = reorderList from to state.shelves }
+
+reorderBooksInShelf : Int -> Int -> AppState -> AppState
+reorderBooksInShelf from to state =
+    state
+        |> updateCurrentShelf (\shelf -> { shelf | books = reorderList from to shelf.books })
+
+
+-- 現在選択されている本の中のページを並べ替えます
+reorderPagesInBook : Int -> Int -> AppState -> AppState
+reorderPagesInBook from to state =
+    case state.currentBookId of
+        Just bookId ->
+            -- updateBookInShelves を使用して、対象の本の pages フィールドに reorderList を適用
+            { state
+                | shelves =
+                    updateBookInShelves bookId 
+                        (\book -> { book | pages = reorderList from to book.pages }) -- [修正箇所] 関数合成的にページを並べ替え
+                        state.shelves
+            }
+        Nothing -> state
+
+
+-- AppState内の現在選択されている本棚を更新する汎用関数
+updateCurrentShelf : (Shelf -> Shelf) -> AppState -> AppState
+updateCurrentShelf transform state =
+    let
+        newShelves =
+            state.shelves
+                |> List.map
+                    (\shelf ->
+                        if shelf.id == state.currentShelfId then
+                            transform shelf
+                        else
+                            shelf
+                    )
+    in
+    { state | shelves = newShelves }
+
+-- 上記の関数を使用して本を追加する処理を再定義
+-- 現在選択されている本棚に、指定されたIDを持つ新しい本を追加します
+addBookToCurrentShelf : String -> AppState -> AppState
+addBookToCurrentShelf newId state =
+    let
+        -- 新しい本のデータを作成
+        newBook =
+            { id = newId
+            , title = "New Book"
+            , pages = []
+            }
+    in
+    state
+        |> updateCurrentShelf (\shelf -> { shelf | books = shelf.books ++ [ newBook ] })
+
+
+-- MARK:ページ削除
+removeCurrentPage : String -> AppState -> AppState
+removeCurrentPage pageId state =
+    case getCurrentBook state of
+        Just book ->
+            let
+                -- IDが一致しないものだけ残す（削除）
+                newPages =
+                    List.filter (\p -> p.id /= pageId) book.pages
+
+                newShelves =
+                    updateBookInShelves book.id (\b -> { b | pages = newPages }) state.shelves
+
+                -- 現在のインデックスが新しいリストの範囲外にならないよう調整
+                newPageIndex =
+                    if List.isEmpty newPages then
+                        0
+                    else
+                        Basics.min state.currentPageIndex (List.length newPages - 1)
+            in
+            { state | shelves = newShelves, currentPageIndex = newPageIndex }
+
+        Nothing ->
+            state
+
+
+-- ページ順序の入れ替えロジック
+reorderPagesInCurrentBook : Int -> Int -> AppState -> AppState
+reorderPagesInCurrentBook oldIdx newIdx state =
+    case getCurrentBook state of
+        Just book ->
+            let
+                newPages =
+                    reorderList oldIdx newIdx book.pages
+
+                newShelves =
+                    updateBookInShelves book.id (\b -> { b | pages = newPages }) state.shelves
+            in
+            { state | shelves = newShelves, currentPageIndex = newIdx }
+
+        Nothing ->
+            state
+
+
+-- 本文の1行目からタイトルを抽出し、それと元の本文を返します
+-- 本文は一切削らず、コピーするだけの仕様にします
+extractTitleFromContent : Int -> String -> String
+extractTitleFromContent index content =
+    let
+        firstLine =
+            content 
+                |> String.lines 
+                |> List.head 
+                |> Maybe.withDefault ""
+    in
+    if String.startsWith "# " firstLine then
+        -- 「# 」以降の文字列をタイトルとして採用
+        String.dropLeft 2 firstLine |> String.trim
+    else
+        -- 見出しがない場合はデフォルトのページ番号
+        "Page " ++ String.fromInt (index + 1)
+
+
+-- 現在のページの本文とタイトルを同時に更新します
+updateCurrentPageContent : String -> AppState -> AppState
+updateCurrentPageContent newContent state =
+    case getCurrentBook state of
+        Just book ->
+            let
+                -- 新しいタイトルを抽出（インデックスは表示用に+1されたものではなく0ベースを渡す）
+                newTitle =
+                    extractTitleFromContent state.currentPageIndex newContent
+
+                updatePage pIdx page =
+                    if pIdx == state.currentPageIndex then
+                        -- 本文(content)だけでなくタイトル(title)も更新
+                        { page | content = newContent, title = newTitle }
+                    else
+                        page
+
+                newPages =
+                    List.indexedMap updatePage book.pages
+
+                newShelves =
+                    updateBookInShelves book.id (\b -> { b | pages = newPages }) state.shelves
+            in
+            { state | shelves = newShelves }
+
+        Nothing ->
+            state
+
+
+-- 本棚の削除とIDの調整
+removeShelf : String -> AppState -> AppState
+removeShelf shelfId state =
+    let
+        newShelves =
+            List.filter (\s -> s.id /= shelfId) state.shelves
+
+        -- 削除した本棚を選択中だった場合、先頭の本棚に切り替える
+        nextShelfId =
+            if state.currentShelfId == shelfId then
+                newShelves
+                    |> List.head
+                    |> Maybe.map .id
+                    |> Maybe.withDefault ""
+            else
+                state.currentShelfId
+    in
+    { state | shelves = newShelves, currentShelfId = nextShelfId }
+
+-- AppStateレベルでのブック削除
+removeBookFromState : String -> AppState -> AppState
+removeBookFromState bookId state =
+    let
+        newShelves =
+            deleteBookFromShelves bookId state.shelves
+
+        -- 削除したブックが現在選択中だった場合、選択を解除する
+        newCurrentBookId =
+            if state.currentBookId == Just bookId then
+                Nothing
+            else
+                state.currentBookId
+    in
+    { state | shelves = newShelves, currentBookId = newCurrentBookId }
+
+
+-- すべての本棚の中から、特定のIDを持つブックを探して削除します
+deleteBookFromShelves : String -> List Shelf -> List Shelf
+deleteBookFromShelves bookId shelves =
+    List.map
+        (\shelf ->
+            { shelf | books = List.filter (\b -> b.id /= bookId) shelf.books }
+        )
+        shelves
+
+
+-- MARK:ホイールの回転を判定
+wheelDecoder : Msg -> Msg -> Decode.Decoder Msg
+wheelDecoder upMsg downMsg =
+    Decode.field "deltaY" Decode.float
+        |> Decode.map (\delta ->
+            if delta < 0 then
+                upMsg   -- 上回転（前へ）
+            else
+                downMsg -- 下回転（次へ）
+        )
+
+
+onEnter : Msg -> Attribute Msg
+onEnter msg =
+    on "keydown"
+        (Decode.field "key" Decode.string
+            |> Decode.andThen
+                (\key ->
+                    if key == "Enter" then
+                        Decode.succeed msg
+                    else
+                        Decode.fail "Not enter"
+                )
+        )
+
+-- MARK:キーボードショートカット用デコーダー
+keyDecoder : Decode.Decoder Msg
+keyDecoder =
+    Decode.map2
+        (\key ctrl ->
+            case ( key, ctrl ) of
+                ( "z", True )       -> Undo
+                ( "y", True )       -> Redo
+                ( "ArrowRight", _ ) -> NextPage
+                ( "ArrowLeft", _ )  -> PrevPage
+                _ -> NoOp
+        )
+        (Decode.field "key" Decode.string)
+        (Decode.field "ctrlKey" Decode.bool)
+
+
+decodeIncomingMsg : Decode.Value -> Msg
+decodeIncomingMsg value =
+    let
+        tagDecoder = Decode.field "tag" Decode.string
+    in
+    case Decode.decodeValue tagDecoder value of
+        -- Ok "CreateShelf" ->
+        --     case Decode.decodeValue (Decode.field "id" Decode.string) value of
+        --         Ok id -> CreateShelf
+        --         --Ok id -> CreateShelf id
+        --         Err _ -> NoOp
+        -- Ok "CreateBook" ->
+        --     case Decode.decodeValue (Decode.field "id" Decode.string) value of
+        --         Ok id -> CreateBook
+        --         Err _ -> NoOp
+        -- Ok "CreatePage" ->
+        --     case Decode.decodeValue (Decode.field "id" Decode.string) value of
+        --         Ok id -> CreatePage
+        --         Err _ -> NoOp
+        -- Ok "CreatePageNext" ->
+        --     case Decode.decodeValue (Decode.field "id" Decode.string) value of
+        --         Ok id -> CreatePageNext id
+        --         Err _ -> NoOp
+        Ok "ReorderPages" ->
+            let
+                reorderDecoder =
+                    Decode.map2 ReorderPages
+                        (Decode.field "from" Decode.int)
+                        (Decode.field "to" Decode.int)
+            in
+            case Decode.decodeValue reorderDecoder value of
+                Ok msg -> msg
+                Err _ -> NoOp
+        Ok "EDITOR_CHANGED" ->
+            case Decode.decodeValue (Decode.field "payload" Decode.string) value of
+                Ok content -> UpdateContent content
+                Err _ -> NoOp
+        Ok "SCROLL_CHANGED" ->
+            case Decode.decodeValue (Decode.field "payload" Decode.float) value of
+                Ok _ -> NoOp
+                Err _ -> NoOp
+        Ok "ImportBook" ->
+            case ( Decode.decodeValue (Decode.field "id" Decode.string) value
+                , Decode.decodeValue (Decode.field "payload" decodeBook) value ) of
+                ( Ok id, Ok book ) -> ImportBook id book
+                _ -> NoOp
+        Ok "ImportShelf" ->
+            case ( Decode.decodeValue (Decode.field "id" Decode.string) value
+                , Decode.decodeValue (Decode.field "payload" decodeShelf) value ) of
+                ( Ok id, Ok shelf ) -> ImportShelf id shelf
+                _ -> NoOp
+        _ ->
+            NoOp
+
+
+-- MARK:履歴保存
+notifyAndSave : Model -> ( Model, Cmd Msg )
+notifyAndSave newModel =
+    ( newModel, saveToStorage (JsonConverter.encodeModel newModel) )
+
+-- 保存処理と共に追加のコマンドを実行する
+notifyAndSaveWithCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )
+notifyAndSaveWithCmd additionalCmd newModel =
+    ( newModel
+    , Cmd.batch
+        [ saveToStorage (JsonConverter.encodeModel newModel)
+        , additionalCmd
+        ]
+    )
+
+-- UNDOのための現状保存
+updateAppState : AppState -> Model -> Model
+updateAppState newPresent model =
+    { model
+        | past = List.take 100 (model.present :: model.past)
+        , present = newPresent
+        , future = []
+    }
