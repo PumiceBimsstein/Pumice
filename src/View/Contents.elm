@@ -24,22 +24,24 @@ viewLayout model present =
             NormalSidebar ->
                 div [ class sidebarWrapper ] [ sidebarArea model present ]
 
-            HiddenSidebar ->
-                text ""
-
             OverlaySidebar ->
                 text ""
+            
+            LeftSidebar ->
+                div [ class sidebarWrapper ] [ sidebarArea model present ]
+
         , mainContentArea model present
         , case model.sidebarMode of
             NormalSidebar ->
                 div [ class rightsidebarWrapper ] [ rightSidebarArea model present ]
 
-            HiddenSidebar ->
-                text ""
-
             OverlaySidebar ->
                 text ""
-        , if model.sidebarMode == OverlaySidebar then
+            
+            LeftSidebar ->
+                text ""
+        , if model.sidebarMode == OverlaySidebar
+                || model.sidebarMode == LeftSidebar then
             overlaySidebarArea model present
           else
             text ""
@@ -64,7 +66,7 @@ rightsidebarWrapper =
 overlaySidebarArea : Model -> AppState -> Html Msg
 overlaySidebarArea model present =
     div
-        [ class (tw [ "fixed", "bottom-12", "right-4", "z-40", "scale-75", "origin-bottom-right", "shadow-xl" ]) 
+        [ class (tw [ "fixed", "bottom-12", "right-4", "z-40", "scale-[0.85]", "origin-bottom-right", "shadow-xl" ]) 
         , preventDefaultOn "wheel" (Decode.succeed ( NoOp, True ))
         ]
         [ rightSideWindow model present ]

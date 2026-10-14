@@ -204,7 +204,7 @@ shelfCardStyle theme isActive isOpen =
         activeBorder =
             if isActive then
                 tw  [(basecolors theme).borderStrong
-                    , "border-1"
+                    , "border-2"
                     ]
             else
                 (basecolors theme).borderBtn
@@ -312,8 +312,7 @@ formatShelfCountText shelf =
 footerRowStyle : ColorTheme -> String
 footerRowStyle = \theme ->
     tw  [ "flex", "items-center", "justify-between"
-        , "w-full", "py-2", "mt-auto"
-        , "border-t"
+        , "w-full", "py-2", "mt-auto", "border-t"
         , (basecolors theme).borderUnder
         ]
 
@@ -668,8 +667,7 @@ pageContentView model present =
                 , preventDefaultOn "dragover" (Decode.succeed ( NoOp, True ))
                 , preventDefaultOn "drop" (Decode.succeed ( NoOp, True ))
                 ]
-                [ floatingControl model
-                , div
+                [ div
                     [ class "flex-1 overflow-y-auto" ]
                     [ centralArea model present book ]
                 , viewFooter model present book model.colorTheme
@@ -684,94 +682,6 @@ mainWrapperStyle theme =
         , (basecolors theme).bg 
         ]
 
--- MARK:floatingControl
--- サイドバー非表示時のコントロールウィンドウ
-floatingControl : Model -> Html Msg
-floatingControl model =
-    if model.sidebarMode == HiddenSidebar || model.sidebarMode == OverlaySidebar then
-        div
-            [ class (floatingContainerStyle model.colorTheme) ]
-            [ viewEditToggle model.colorTheme model.mode
-            , sidebarToggle model
-            , miniController model
-            ]
-    else text ""
-
-
-viewEditToggle : ColorTheme -> Mode -> Html Msg
-viewEditToggle theme currentMode =
-    button
-        [ class (sidebarBtnStyle theme (currentMode == ViewMode))
-        , onClick (ChangeMode (nextMode currentMode))
-        ]
-        [ text (modeLabel currentMode) ]
-
-
-sidebarToggle : Model -> Html Msg
-sidebarToggle model =
-    button
-        [ class (sidebarBtnStyle model.colorTheme False)
-        , onClick ToggleNormalSidebar
-        ]
-        [ text "SIDEBAR" ]
-
-
-miniController : Model -> Html Msg
-miniController model =
-    button
-        [ class (sidebarBtnStyle model.colorTheme (model.sidebarMode == OverlaySidebar))
-        , onClick ToggleOverlaySidebar --ToggleSidebarOverlay
-        ]
-        [ text "Controller" ]
-
-
-
-floatingContainerStyle : ColorTheme -> String
-floatingContainerStyle theme =
-    let
-        c = basecolors theme
-    in
-    tw
-        [ "flex", "fixed" --"min-[896px]:hidden"
-        , "top-4", "z-50", "right-4"
-        , "p-1.5", "gap-2", "shadow-md", "border"
-        , "transition-all", "duration-200", "items-center"
-        , c.surface
-        , c.borderBtn
-        , c.text
-        , c.rounded
-        ]
-
-
-sidebarBtnStyle : ColorTheme -> Bool -> String
-sidebarBtnStyle theme isActive  =
-    let
-        c = basecolors theme
-        common = 
-            [ "uppercase", "border", "flex", "items-center", "justify-center"
-            , "px-3", "py-1", "text-xs", c.rounded ]
-        state =
-            if isActive then
-                [ c.primary, c.deco, c.border ]
-            else
-                [ c.text, c.borderBtn, "hover:bg-white/25" ]
-    in
-    tw (common ++ state)
-
-
-nextMode : Mode -> Mode
-nextMode currentMode =
-    if currentMode == ViewMode then
-        EditMode
-    else
-        ViewMode
-
-modeLabel : Mode -> String
-modeLabel currentMode =
-    if currentMode == ViewMode then
-        "VIEW"
-    else
-        "EDIT"
 
 -- MARK:文書エリア
 centralArea : Model -> AppState -> Book -> Html Msg
@@ -819,16 +729,16 @@ viewMarkdownView model page =
                         Narrow -> "px-32"
                         Normal -> "px-16"
                         Wide   -> "px-4"
-                HiddenSidebar ->
+                OverlaySidebar ->
                     case model.contentWidth of
                         Narrow -> "px-64"
                         Normal -> "px-32"
                         Wide   -> "px-8"
-                OverlaySidebar ->
+                LeftSidebar ->
                     case model.contentWidth of
                         Narrow -> "px-64"
-                        Normal -> "px-48"
-                        Wide   -> "px-32"
+                        Normal -> "px-32"
+                        Wide   -> "px-8"
     in
     div
         [ id "markdown-container"

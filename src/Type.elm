@@ -59,8 +59,8 @@ type Mode
 
 type SidebarMode
     = NormalSidebar
-    | HiddenSidebar
     | OverlaySidebar
+    | LeftSidebar
 
 type MenuDirection
     = Above
@@ -257,5 +257,6 @@ type Msg
     | ToggleExportMenu String
     | CloseExportMenu
     | ToggleNormalSidebar
-    | ToggleOverlaySidebar
+    | ToggleLeftSidebar
+    -- | ToggleOverlaySidebar
     | NoOp

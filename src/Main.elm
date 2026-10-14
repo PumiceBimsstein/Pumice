@@ -459,23 +459,34 @@ update msg model =
             let
                 nextMode =
                     if model.sidebarMode == NormalSidebar then
-                        HiddenSidebar
+                        OverlaySidebar
 
                     else
                         NormalSidebar
             in
             ( { model | sidebarMode = nextMode }, Cmd.none )
 
-        ToggleOverlaySidebar ->
+        ToggleLeftSidebar ->
             let
                 nextMode =
-                    if model.sidebarMode == OverlaySidebar then
-                        HiddenSidebar
+                    if model.sidebarMode == LeftSidebar then
+                        OverlaySidebar
 
                     else
-                        OverlaySidebar
+                        LeftSidebar
             in
             ( { model | sidebarMode = nextMode }, Cmd.none )
+
+        -- ToggleOverlaySidebar ->
+        --     let
+        --         nextMode =
+        --             if model.sidebarMode == OverlaySidebar then
+        --                 HiddenSidebar
+
+        --             else
+        --                 OverlaySidebar
+        --     in
+        --     ( { model | sidebarMode = nextMode }, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )

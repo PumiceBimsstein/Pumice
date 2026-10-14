@@ -22,33 +22,6 @@ rightSidebarArea model present =
         ]
 
 
-rightSideWindow : Model -> AppState -> Html Msg
-rightSideWindow model present =
-    div
-        [ class (rightSideWindowStyle model.colorTheme) ]
-        [ viewModeButtonGroup model.colorTheme model.mode
-        , controlSectionMini model
-        , bottomStatusArea model present
-        ]
-
-rightSideWindowStyle : ColorTheme -> String
-rightSideWindowStyle theme =
-    tw  [ "flex", "flex-col", "w-32", "flex-shrink-0"
-        , "border", "h-auto"
-        , (basecolors theme).surface
-        , (basecolors theme).borderBtn
-        , (basecolors theme).rounded
-        , (basecolors theme).textMuted
-        ]
-
-controlSectionMini : Model -> Html Msg
-controlSectionMini model =
-    div [ class "p-3 border-b text-xs border-gray-500/10" ]
-        [ viewFontSizeSelector model
-        , viewAddPageButton model
-        ]
-
-
 rightSideStyle : ColorTheme -> String
 rightSideStyle theme =
     tw  [ "flex", "flex-col", "w-48", "flex-shrink-0", "border-l", "h-full"
@@ -146,6 +119,84 @@ modeButtonStyle theme isActive =
                 ]
     in
     tw (base ++ state)
+
+
+--MARK:ミニサイドバー
+rightSideWindow : Model -> AppState -> Html Msg
+rightSideWindow model present =
+    div
+        [ class (rightSideWindowStyle model.colorTheme) ]
+        [ viewModeButtonGroup model.colorTheme model.mode
+        , sidebarModeSection model
+        , controlSectionMini model
+        , bottomStatusArea model present
+        ]
+
+sidebarModeSection : Model -> Html Msg
+sidebarModeSection model =
+    div [ class "flex flex-col gap-2 mt-auto mx-3 font-bold" ]
+        [ leftSidebarToggle model.colorTheme model.sidebarMode
+        , sidebarToggleBtn model
+        ]
+
+
+leftSidebarToggle : ColorTheme -> SidebarMode -> Html Msg
+leftSidebarToggle theme currentMode =
+    button
+        [ class (sidebarBtnStyle theme (currentMode == LeftSidebar))
+        , onClick ToggleLeftSidebar
+        ]
+        [ text "Left Menu" ]
+
+sidebarToggleBtn : Model -> Html Msg
+sidebarToggleBtn model =
+    button
+        [ class (sidebarBtnStyle model.colorTheme False)
+        , onClick ToggleNormalSidebar
+        ,title "Show Sidebar"
+        ]
+        [ text "Normal" ]
+
+
+sidebarBtnStyle : ColorTheme -> Bool -> String
+sidebarBtnStyle theme isActive =
+    let
+        base =
+            [ "w-full", "py-1.5", "text-sm", "font-semibold", "border", "opacity-90"
+            , (basecolors theme).rounded
+            ]
+        state =
+            if isActive then
+                [ "border-transparent"
+                , (basecolors theme).primary
+                , (basecolors theme).deco
+                ]
+            else
+                [ (basecolors theme).borderBtn
+                , (basecolors theme).text
+                , "hover:bg-white/25"
+                , "bg-transparent"
+                ]
+    in
+    tw (base ++ state)
+
+rightSideWindowStyle : ColorTheme -> String
+rightSideWindowStyle theme =
+    tw  [ "flex", "flex-col", "w-32", "flex-shrink-0"
+        , "border", "h-auto"
+        , (basecolors theme).surface
+        , (basecolors theme).borderBtn
+        , (basecolors theme).rounded
+        , (basecolors theme).textMuted
+        ]
+
+controlSectionMini : Model -> Html Msg
+controlSectionMini model =
+    div [ class "p-3 border-b text-xs border-gray-500/10" ]
+        [ viewFontSizeSelector model
+        , viewAddPageButton model
+        ]
+
 
 -- MARK:セレクター
 viewThemeSelector : ColorTheme -> Html Msg
@@ -335,7 +386,7 @@ viewBooksButton model =
 categoryBtn : ColorTheme -> String
 categoryBtn theme =
     tw  [ "w-full", "h-8", "border", "px-2.5", "text-sm", "font-mono"
-        , "items-center", "justify-center"
+        , "items-center", "justify-center", "hover:bg-white/25"
         , (basecolors theme).borderBtn
         , (basecolors theme).rounded
         , (basecolors theme).textMuted
