@@ -5,6 +5,7 @@ import Html.Attributes exposing (class, id, attribute, style)
 import Markdown.Block
 import Markdown.Parser
 import Markdown.Renderer
+import Regex
 import Type exposing (ColorTheme, FontSize, RenderStyle)
 import View.MarkdownStyles as Styles
 import Domain.Selector exposing (colorThemeToString)
@@ -80,14 +81,10 @@ customRenderer theme renderStyle searchText=
 
         , codeSpan =
             \content ->
-                if String.startsWith "math" content then
+                if String.startsWith "math " content then
                     let
-                        -- "math" または "math " の後ろを数式として抽出
-                        formula = 
-                            if String.startsWith "math " content then
-                                String.dropLeft 5 content
-                            else
-                                String.dropLeft 4 content
+                        formula =
+                            String.dropLeft 5 content
                     in
                     node "katex-inline" [ attribute "formula" formula ] []
                 else
@@ -101,6 +98,66 @@ customRenderer theme renderStyle searchText=
     }
 
 
+preprocessMathForParser : String -> String
+preprocessMathForParser input =
+    -- 1. ``` で分割し、コードブロックの内外を分離する
+    input
+        |> String.split "```"
+        |> List.indexedMap
+            (\index part ->
+                if modBy 2 index == 1 then
+                    -- 奇数番目 = コードブロックの中身！一切手を加えず完全に保護
+                    part
+
+                else
+                    -- 偶数番目 = 通常の文章領域！ここで数式を変換する
+                    part
+                        -- (A) ChatGPT / Gemini のブロック数式
+                        -- バックスラッシュ2つ (\\[ ... \\]) と 1つ (\[ ... \]) の両方を置換
+                        |> String.replace "\\\\[" "\n```math\n"
+                        |> String.replace "\\\\]" "\n```\n"
+                        |> String.replace "\\[" "\n```math\n"
+                        |> String.replace "\\]" "\n```\n"
+                        -- (B) ChatGPT / Gemini のインライン数式
+                        -- \\( ... \\) および \( ... \) を置換
+                        |> String.replace "\\\\(" "`math "
+                        |> String.replace "\\\\)" "`"
+                        |> String.replace "\\(" "`math "
+                        |> String.replace "\\)" "`"
+                        -- (C) Claude / Vibe / Gemini のブロック数式 $$ ... $$
+                        |> replaceRegex "\\$\\$([\\s\\S]+?)\\$\\$"
+                            (\m ->
+                                case m.submatches of
+                                    (Just formula) :: _ ->
+                                        "\n```math\n" ++ String.trim formula ++ "\n```\n"
+
+                                    _ ->
+                                        m.match
+                            )
+                        -- (D) Claude / Vibe のインライン数式 $ ... $ (通貨記号を除外)
+                        |> replaceRegex "(^|[^\\\\])\\$(?!\\s)(?!\\d+(?:\\.\\d+)?(?:\\s|〜|~|-|to))([^\\$\\n]+?)(?<!\\s)\\$(?!\\d)"
+                            (\m ->
+                                case m.submatches of
+                                    (Just prefix) :: (Just formula) :: _ ->
+                                        prefix ++ "`math " ++ formula ++ "`"
+
+                                    _ ->
+                                        m.match
+                            )
+            )
+        -- 2. 再び ``` で結合して元の構造に戻す
+        |> String.join "```"
+
+-- 正規表現ヘルパー
+replaceRegex : String -> (Regex.Match -> String) -> String -> String
+replaceRegex pattern replacer target =
+    case Regex.fromString pattern of
+        Just regex ->
+            Regex.replace regex replacer target
+
+        Nothing ->
+            target
+
 render : ColorTheme -> RenderStyle -> FontSize -> String -> String -> Html msg
 render theme style size searchText markdownRaw =
     if String.isEmpty (String.trim markdownRaw) then
@@ -108,21 +165,24 @@ render theme style size searchText markdownRaw =
 
     else
         let
-            parsed = Markdown.Parser.parse markdownRaw
-            topSpacer = div [ class "h-16 w-full" ] []
-            bottomSpacer = div [ class "h-32 w-full" ] []
+            processedMarkdown =
+                preprocessMathForParser markdownRaw
+
+            parsed =
+                Markdown.Parser.parse processedMarkdown
+
+            topSpacer =
+                div [ class "h-16 w-full" ] []
+
+            bottomSpacer =
+                div [ class "h-32 w-full" ] []
         in
         case parsed of
             Ok blocks ->
                 case Markdown.Renderer.render (customRenderer theme style searchText) blocks of
                     Ok renderedHtmls ->
-                        let
-                            extendedHtmls =
-                                topSpacer :: renderedHtmls ++ [ bottomSpacer ]
-                        in
-                        
-                        div (Styles.markdownContainer theme style size) extendedHtmls
-                        -- div (Styles.markdownContainer theme style size) renderedHtmls
+                        div (Styles.markdownContainer theme style size)
+                            (topSpacer :: renderedHtmls ++ [ bottomSpacer ])
 
                     Err _ ->
                         viewPlainContent theme style size markdownRaw

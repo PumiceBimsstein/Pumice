@@ -15276,7 +15276,7 @@
     };
   }
 
-  // src_highlight3.js
+  // src_highlight.js
   common_default.registerLanguage("elm", elm);
   common_default.registerLanguage("haskell", haskell);
   common_default.registerLanguage("ocaml", ocaml);
