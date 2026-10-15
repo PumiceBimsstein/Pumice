@@ -19724,7 +19724,8 @@ var $author$project$View$MainArea$menuButtonStyle = function (theme) {
 				'font-medium',
 				'shadow-sm',
 				'border',
-				'hover:bg-white/10',
+				'transition-all duration-100',
+				'hover:scale-105 hover:brightness-110 hover:shadow-md',
 				$author$project$View$Style$basecolors(theme).al,
 				$author$project$View$Style$basecolors(theme).P,
 				$author$project$View$Style$basecolors(theme).aY,
@@ -20384,12 +20385,13 @@ var $author$project$View$MainArea$shelfCardStyle = F3(
 					'w-full',
 					'h-full',
 					'relative',
-					'transition-all',
+					'transition-all duration-200',
 					'flex',
 					'flex-col',
 					'border',
 					stackOrder,
 					'cursor-pointer',
+					'hover:shadow-xl hover:-translate-y-1 hover:brightness-105',
 					$author$project$View$Style$basecolors(theme).P,
 					$author$project$View$Style$basecolors(theme).a2,
 					$author$project$View$Style$basecolors(theme).aY,
@@ -20657,20 +20659,29 @@ var $author$project$View$MainArea$shelfListContainerStyle = function (theme) {
 			]));
 };
 var $author$project$Type$CreateShelf = {$: 3};
-var $author$project$View$MainArea$makeNewShelf = function (theme) {
-	return A2(
-		$elm$html$Html$button,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class(
-				$author$project$View$MainArea$menuButtonStyle(theme)),
-				$elm$html$Html$Events$onClick($author$project$Type$CreateShelf)
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text('New Shelf')
-			]));
-};
+var $author$project$View$MainArea$makeNewShelf = F2(
+	function (theme, isGuiding) {
+		var pulseClass = isGuiding ? $author$project$View$Style$tw(
+			_List_fromArray(
+				['animate-pulse', '[animation-duration:1s]', 'ring-2 ring-amber-400 ring-offset-1 ring-offset-transparent'])) : '';
+		return A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(
+					$author$project$View$Style$tw(
+						_List_fromArray(
+							[
+								$author$project$View$MainArea$menuButtonStyle(theme),
+								pulseClass
+							]))),
+					$elm$html$Html$Events$onClick($author$project$Type$CreateShelf)
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('New Shelf')
+				]));
+	});
 var $author$project$Type$ShelfImport = 0;
 var $author$project$View$MainArea$shelfFileImport = function (theme) {
 	return A2(
@@ -20689,17 +20700,22 @@ var $author$project$View$MainArea$shelfFileImport = function (theme) {
 			]));
 };
 var $author$project$View$MainArea$shelfListMenu = function (model) {
-	return _Utils_eq(model.M, $author$project$Type$ShelfListView) ? A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class($author$project$View$MainArea$shelfListMenuStyle)
-			]),
-		_List_fromArray(
-			[
-				$author$project$View$MainArea$shelfFileImport(model.bk),
-				$author$project$View$MainArea$makeNewShelf(model.bk)
-			])) : $elm$html$Html$text('');
+	if (_Utils_eq(model.M, $author$project$Type$ShelfListView)) {
+		var isGuiding = $elm$core$List$length(model.B.w) <= 2;
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class($author$project$View$MainArea$shelfListMenuStyle)
+				]),
+			_List_fromArray(
+				[
+					$author$project$View$MainArea$shelfFileImport(model.bk),
+					A2($author$project$View$MainArea$makeNewShelf, model.bk, isGuiding)
+				]));
+	} else {
+		return $elm$html$Html$text('');
+	}
 };
 var $author$project$View$MainArea$shelfListTitleStyle = function (theme) {
 	return $author$project$View$Style$tw(
@@ -21436,7 +21452,8 @@ var $author$project$View$RightSideBar$sidebarModeSection = function (model) {
 };
 var $author$project$Type$ReorderMode = 2;
 var $author$project$View$RightSideBar$modeButtonStyle = F2(
-	function (theme, isActive) {
+	function (model, isActive) {
+		var theme = model.bk;
 		var state = isActive ? _List_fromArray(
 			[
 				'border-transparent',
@@ -21449,7 +21466,16 @@ var $author$project$View$RightSideBar$modeButtonStyle = F2(
 				'hover:opacity-70',
 				'bg-transparent'
 			]);
-		var base = _List_fromArray(
+		var base = ((model.ad === 1) || (model.ad === 2)) ? _List_fromArray(
+			[
+				'w-full',
+				'py-1.5',
+				'text-sm',
+				'font-semibold',
+				'border',
+				'opacity-90',
+				$author$project$View$Style$basecolors(theme).aY
+			]) : _List_fromArray(
 			[
 				'w-full',
 				'py-2.5',
@@ -21463,17 +21489,17 @@ var $author$project$View$RightSideBar$modeButtonStyle = F2(
 			_Utils_ap(base, state));
 	});
 var $author$project$View$RightSideBar$viewModeButton = F4(
-	function (theme, mode, label, isActive) {
+	function (model, mode, label, isActive) {
 		return A2(
 			$elm$html$Html$button,
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					A2($author$project$View$RightSideBar$modeButtonStyle, theme, isActive)),
+					A2($author$project$View$RightSideBar$modeButtonStyle, model, isActive)),
 					A2(
 					$elm$html$Html$Attributes$style,
 					'font-family',
-					$author$project$View$Style$basecolors(theme).aI),
+					$author$project$View$Style$basecolors(model.bk).aI),
 					$elm$html$Html$Events$onClick(
 					$author$project$Type$ChangeMode(mode))
 				]),
@@ -21483,7 +21509,8 @@ var $author$project$View$RightSideBar$viewModeButton = F4(
 				]));
 	});
 var $author$project$View$RightSideBar$viewModeButtonGroup = F2(
-	function (theme, currentMode) {
+	function (model, currentMode) {
+		var theme = model.bk;
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -21492,9 +21519,9 @@ var $author$project$View$RightSideBar$viewModeButtonGroup = F2(
 				]),
 			_List_fromArray(
 				[
-					A4($author$project$View$RightSideBar$viewModeButton, theme, 0, 'VIEW', !currentMode),
-					A4($author$project$View$RightSideBar$viewModeButton, theme, 1, 'EDIT', currentMode === 1),
-					A4($author$project$View$RightSideBar$viewModeButton, theme, 2, 'PAGES', currentMode === 2)
+					A4($author$project$View$RightSideBar$viewModeButton, model, 0, 'VIEW', !currentMode),
+					A4($author$project$View$RightSideBar$viewModeButton, model, 1, 'EDIT', currentMode === 1),
+					A4($author$project$View$RightSideBar$viewModeButton, model, 2, 'PAGES', currentMode === 2)
 				]));
 	});
 var $author$project$View$RightSideBar$rightSideWindow = F2(
@@ -21508,7 +21535,7 @@ var $author$project$View$RightSideBar$rightSideWindow = F2(
 				]),
 			_List_fromArray(
 				[
-					A2($author$project$View$RightSideBar$viewModeButtonGroup, model.bk, model.cG),
+					A2($author$project$View$RightSideBar$viewModeButtonGroup, model, model.cG),
 					$author$project$View$RightSideBar$sidebarModeSection(model),
 					$author$project$View$RightSideBar$controlSectionMini(model),
 					A2($author$project$View$RightSideBar$bottomStatusArea, model, present)
@@ -21833,7 +21860,7 @@ var $author$project$View$RightSideBar$rightSidebarArea = F2(
 				]),
 			_List_fromArray(
 				[
-					A2($author$project$View$RightSideBar$viewModeButtonGroup, model.bk, model.cG),
+					A2($author$project$View$RightSideBar$viewModeButtonGroup, model, model.cG),
 					$author$project$View$RightSideBar$controlSection(model),
 					$author$project$View$RightSideBar$scrollableArea,
 					A2($author$project$View$RightSideBar$bottomStatusArea, model, present)
@@ -22341,7 +22368,7 @@ var $author$project$View$SideBarContents$headingSelectorStyle = function (theme)
 				'text-sm',
 				'outline-none',
 				'h-8',
-				'w-16',
+				'w-18',
 				$author$project$View$Style$basecolors(theme).ch,
 				$author$project$View$Style$basecolors(theme).al,
 				$author$project$View$Style$basecolors(theme).aY,

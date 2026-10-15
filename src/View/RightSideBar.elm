@@ -15,7 +15,7 @@ rightSidebarArea : Model -> AppState -> Html Msg
 rightSidebarArea model present =
     aside
         [ class (rightSideStyle model.colorTheme) ]
-        [ viewModeButtonGroup model.colorTheme model.mode
+        [ viewModeButtonGroup model model.mode
         , controlSection model
         , scrollableArea
         , bottomStatusArea model present
@@ -30,12 +30,15 @@ rightSideStyle theme =
         , (basecolors theme).textMuted
         ]
 
-viewModeButtonGroup : ColorTheme -> Mode -> Html Msg
-viewModeButtonGroup theme currentMode =
+viewModeButtonGroup : Model -> Mode -> Html Msg
+viewModeButtonGroup model currentMode =
+    let
+        theme = model.colorTheme
+    in
     div [ class "p-3 space-y-1" ]
-        [ viewModeButton theme ViewMode "VIEW" (currentMode == ViewMode)
-        , viewModeButton theme EditMode "EDIT" (currentMode == EditMode)
-        , viewModeButton theme ReorderMode "PAGES" (currentMode == ReorderMode)
+        [ viewModeButton model ViewMode "VIEW" (currentMode == ViewMode)
+        , viewModeButton model EditMode "EDIT" (currentMode == EditMode)
+        , viewModeButton model ReorderMode "PAGES" (currentMode == ReorderMode)
         ]
 
 controlSection : Model -> Html Msg
@@ -88,23 +91,28 @@ bookPageCounter theme present =
             pageCount theme present book
 
 
-viewModeButton : ColorTheme -> Mode -> String -> Bool -> Html Msg
-viewModeButton theme mode label isActive =
+viewModeButton : Model -> Mode -> String -> Bool -> Html Msg
+viewModeButton model mode label isActive =
     button 
-        [ class (modeButtonStyle theme isActive)
-        , style "font-family" (basecolors theme).fontDeco
+        [ class (modeButtonStyle model isActive)
+        , style "font-family" (basecolors model.colorTheme).fontDeco
         , onClick (ChangeMode mode) 
         ] 
         [ text label ]
 
 
-modeButtonStyle : ColorTheme -> Bool -> String
-modeButtonStyle theme isActive =
+modeButtonStyle : Model -> Bool -> String
+modeButtonStyle model isActive =
     let
+        theme = model.colorTheme
         base =
-            [ "w-full", "py-2.5", "text-sm", "font-semibold", "border", "opacity-90"
-            , (basecolors theme).rounded
-            ]
+            if model.sidebarMode == OverlaySidebar || model.sidebarMode == LeftSidebar then
+                ["w-full", "py-1.5", "text-sm", "font-semibold", "border", "opacity-90"
+                , (basecolors theme).rounded]
+            else
+                [ "w-full", "py-2.5", "text-sm", "font-semibold", "border", "opacity-90"
+                , (basecolors theme).rounded
+                ]
         state =
             if isActive then
                 [ "border-transparent"
@@ -126,7 +134,7 @@ rightSideWindow : Model -> AppState -> Html Msg
 rightSideWindow model present =
     div
         [ class (rightSideWindowStyle model.colorTheme) ]
-        [ viewModeButtonGroup model.colorTheme model.mode
+        [ viewModeButtonGroup model model.mode
         , sidebarModeSection model
         , controlSectionMini model
         , bottomStatusArea model present

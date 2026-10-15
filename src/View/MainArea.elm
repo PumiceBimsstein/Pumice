@@ -92,9 +92,13 @@ shelfListTitle model =
 shelfListMenu : Model -> Html Msg
 shelfListMenu model =
     if model.mainViewMode == ShelfListView then
+        let
+            isGuiding =
+                List.length model.present.shelves <= 2
+        in
         div [ class shelfListMenuStyle ]
             [ shelfFileImport model.colorTheme
-            , makeNewShelf model.colorTheme
+            , makeNewShelf model.colorTheme isGuiding
             ]
     else
         text ""
@@ -110,15 +114,37 @@ shelfFileImport theme =
         [ text "Import" ]
 
 
-makeNewShelf : ColorTheme -> Html Msg
-makeNewShelf theme =
+-- makeNewShelf : ColorTheme -> Html Msg
+-- makeNewShelf theme =
+--     button
+--         [ class (menuButtonStyle theme)
+--         --, onClick RequestCreateShelf
+--         , onClick CreateShelf
+--         ]
+--         [ text "New Shelf" ]
+
+-- MARK: 2. 2つ以下のときに animate-pulse（ゆっくり点滅）を付与
+makeNewShelf : ColorTheme -> Bool -> Html Msg
+makeNewShelf theme isGuiding =
+    let
+        pulseClass =
+            if isGuiding then
+                tw
+                    [ "animate-pulse"
+                    -- 速さ：秒数で自由に変更可能（例: 3s は標準よりさらにゆったり）
+                    , "[animation-duration:1s]"
+                    -- 色：amber（黄色/オレンジ系）や emerald（緑系）、sky（青系）などに変更可能
+                    , "ring-2 ring-amber-400 ring-offset-1 ring-offset-transparent"
+                    ]
+
+            else
+                ""
+    in
     button
-        [ class (menuButtonStyle theme)
-        --, onClick RequestCreateShelf
+        [ class (tw [ menuButtonStyle theme, pulseClass ])
         , onClick CreateShelf
         ]
         [ text "New Shelf" ]
-
 
 shelfListMenuStyle : String
 shelfListMenuStyle =
@@ -140,7 +166,9 @@ menuButtonStyle theme =
         , "text-xs"
         , "font-medium", "shadow-sm"
         , "border"
-        , "hover:bg-white/10"
+        --, "hover:bg-white/10"
+        , "transition-all duration-100"
+        , "hover:scale-105 hover:brightness-110 hover:shadow-md"
         , (basecolors theme).borderBtn
         , (basecolors theme).text
         , (basecolors theme).rounded
@@ -214,10 +242,11 @@ shelfCardStyle theme isActive isOpen =
             else
                 "z-0"
     in
-        tw  [ "pt-6", "px-6", "w-full", "h-full", "relative", "transition-all"
+        tw  [ "pt-6", "px-6", "w-full", "h-full", "relative", "transition-all duration-200"
             , "flex", "flex-col", "border"
             , stackOrder
             , "cursor-pointer"
+            , "hover:shadow-xl hover:-translate-y-1 hover:brightness-105"
             --, "hover:opacity-80"
             , (basecolors theme).text
             , (basecolors theme).surface

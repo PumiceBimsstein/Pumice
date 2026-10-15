@@ -181,7 +181,7 @@ setHeadingLevel str =
 headingSelectorStyle : ColorTheme -> String
 headingSelectorStyle theme =
         tw  [ "border", "px-3", "py-1", "mb-1"
-            , "text-sm", "outline-none", "h-8", "w-16"
+            , "text-sm", "outline-none", "h-8", "w-18"
             , (basecolors theme).brightAccent
             , (basecolors theme).borderBtn
             , (basecolors theme).rounded
