@@ -165,21 +165,6 @@ update msg model =
             createPage page model
                 |> notifyAndSave
 
-        -- CreateNextPage page ->
-        --     let
-        --         newModel =
-        --             createPage page model
-
-        --         newPresent =
-        --             newModel.present
-        --     in
-        --     { newModel
-        --         | present =
-        --             { newPresent | currentPageIndex = page }
-        --         , mode = EditMode
-        --     }
-        --         |> notifyAndSave
-
         CreateNextPage page ->
             let
                 -- 1. 追加前の状態を履歴に保存
@@ -212,24 +197,16 @@ update msg model =
                 |> applyPageSelection index
                 |> (\m -> { m | scrollRatio = 0 })
                 |> notifyAndSaveWithCmd (scrollToTop ())
-                -- |> notifyAndSaveWithCmd 
-                --     (Cmd.batch 
-                --         [ scrollToTop ()
-                --         , scrollToTocHeading ()
-                --         ]
-                --     )
 
         NextPage ->
             model
                 |> applyNextPage
                 |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, Ports.scrollToTocHeading () ])
-                --|> (\( m, cmd ) -> ( m, cmd ))
 
         PrevPage ->
             model
                 |> applyPrevPage
                 |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, Ports.scrollToTocHeading () ])
-                --|> (\( m, cmd ) -> ( m, cmd ))
 
         ChangeMode newMode ->
             let
@@ -315,9 +292,6 @@ update msg model =
                 |> (\state -> updateAppState state model)
                 |> notifyAndSave
 
-        -- RequestImport ->
-        --     ( model, requestFileImport () )
-        
         RequestImport target ->
             ( model, requestFileImport (importTargetToString target) )
         
@@ -810,4 +784,3 @@ subscriptions _ =
         , fileContentReceiver ImportData
         , pageFileSelected PageFileSelected
         ]
-

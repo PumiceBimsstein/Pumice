@@ -114,7 +114,7 @@ shelfFileImport theme =
         [ text "Import" ]
 
 
--- MARK: 2. 2つ以下のときに animate-pulse（ゆっくり点滅）を付与
+-- 2つ以下のときに animate-pulse（ゆっくり点滅）を付与
 makeNewShelf : ColorTheme -> Bool -> Html Msg
 makeNewShelf theme isGuiding =
     let

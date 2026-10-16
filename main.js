@@ -18823,7 +18823,7 @@ var $author$project$View$Reorder$reorderStyle = {
 					'inset-0',
 					'origin-top-left',
 					'font-bold',
-					'text-sm',
+					'text-xs',
 					'p-2',
 					'pointer-events-none',
 					'whitespace-normal',
@@ -19003,8 +19003,96 @@ var $author$project$View$Reorder$viewPageCardHeader = F3(
 					$elm$html$Html$text('×'))
 				]));
 	});
-var $author$project$View$Reorder$viewPageCardPreview = F2(
-	function (model, title) {
+var $author$project$View$Reorder$viewPageCardPreview = F3(
+	function (model, index, content) {
+		var previewText = function () {
+			var trimmed = $elm$core$String$trim(content);
+			return $elm$core$String$isEmpty(trimmed) ? ('Page ' + $elm$core$String$fromInt(index + 1)) : A2($elm$core$String$left, 200, trimmed);
+		}();
+		var allHeadings = A2($author$project$Domain$Helper$extractHeadings, index, content);
+		var actualHeadings = function () {
+			if (allHeadings.b && (!allHeadings.b.b)) {
+				var h = allHeadings.a;
+				return (_Utils_eq(
+					h.M,
+					'Page ' + $elm$core$String$fromInt(index + 1)) && (!A2($elm$core$String$contains, '#', content))) ? _List_Nil : allHeadings;
+			} else {
+				return allHeadings;
+			}
+		}();
+		var h1List = A2(
+			$elm$core$List$filter,
+			function (h) {
+				return h.X === 1;
+			},
+			actualHeadings);
+		var h2List = A2(
+			$elm$core$List$filter,
+			function (h) {
+				return h.X === 2;
+			},
+			actualHeadings);
+		var h3List = A2(
+			$elm$core$List$filter,
+			function (h) {
+				return h.X === 3;
+			},
+			actualHeadings);
+		var items = (!$elm$core$List$isEmpty(h1List)) ? A2(
+			$elm$core$List$map,
+			function (h) {
+				return A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('truncate')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('# ' + h.M)
+						]));
+			},
+			h1List) : ((!$elm$core$List$isEmpty(h2List)) ? A2(
+			$elm$core$List$map,
+			function (h) {
+				return A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('truncate opacity-90')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('## ' + h.M)
+						]));
+			},
+			h2List) : ((!$elm$core$List$isEmpty(h3List)) ? A2(
+			$elm$core$List$map,
+			function (h) {
+				return A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('truncate opacity-80')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('### ' + h.M)
+						]));
+			},
+			h3List) : _List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('text-xs break-words whitespace-pre-wrap opacity-70')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(previewText)
+					]))
+			])));
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -19020,10 +19108,7 @@ var $author$project$View$Reorder$viewPageCardPreview = F2(
 							$elm$html$Html$Attributes$class(
 							$author$project$View$Reorder$reorderStyle.bJ(model.bh))
 						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text(title)
-						]))
+					items)
 				]));
 	});
 var $author$project$View$Reorder$viewPageCard = F5(
@@ -19043,7 +19128,7 @@ var $author$project$View$Reorder$viewPageCard = F5(
 			_List_fromArray(
 				[
 					A3($author$project$View$Reorder$viewPageCardHeader, model, index, pageId),
-					A2($author$project$View$Reorder$viewPageCardPreview, model, page.b7)
+					A3($author$project$View$Reorder$viewPageCardPreview, model, index, page.bi)
 				]));
 	});
 var $author$project$Type$DragEnd = {$: 39};

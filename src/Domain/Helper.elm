@@ -103,15 +103,12 @@ extractHeadings pageIdx content =
                             String.trim line
                     in
                     if String.startsWith "```" trimmed then
-                        -- コードブロックの開始/終了を切り替え
                         parseLines rest (not inCodeBlock) acc
 
                     else if inCodeBlock then
-                        -- コードブロック内部の行は無視
                         parseLines rest True acc
 
                     else
-                        -- コードブロック外部の行で見出しを判定
                         let
                             maybeHeading =
                                 if String.startsWith "### " line then

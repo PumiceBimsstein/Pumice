@@ -40,7 +40,7 @@ viewPageCard model present index page pageId =
         , onDoubleClick (ChangeMode EditMode)
         ]
         [ viewPageCardHeader model index pageId
-        , viewPageCardPreview model page.title
+        , viewPageCardPreview model index page.content
         ]
 
 
@@ -54,12 +54,58 @@ viewPageCardHeader model index pageId =
         ]
 
 
-viewPageCardPreview : Model -> String -> Html Msg
-viewPageCardPreview model title =
+viewPageCardPreview : Model -> Int -> String -> Html Msg
+viewPageCardPreview model index content =
+    let
+        allHeadings = extractHeadings index content
+
+        -- ※ extractHeadings は見出しが一切ない場合にダミーの「Page X (level 1)」を返すため、
+        --    本文に見出しが存在しないケースを判定して除外
+        actualHeadings =
+            case allHeadings of
+                [ h ] ->
+                    if h.text == ("Page " ++ String.fromInt (index + 1)) && not (String.contains "#" content) then
+                        []
+
+                    else
+                        allHeadings
+
+                _ ->
+                    allHeadings
+
+        h1List = List.filter (\h -> h.level == 1) actualHeadings
+        h2List = List.filter (\h -> h.level == 2) actualHeadings
+        h3List = List.filter (\h -> h.level == 3) actualHeadings
+
+        -- 見出し1〜3が全てない場合の先頭200文字
+        previewText =
+            let
+                trimmed =
+                    String.trim content
+            in
+            if String.isEmpty trimmed then
+                "Page " ++ String.fromInt (index + 1)
+
+            else
+                String.left 200 trimmed
+
+        items =
+            if not (List.isEmpty h1List) then
+                List.map (\h -> div [ class "truncate" ] [ text ("# " ++ h.text) ]) h1List
+
+            else if not (List.isEmpty h2List) then
+                List.map (\h -> div [ class "truncate opacity-90" ] [ text ("## " ++ h.text) ]) h2List
+
+            else if not (List.isEmpty h3List) then
+                List.map (\h -> div [ class "truncate opacity-80" ] [ text ("### " ++ h.text) ]) h3List
+
+            else
+                [ div [ class "text-xs break-words whitespace-pre-wrap opacity-70" ] [ text previewText ] ]
+    in
     div [ class "flex-1 p-2 overflow-hidden relative" ]
         [ div
-            [ class (reorderStyle.pageCardPreviewContent model.colorTheme)]
-            [ text title ]
+            [ class (reorderStyle.pageCardPreviewContent model.colorTheme) ]
+            items
         ]
 
 
@@ -127,7 +173,7 @@ reorderStyle =
     , pageCardPreviewContent = \theme ->
         tw  [ "absolute", "inset-0", "origin-top-left"--, "scale-[0.9]"
             --, "w-[250%]", "h-[250%]"
-            , "font-bold", "text-sm"
+            , "font-bold", "text-xs"
             , "p-2", "pointer-events-none"--, "opacity-80"
             , "whitespace-normal", "break-words"
             , (basecolors theme).accent
