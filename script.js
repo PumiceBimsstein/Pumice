@@ -1,4 +1,6 @@
 window.elmAppPromise.then(app => {
+    
+    console.log('[DEBUG] Elm アプリが初期化されました。ポートの登録を開始します。');
 
     // 新しい本のIDを作成
     if (app.ports.requestCreate) {
@@ -48,6 +50,51 @@ window.elmAppPromise.then(app => {
         });
     }
 
+    // 目次のハイライト項目へスクロール追従
+    // if (app.ports && app.ports.scrollToTocHeading) {
+    //     app.ports.scrollToTocHeading.subscribe(() => {
+    //         requestAnimationFrame(() => {
+    //             const tocArea = document.getElementById('toc-area');
+    //             if (tocArea) {
+    //                 const activeItem = tocArea.querySelector('.border-l-4');
+    //                 if (activeItem) {
+    //                     activeItem.scrollIntoView({
+    //                         behavior: 'smooth',
+    //                         block: 'start'
+    //                     });
+    //                 }
+    //             }
+    //         });
+    //     });
+    // }
+
+    if (app.ports && app.ports.scrollToTocHeading) {
+        app.ports.scrollToTocHeading.subscribe(() => {
+            requestAnimationFrame(() => {
+                const tocArea = document.getElementById('toc-area');
+                if (tocArea) {
+                    const activeItem = tocArea.querySelector('.border-l-4');
+                    if (activeItem) {
+                        const containerRect = tocArea.getBoundingClientRect();
+                        const itemRect = activeItem.getBoundingClientRect();
+
+                        // 要素が #toc-area の表示範囲外（上または下）にあるか判定
+                        const isOutside =
+                            itemRect.top < containerRect.top ||
+                            itemRect.bottom > containerRect.bottom;
+
+                        // 範囲外にある場合のみ最上部（start）へスクロール
+                        if (isOutside) {
+                            activeItem.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }
+                }
+            });
+        });
+    }
 
     let draggedIdx = null;
 

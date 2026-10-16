@@ -13,18 +13,6 @@ import Type exposing (..)
 
 -- MARK:エンコーダー
 
--- encodeModel : Model -> String
--- encodeModel model =
---     Encode.object
---         [ ( "present", encodeAppState model.present )
---         , ( "fontSize", encodeFontSize model.fontSize )
---         , ( "colorTheme", encodeColorTheme model.colorTheme )
---         , ( "renderStyle", encodeRenderStyle model.renderStyle )
---         , ( "visibleHeadingLevel", encodeHeadingLevel model.visibleHeadingLevel )
---         , ( "contentWidth", encodeContentWidth model.contentWidth )
---         ]
---         |> Encode.encode 0
-
 encodeModel : Model -> String
 encodeModel model =
     Encode.object
@@ -47,6 +35,7 @@ encodeAppState state =
         , ( "currentShelfId", Encode.string state.currentShelfId )
         , ( "currentBookId", encodeMaybe Encode.string state.currentBookId )
         , ( "currentPageIndex", Encode.int state.currentPageIndex )
+        , ( "currentHeading", Encode.list Encode.string state.currentHeading )
         ]
 
 -- 本棚（Shelf）のエンコーダー

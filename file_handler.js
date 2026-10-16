@@ -225,6 +225,29 @@ function initFileHandlers(app) {
         });
     }
 
+    // --- ページインポート用 (ファイル選択ダイアログ) ---
+    if (app.ports.requestPageImport) {
+        app.ports.requestPageImport.subscribe(() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.txt,.md';
+            input.multiple = false;
+            input.onchange = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    if (app.ports.pageFileSelected) {
+                        app.ports.pageFileSelected.send([file.name, e.target.result]);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        });
+    }
+
     // --- 4. グローバルイベントリスナー ---
 
     window.addEventListener('dragover', e => e.preventDefault());

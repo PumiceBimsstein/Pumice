@@ -94,9 +94,6 @@ viewSortableItem _ maybeDrag target index isEditing itemHtml =
         , itemHtml
         ]
 
--- dropIndicator : ColorTheme -> String
--- dropIndicator _ =
---     tw  [ "w-1 h-full mx-1 bg-blue-500 rounded-full transition-all"]
 
 -- 汎用ボタン
 viewButton : ColorTheme -> ButtonKind -> Msg -> Html Msg -> Html Msg

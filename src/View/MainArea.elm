@@ -114,15 +114,6 @@ shelfFileImport theme =
         [ text "Import" ]
 
 
--- makeNewShelf : ColorTheme -> Html Msg
--- makeNewShelf theme =
---     button
---         [ class (menuButtonStyle theme)
---         --, onClick RequestCreateShelf
---         , onClick CreateShelf
---         ]
---         [ text "New Shelf" ]
-
 -- MARK: 2. 2つ以下のときに animate-pulse（ゆっくり点滅）を付与
 makeNewShelf : ColorTheme -> Bool -> Html Msg
 makeNewShelf theme isGuiding =
@@ -166,7 +157,6 @@ menuButtonStyle theme =
         , "text-xs"
         , "font-medium", "shadow-sm"
         , "border"
-        --, "hover:bg-white/10"
         , "transition-all duration-100"
         , "hover:scale-105 hover:brightness-110 hover:shadow-md"
         , (basecolors theme).borderBtn
@@ -185,7 +175,6 @@ shelfGrid model shelves =
 shelfListContainerStyle : ColorTheme -> String
 shelfListContainerStyle theme =
     tw  [ "px-8", "py-8", "h-full", "overflow-y-auto"
-        --, "relative"
         , (basecolors theme).bg
         ]
 
@@ -247,7 +236,6 @@ shelfCardStyle theme isActive isOpen =
             , stackOrder
             , "cursor-pointer"
             , "hover:shadow-xl hover:-translate-y-1 hover:brightness-105"
-            --, "hover:opacity-80"
             , (basecolors theme).text
             , (basecolors theme).surface
             , (basecolors theme).rounded
@@ -532,7 +520,6 @@ bookCardStyle theme isActive isOpen=
         , "w-full", "h-full", "pt-5", "px-5", "shadow-lg"
         , "hover:shadow-xl", "border"
         , "cursor-pointer"
-        --, "opacity-90"
         , stackOrder
         , corners
         , (basecolors theme).surface

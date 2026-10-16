@@ -21,6 +21,7 @@ import Ports exposing
     , syncScroll
     , scrollToIndex
     , scrollToTop
+    , scrollToTocHeading
     , triggerDownload
     , fileDropped
     , incomingMsg
@@ -29,7 +30,7 @@ import Ports exposing
     , fileContentReceiver
     , exportFile
     , exportZip
-    , requestFileImport
+    , requestFileImport, requestPageImport, pageFileSelected
     )
 
 -- MAIN
@@ -164,24 +165,41 @@ update msg model =
             createPage page model
                 |> notifyAndSave
 
+        -- CreateNextPage page ->
+        --     let
+        --         newModel =
+        --             createPage page model
+
+        --         newPresent =
+        --             newModel.present
+        --     in
+        --     { newModel
+        --         | present =
+        --             { newPresent | currentPageIndex = page }
+        --         , mode = EditMode
+        --     }
+        --         |> notifyAndSave
+
         CreateNextPage page ->
             let
-                newModel =
-                    createPage page model
+                -- 1. 追加前の状態を履歴に保存
+                recordedModel =
+                    recordHistory model
 
+                -- 2. ページをビルド（生成）
+                builtModel =
+                    buildPage page recordedModel
+
+                -- 3. 新しいページインデックスへ切り替え
                 newPresent =
-                    newModel.present
+                    builtModel.present
             in
-            { newModel
+            { builtModel
                 | present =
                     { newPresent | currentPageIndex = page }
                 , mode = EditMode
             }
                 |> notifyAndSave
-
-        -- RequestCreatePageFromClipboard ->
-        --     -- JS側で処理が走るため、Elm側では何もしない
-        --     ( model, Cmd.none )
 
         DeletePage pageId ->
             model.present
@@ -194,16 +212,24 @@ update msg model =
                 |> applyPageSelection index
                 |> (\m -> { m | scrollRatio = 0 })
                 |> notifyAndSaveWithCmd (scrollToTop ())
+                -- |> notifyAndSaveWithCmd 
+                --     (Cmd.batch 
+                --         [ scrollToTop ()
+                --         , scrollToTocHeading ()
+                --         ]
+                --     )
 
         NextPage ->
             model
                 |> applyNextPage
-                |> (\( m, cmd ) -> ( m, cmd ))
+                |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, Ports.scrollToTocHeading () ])
+                --|> (\( m, cmd ) -> ( m, cmd ))
 
         PrevPage ->
             model
                 |> applyPrevPage
-                |> (\( m, cmd ) -> ( m, cmd ))
+                |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, Ports.scrollToTocHeading () ])
+                --|> (\( m, cmd ) -> ( m, cmd ))
 
         ChangeMode newMode ->
             let
@@ -294,6 +320,12 @@ update msg model =
         
         RequestImport target ->
             ( model, requestFileImport (importTargetToString target) )
+        
+        RequestPageImport ->
+            ( model, requestPageImport () )
+
+        PageFileSelected value ->
+            processFileDrop value model
 
         ImportBook newId importedBook ->
             case model.mainViewMode of
@@ -477,17 +509,6 @@ update msg model =
             in
             ( { model | sidebarMode = nextMode }, Cmd.none )
 
-        -- ToggleOverlaySidebar ->
-        --     let
-        --         nextMode =
-        --             if model.sidebarMode == OverlaySidebar then
-        --                 HiddenSidebar
-
-        --             else
-        --                 OverlaySidebar
-        --     in
-        --     ( { model | sidebarMode = nextMode }, Cmd.none )
-
         NoOp ->
             ( model, Cmd.none )
 
@@ -654,17 +675,6 @@ applyNextPage model =
             ( model, Cmd.none )
 
 
--- 指定されたインデックスのページを表示するようにモデルを更新します
-applyPageSelection : Int -> Model -> Model
-applyPageSelection index model =
-    let
-        newPresent = applyPageChange index model.present
-    in
-    { model | present = newPresent, scrollRatio = 0 }
-
-
-
-
 
 
 
@@ -789,10 +799,6 @@ applyBookSelection bookId model =
         , scrollRatio = 0
     }
 
-
-
-
-
 -- MARK:subscriptions
 
 subscriptions : Model -> Sub Msg
@@ -802,23 +808,6 @@ subscriptions _ =
         , fileDropped FileDropped
         , incomingMsg decodeIncomingMsg
         , fileContentReceiver ImportData
+        , pageFileSelected PageFileSelected
         ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

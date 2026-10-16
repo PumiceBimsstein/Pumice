@@ -51,6 +51,7 @@ controlSection model =
         , viewRenderStyleSelector theme model.renderStyle
         , viewFontSizeSelector model
         , viewAddPageButton model
+        , importPageButton model
         , viewExportControl theme model.exportFormat
         , sidebarToggle model
         ]
@@ -151,17 +152,18 @@ sidebarModeSection model =
 leftSidebarToggle : ColorTheme -> SidebarMode -> Html Msg
 leftSidebarToggle theme currentMode =
     button
-        [ class (sidebarBtnStyle theme (currentMode == LeftSidebar))
+        [ class (tw [ sidebarBtnStyle theme (currentMode == LeftSidebar), "border-l-8" ])
         , onClick ToggleLeftSidebar
         ]
         [ text "Left Menu" ]
 
+
 sidebarToggleBtn : Model -> Html Msg
 sidebarToggleBtn model =
     button
-        [ class (sidebarBtnStyle model.colorTheme False)
+        [ class (tw [ sidebarBtnStyle model.colorTheme False, "border-x-8" ])
         , onClick ToggleNormalSidebar
-        ,title "Show Sidebar"
+        , title "Show Sidebar"
         ]
         [ text "Normal" ]
 
@@ -170,7 +172,7 @@ sidebarBtnStyle : ColorTheme -> Bool -> String
 sidebarBtnStyle theme isActive =
     let
         base =
-            [ "w-full", "py-1.5", "text-sm", "font-semibold", "border", "opacity-90"
+            [ "w-full", "py-1", "text-sm", "font-semibold", "border", "opacity-90"
             , (basecolors theme).rounded
             ]
         state =
@@ -284,16 +286,34 @@ viewAddPageButton model =
         [ text "+ Next Page" ]
 
 
+importPageButton : Model -> Html Msg
+importPageButton model =
+    button
+        [ class (importPageStyle model.colorTheme)
+        , onClick RequestPageImport
+        ]
+        [ text "+ Import txt/md" ]
+
+
 addPageBtnStyle : ColorTheme -> String
 addPageBtnStyle theme =
     tw  [ "w-full", "py-2.5", "text-sm"
-        , "pr-2", "mt-6", "mb-3", "border"--, "transition-colors"
+        , "pr-2", "mt-6", "mb-3", "border"
         , (basecolors theme).borderStrong
         , (basecolors theme).rounded
         , (basecolors theme).bg
         , (basecolors theme).text
         , "hover:bg-white/5" ]
 
+importPageStyle : ColorTheme -> String
+importPageStyle theme =
+    tw  [ "w-full", "py-1.5", "text-sm"
+        , "pr-2", "mt-1", "mb-6", "border"
+        , (basecolors theme).borderBtn
+        , (basecolors theme).rounded
+        --, (basecolors theme).bg
+        , (basecolors theme).text
+        , "hover:bg-white/5" ]
 
 -- MARK:エクスポート
 viewExportControl : ColorTheme -> ExportFormat -> Html Msg

@@ -87,69 +87,6 @@ updateBookInShelves bookId updater shelves =
         )
         shelves
 
--- MARK:splitContent
--- コンテンツを条件に従って再帰的に分割する補助関数
--- この機能は削除される予定で、現在は無効化されています
--- splitContent : String -> List String
--- splitContent remaining =
---     if String.length remaining <= 5000 then
---         [ remaining ]
---     else
---         let
---             initialSearchIdx = 2000
-            
---             -- まずコードブロックの中であれば、ブロックが終わるまで分割位置をずらす
---             safeStartIdx = findSafeSplitIndex remaining initialSearchIdx
-            
---             searchArea = String.dropLeft safeStartIdx remaining
---             limitArea = String.left 1000 searchArea
-
---             splitOffset =
---                 if String.contains "#" limitArea || String.contains "---" limitArea then
---                     let
---                         idxHash = String.indices "#" limitArea |> List.head |> Maybe.withDefault 9999
---                         idxDash = String.indices "---" limitArea |> List.head |> Maybe.withDefault 9999
---                     in
---                     Basics.min idxHash idxDash
---                 else
---                     case String.indices "\n\n" searchArea |> List.head of
---                         Just idx -> idx
---                         Nothing ->
---                             case String.indices "\n" searchArea |> List.head of
---                                 Just idx -> idx
---                                 Nothing -> 0
-
---             actualSplitIdx = safeStartIdx + splitOffset
-            
---             head = String.left actualSplitIdx remaining
---             tail = String.dropLeft actualSplitIdx remaining |> String.trim
---         in
---         if String.isEmpty tail then
---             [ head ]
---         else
---             head :: splitContent tail
-
--- findSafeSplitIndex : String -> Int -> Int
--- findSafeSplitIndex content targetIdx =
---     let
---         before =
---             String.left targetIdx content
-
---         -- バッククォート3つの出現回数を数える
---         backtickCount =
---             List.length (String.indices "```" before)
---     in
---     if modBy 2 backtickCount /= 0 then
---         -- 奇数ならコードブロックの途中なので、次の "```" の後ろまでスキップ
---         case String.indices "```" (String.dropLeft targetIdx content) |> List.head of
---             Just nextEnd ->
---                 targetIdx + nextEnd + 3
-
---             Nothing ->
---                 targetIdx
---     else
---         targetIdx
-
 
 extractHeadings : Int -> String -> List Heading
 extractHeadings pageIdx content =
@@ -341,15 +278,6 @@ headingLevelToInt level =
         H1 -> 1
         H2 -> 2
         H3 -> 3
-
-
--- checkSectionHit : String -> String -> String -> List String -> Bool
--- checkSectionHit searchText headingText content allHeadingTexts =
---     if String.isEmpty searchText then
---         False
-
---     else
---         isHit searchText headingText || isSectionContentHit searchText headingText content allHeadingTexts
 
 
 checkSectionHit : String -> String -> String -> List String -> Bool
@@ -556,18 +484,15 @@ bookToAllEntries parentPath book =
     in
     txtEntries ++ mdEntries
 
--- JavaScriptからの[ファイル名, 内容]をデコードする
-decodeDropPayload : Decode.Value -> Result Decode.Error ( String, String )
-decodeDropPayload value =
+
+
+-- 指定されたインデックスのページを表示するようにモデルを更新します
+applyPageSelection : Int -> Model -> Model
+applyPageSelection index model =
     let
-        decoder =
-            Decode.map2 Tuple.pair
-                (Decode.index 0 Decode.string)
-                (Decode.index 1 Decode.string)
+        newPresent = applyPageChange index model.present
     in
-    Decode.decodeValue decoder value
-
-
+    { model | present = newPresent, scrollRatio = 0 }
 
 
 applyPageChange : Int -> AppState -> AppState
@@ -866,23 +791,6 @@ decodeIncomingMsg value =
         tagDecoder = Decode.field "tag" Decode.string
     in
     case Decode.decodeValue tagDecoder value of
-        -- Ok "CreateShelf" ->
-        --     case Decode.decodeValue (Decode.field "id" Decode.string) value of
-        --         Ok id -> CreateShelf
-        --         --Ok id -> CreateShelf id
-        --         Err _ -> NoOp
-        -- Ok "CreateBook" ->
-        --     case Decode.decodeValue (Decode.field "id" Decode.string) value of
-        --         Ok id -> CreateBook
-        --         Err _ -> NoOp
-        -- Ok "CreatePage" ->
-        --     case Decode.decodeValue (Decode.field "id" Decode.string) value of
-        --         Ok id -> CreatePage
-        --         Err _ -> NoOp
-        -- Ok "CreatePageNext" ->
-        --     case Decode.decodeValue (Decode.field "id" Decode.string) value of
-        --         Ok id -> CreatePageNext id
-        --         Err _ -> NoOp
         Ok "ReorderPages" ->
             let
                 reorderDecoder =

@@ -6,7 +6,6 @@ import Html.Events exposing (..)
 import Type exposing (..)
 import View.Style exposing (..)
 import Domain.Helper exposing (..)
---import Icon exposing (..)
 
 
 viewToc : Model -> AppState -> Html Msg
@@ -79,7 +78,6 @@ buildHeadingItemClass : ColorTheme -> Heading -> Int -> List String -> Bool -> L
 buildHeadingItemClass theme h currentPageIndex currentHeading isSectionHit =
     headingItemStyle theme h.level
         ++ headingHighlightStyle theme (isCurrentHeading h currentPageIndex currentHeading) isSectionHit
-        -- ++ searchHighlightClass theme isSectionHit
 
 
 headingItemStyle : ColorTheme -> Int -> List String

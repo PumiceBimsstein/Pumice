@@ -1,13 +1,7 @@
 module Domain.AddItem exposing (..)
 
 import Type exposing (..)
---import Browser.Dom
---import Task
---import Html.Attributes exposing (..)
---import Html.Events exposing (on, preventDefaultOn)
---import Html exposing (Attribute)
 import Json.Decode as Decode
---import JsonConverter exposing (decodeBook, decodeShelf)
 import Domain.Helper exposing (..)
 import Random
 import Uuid.Barebones exposing (uuidStringGenerator)
@@ -64,8 +58,66 @@ handleFileDrop fileName contentList present =
             present
 
 
+-- handleFileDropped : Decode.Value -> Model -> ( Model, Cmd Msg )
+-- handleFileDropped value model =
+--     if model.mode == EditMode then
+--         ( model, Cmd.none )
+
+--     else
+--         case decodeDropPayload value of
+--             Ok ( fileName, fullContent ) ->
+--                 let
+--                     insertIndex =
+--                         getCurrentBook model.present
+--                             |> Maybe.map (.pages >> List.length)
+--                             |> Maybe.withDefault 0
+
+--                     updateModel =
+--                         { model
+--                             | pageCreationBuffer = [ fullContent ]
+--                             , pageCreationTitle = fileName
+--                         }
+                    
+--                     nextIndex = model.present.currentPageIndex + 1
+                    
+--                     newModel = applyPageSelection nextIndex updateModel
+                    
+--                 in
+--                 ( newModel, nextMsg (CreatePage insertIndex) )
+
+--             Err _ ->
+--                 ( model, Cmd.none )
+
+
 handleFileDropped : Decode.Value -> Model -> ( Model, Cmd Msg )
 handleFileDropped value model =
+    if model.mode == EditMode && isEditorArea value then
+        ( recordHistory model, Cmd.none )
+
+    else
+        processFileDrop value model
+
+
+{-| ドロップされた場所の id が "editor-area" かどうかを判定するヘルパー
+-}
+isEditorArea : Decode.Value -> Bool
+isEditorArea value =
+    let
+        idDecoder =
+            Decode.oneOf
+                [ -- 通常のブラウザイベントの場合: event.target.id
+                  Decode.at [ "target", "id" ] Decode.string
+
+                -- JS/Port側で独自のオブジェクトとして送っている場合のフォールバック
+                , Decode.field "targetId" Decode.string
+                , Decode.field "id" Decode.string
+                ]
+    in
+    Decode.decodeValue idDecoder value == Ok "editor-area"
+
+
+processFileDrop : Decode.Value -> Model -> ( Model, Cmd Msg )
+processFileDrop value model =
     case decodeDropPayload value of
         Ok ( fileName, fullContent ) ->
             let
@@ -74,16 +126,36 @@ handleFileDropped value model =
                         |> Maybe.map (.pages >> List.length)
                         |> Maybe.withDefault 0
 
-                newModel =
+                updateModel =
                     { model
                         | pageCreationBuffer = [ fullContent ]
                         , pageCreationTitle = fileName
                     }
+
+                nextIndex =
+                    model.present.currentPageIndex + 1
+
+                newModel =
+                    applyPageSelection nextIndex updateModel
             in
             ( newModel, nextMsg (CreatePage insertIndex) )
 
         Err _ ->
             ( model, Cmd.none )
+
+
+
+-- JavaScriptからの[ファイル名, 内容]をデコードする
+decodeDropPayload : Decode.Value -> Result Decode.Error ( String, String )
+decodeDropPayload value =
+    let
+        decoder =
+            Decode.map2 Tuple.pair
+                (Decode.index 0 Decode.string)
+                (Decode.index 1 Decode.string)
+    in
+    Decode.decodeValue decoder value
+
 
 -- AppStateにインポートした本棚を追加する
 appendShelfData : Shelf -> AppState -> AppState
@@ -211,28 +283,28 @@ buildPage insertIndex model =
 --     insertPageAt (state.currentPageIndex + 1) newId state
 
 
-insertPageAt : Int -> String -> AppState -> AppState
-insertPageAt targetIdx newId state =
-    let
-        newPage = { id = newId, title = "Untitled Page", content = "# New Page" }
+-- insertPageAt : Int -> String -> AppState -> AppState
+-- insertPageAt targetIdx newId state =
+--     let
+--         newPage = { id = newId, title = "Untitled Page", content = "# New Page" }
 
-        updateBooks books =
-            List.map 
-                (\b -> 
-                    if Just b.id == state.currentBookId then 
-                        { b | pages = 
-                                List.take targetIdx b.pages ++ (newPage :: List.drop targetIdx b.pages)
-                        } 
-                    else b
-                ) 
-                books
+--         updateBooks books =
+--             List.map 
+--                 (\b -> 
+--                     if Just b.id == state.currentBookId then 
+--                         { b | pages = 
+--                                 List.take targetIdx b.pages ++ (newPage :: List.drop targetIdx b.pages)
+--                         } 
+--                     else b
+--                 ) 
+--                 books
 
-        newShelves =
-            List.map 
-                (\s -> if s.id == state.currentShelfId then { s | books = updateBooks s.books } else s) 
-                state.shelves
-    in
-    { state | shelves = newShelves, currentPageIndex = targetIdx }
+--         newShelves =
+--             List.map 
+--                 (\s -> if s.id == state.currentShelfId then { s | books = updateBooks s.books } else s) 
+--                 state.shelves
+--     in
+--     { state | shelves = newShelves, currentPageIndex = targetIdx }
 
 
 addPageToCurrentBook : String -> Int -> String -> AppState -> AppState

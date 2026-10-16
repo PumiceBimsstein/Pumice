@@ -125,7 +125,7 @@ tabTocList : Model -> AppState -> Html Msg
 tabTocList model present =
     div [ class (tw [ "flex", "flex-col", "h-full", "pt-2" ]) ]
         [ div
-            (class (tw [ "flex-1", "overflow-y-auto" ]) :: Style.scrollbarStyle model.colorTheme)
+            (id "toc-area" :: class (tw [ "flex-1", "overflow-y-auto" ]) :: Style.scrollbarStyle model.colorTheme)
             [ viewToc model present ]
         , viewSidebarActionButton model False
         , headingLevelSelector model

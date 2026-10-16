@@ -60,7 +60,6 @@ viewPageCardPreview model title =
         [ div
             [ class (reorderStyle.pageCardPreviewContent model.colorTheme)]
             [ text title ]
-        --, div [ class reorderStyle.pageCardGradient ] []
         ]
 
 
@@ -73,7 +72,6 @@ viewAddPageCard model =
                 |> Maybe.withDefault 0
     in
     viewButton model.colorTheme Create (CreatePage page) (text "+ PAGE")
-    --viewButton theme Create RequestCreatePage (text "+ PAGE")
 
 
 -- MARK:reorderStyle
@@ -99,7 +97,7 @@ reorderStyle =
                     Magical -> ""
             
             base =
-                [ "aspect-[3/4]", "flex", "flex-col"--, "rounded-sm"
+                [ "aspect-[3/4]", "flex", "flex-col"
                 , "border-2"
                 , "transition-all", "cursor-pointer", "overflow-hidden"
                 , "w-full", "text-left", "items-stretch"

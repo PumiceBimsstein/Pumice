@@ -1,10 +1,8 @@
 module Type exposing (..)
 
 import Json.Decode as Decode
---import Dict exposing (Dict)
 import Random
 import Browser.Dom
--- 基本データ構造
 
 type alias Flags =
     { storageData : Decode.Value
@@ -29,8 +27,6 @@ type alias Shelf =
     , books : List Book
     }
 
--- UNDOの対象となる実データ
-
 type alias AppState =
     { shelves : List Shelf
     , currentShelfId : String
@@ -38,8 +34,6 @@ type alias AppState =
     , currentPageIndex : Int
     , currentHeading : List String
     }
-
--- UI状態および補助型
 
 type alias Heading =
     { level : Int
@@ -191,13 +185,8 @@ type alias Model =
 type Msg
     = Undo
     | Redo
-    -- | RequestCreateShelf
-    -- | RequestCreateBook
-    -- | RequestCreatePage
-    -- | RequestCreatePageNext
       -- 本棚・メインビュー操作
     | ChangeMainView MainViewMode
-    --| CreateShelf String
     | CreateShelf
     | DeleteShelf String
     | SelectShelf String
@@ -206,11 +195,8 @@ type Msg
     | DeleteBook String
     | SelectBook String
       -- ページ操作
-    --| CreatePage String
     | CreatePage Int
     | CreateNextPage Int
-    --| CreatePageNext
-    -- | RequestCreatePageFromClipboard
     | DeletePage String
     | SelectPage Int
     | NextPage
@@ -226,8 +212,9 @@ type Msg
     | JumpToHeading Int String
     | Reorder DragTarget Int Int
     | ReorderPages Int Int
-    --| RequestImport
     | RequestImport ImportTarget
+    | RequestPageImport
+    | PageFileSelected Decode.Value
     | ImportBook String Book
     | ImportShelf String Shelf
     | ImportData String
@@ -237,7 +224,6 @@ type Msg
     | FileDropped Decode.Value
     | ChangeFontSize String
     | OnScroll String Browser.Dom.Viewport
-    --| SyncScroll Float
     | DragStart DragTarget Int
     | DragOver Int
     | DragEnd
@@ -252,11 +238,9 @@ type Msg
     | EditCancel
     | SetVisibleHeadingLevel HeadingLevel
     | SetContentWidth ContentWidth
-    --| OpenSidebarOverlay    --たぶん不要
     | ToggleSidebarOverlay
     | ToggleExportMenu String
     | CloseExportMenu
     | ToggleNormalSidebar
     | ToggleLeftSidebar
-    -- | ToggleOverlaySidebar
     | NoOp

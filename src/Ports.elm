@@ -3,6 +3,7 @@ port module Ports exposing
     , syncScroll
     , scrollToIndex
     , scrollToTop
+    , scrollToTocHeading
     , triggerDownload
     , fileDropped
     , incomingMsg
@@ -11,7 +12,7 @@ port module Ports exposing
     , fileContentReceiver
     , exportFile
     , exportZip
-    , requestFileImport
+    , requestFileImport, requestPageImport, pageFileSelected
     )
 
 import Type exposing (..)
@@ -31,4 +32,6 @@ port fileContentReceiver : (String -> msg) -> Sub msg
 port exportFile : { fileName : String, content : String } -> Cmd msg
 port exportZip : ZipPayload -> Cmd msg
 port requestFileImport : String -> Cmd msg
-
+port requestPageImport : () -> Cmd msg
+port pageFileSelected : (Decode.Value -> msg) -> Sub msg
+port scrollToTocHeading : () -> Cmd msg
