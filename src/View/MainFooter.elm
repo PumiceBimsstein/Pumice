@@ -37,33 +37,13 @@ viewFooter model state book theme =
 
 viewBookTitle : Model -> Book -> Html Msg
 viewBookTitle model book =
-    let
-        isEditing =
-            case model.editing of
-                Just buffer ->
-                    buffer.target == BookTitle && buffer.id == book.id
-                Nothing ->
-                    False
-    in
-    if isEditing then
-        input
-            [ class (mainFooter.bookTitleEdit model.colorTheme)
-            , style "font-family" (basecolors model.colorTheme).fontDeco
-            , value (model.editing |> Maybe.map .value |> Maybe.withDefault book.title)
-            , onInput EditUpdate
-            , onBlur EditSubmit
-            , onEnter EditSubmit
-            , autofocus True
-            ]
-            []
-    else
-        h1
-            [ class (mainFooter.bookTitleStyle model.colorTheme)
-            , style "font-family" (basecolors model.colorTheme).fontDeco
-            , onClick (EditBegin BookTitle book.id book.title)
-            , title book.title -- 省略された時に全文が見えるように
-            ]
-            [ text (book.title) ]
+    h1
+        [ class (mainFooter.bookTitleStyle model.colorTheme)
+        , style "font-family" (basecolors model.colorTheme).fontDeco
+        , onDoubleClick (EditBegin BookTitle book.id book.title)
+        , title book.title -- 省略された時に全文が見えるように
+        ]
+        [ text (book.title) ]
 
 
 viewSeekBar : Model -> AppState -> Int -> Html Msg
@@ -152,7 +132,6 @@ viewWidthSlider theme currentWidth =
 -- MARK:スタイル定義
 mainFooter :
     { footerContainer : ColorTheme -> String
-    , bookTitleEdit : ColorTheme -> String
     , bookTitleStyle : ColorTheme -> String
     , seekBarContainer : String
     , seekBarTrack : String
@@ -167,15 +146,6 @@ mainFooter =
             , (basecolors theme).surface
             , (basecolors theme).border ]
             
-    , bookTitleEdit = \theme ->
-        tw  [ "font-bold", "tracking-tight", "min-w-0", "px-2", "py-0"
-            , "border"
-            , "focus:outline-none", "w-full"
-            , (basecolors theme).textMuted
-            , (basecolors theme).borderStrong
-            , (basecolors theme).rounded
-            , (basecolors theme).bg
-            ]
     , bookTitleStyle = \theme ->    -- truncate を追加して、長すぎる場合に ... にする
         tw  [ "tracking-tight", "min-w-0"
             , "cursor-pointer", "hover:opacity-70", "truncate"
@@ -200,12 +170,9 @@ mainFooter =
         , Html.Attributes.class "h-full" -- duration-200
         ]
     , deletebutton = \colorClass ->
-        let
-            borderBase =
-                [ "border", "rounded", "truncate"
-                , "flex-1", "px-2", "py-1", "text-xs", colorClass
-                , "hover:bg-white/5", "border-gray-500/20"
-                ]
-        in
-        tw borderBase
+        tw  [ "border", "rounded", "truncate"
+            , "flex-1", "px-2", "py-1", "text-xs", colorClass
+            , "hover:bg-white/5", "border-gray-500/20"
+            , "text-red-400"
+            ]
     }

@@ -792,7 +792,7 @@ viewEditor model currentPage =
         , property "theme" (E.string (colorThemeToString model.colorTheme))
         , property "fontSize" (E.int (fontSizeToNumber model.fontSize))
         , on "editor-scroll" scrollDecoder
-        , on "editor-change" (Decode.map UpdateContent (Decode.at [ "detail" ] Decode.string))
+        , on "editor-change" (Decode.map EditorInput (Decode.at [ "detail" ] Decode.string))
         , stopPropagationOn "keydown" (Decode.succeed ( NoOp, True ))
         ]
         []

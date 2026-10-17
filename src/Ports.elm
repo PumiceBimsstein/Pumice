@@ -27,7 +27,6 @@ port fileDropped : (Decode.Value -> msg) -> Sub msg
 port incomingMsg : (Decode.Value -> msg) -> Sub msg
 port requestCreate : String -> Cmd msg
 port pageChanged : () -> Cmd msg
--- port requestClipboardContents : () -> Cmd msg
 port fileContentReceiver : (String -> msg) -> Sub msg
 port exportFile : { fileName : String, content : String } -> Cmd msg
 port exportZip : ZipPayload -> Cmd msg

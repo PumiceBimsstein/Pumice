@@ -250,6 +250,24 @@ createPage insertIndex model =
         |> buildPage insertIndex
         --|> notifyAndSave
 
+createNextPage : Int -> Model -> Model
+createNextPage pageIndex model =
+    model
+        |> recordHistory
+        |> buildPage pageIndex
+        |> selectCreatedPage pageIndex
+        |> setMode EditMode
+
+selectCreatedPage : Int -> Model -> Model
+selectCreatedPage index model =
+    let
+        present = model.present
+    in
+    { model | present = { present | currentPageIndex = index } }
+
+
+
+
 recordHistory : Model -> Model
 recordHistory model =
     { model

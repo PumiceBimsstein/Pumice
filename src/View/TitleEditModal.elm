@@ -15,18 +15,59 @@ viewTitleEditModal model =
     case model.editing of
         Just buffer ->
             div
-                [ class "fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-                , onClick EditSubmit
+                [ class "fixed inset-0 z-50 flex items-center justify-center"
+                -- ダブルクリックの突き抜けを防止
+                , stopPropagationOn "dblclick" (Decode.succeed ( NoOp, True ))
                 ]
-                [ div
-                    [ class (modalContentStyle model.colorTheme)
+                [ -- ① 背景レイヤー（クリックで閉じたい場合は安全のため EditCancel にする）
+                  div
+                    [ class "absolute inset-0 bg-black/50"
+                    , onClick EditCancel -- ★ EditSubmit ではなく EditCancel に変更
+                    ]
+                    []
+
+                -- ② モーダルコンテンツ本体
+                , div
+                    [ class (tw [ modalContentStyle model.colorTheme, "relative z-10" ])
+                    -- 内部のクリック・ポインタ操作が背景に漏れるのを完全に防ぐ
                     , stopPropagationOn "click" (Decode.succeed ( NoOp, True ))
+                    , stopPropagationOn "pointerdown" (Decode.succeed ( NoOp, True ))
                     ]
                     [ renderModalHeader
                     , renderModalInput model.colorTheme buffer
                     , renderModalFooter model.colorTheme
                     ]
                 ]
+            -- div
+            --     [ class "fixed inset-0 z-50 flex items-center justify-center" ]
+            --     [ -- ① 背景クリック専用の要素（内側のイベントとは一切干渉しない）
+            --       div
+            --         [ class "absolute inset-0 bg-black/50"
+            --         , onClick EditSubmit
+            --         ]
+            --         []
+
+            --     -- ② モーダル本体（stopPropagationOn は不要になる）
+            --     , div
+            --         [ class (tw [ modalContentStyle model.colorTheme, "relative z-10" ]) ]
+            --         [ renderModalHeader
+            --         , renderModalInput model.colorTheme buffer
+            --         , renderModalFooter model.colorTheme
+            --         ]
+            --     ]
+            -- div
+            --     [ class "fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+            --     , onClick EditSubmit
+            --     ]
+            --     [ div
+            --         [ class (modalContentStyle model.colorTheme)
+            --         , stopPropagationOn "click" (Decode.succeed ( NoOp, True ))
+            --         ]
+            --         [ renderModalHeader
+            --         , renderModalInput model.colorTheme buffer
+            --         , renderModalFooter model.colorTheme
+            --         ]
+            --     ]
 
         Nothing ->
             text ""

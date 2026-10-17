@@ -12,6 +12,11 @@ import Ports exposing (saveToStorage)
 
 -- MARK: 基本的な処理を行う関数
 
+setMode : Mode -> Model -> Model
+setMode newMode model =
+    { model | mode = newMode }
+
+
 -- 全ての本棚から特定のIDを持つ本を探索
 findBookById : String -> List Shelf -> Maybe Book
 findBookById targetId shelves =
@@ -142,6 +147,28 @@ extractHeadings pageIdx content =
 
     else
         raw
+
+
+{-| 編集バッファの空白を除去し、空の場合はデフォルト名を補正する末端関数 -}
+normalizeEditBuffer : EditBuffer -> EditBuffer
+normalizeEditBuffer buffer =
+    let
+        trimmed =
+            String.trim buffer.value
+
+        finalValue =
+            if String.isEmpty trimmed then
+                case buffer.target of
+                    BookTitle ->
+                        "無題の本"
+
+                    ShelfTitle ->
+                        "無題の本棚"
+
+            else
+                trimmed
+    in
+    { buffer | value = finalValue }
 
 
 --MARK:scrollDecoder
@@ -461,6 +488,7 @@ pageToFileEntry extension folderPath index page =
     , content = page.content
     }
 
+
 bookToAllEntries : String -> Book -> List ZipEntry
 bookToAllEntries parentPath book =
     let
@@ -527,7 +555,7 @@ focusEditor =
     Task.attempt (\_ -> NoOp) (Browser.Dom.focus "editor-area")
 
 
--- 並べ替え(Reorder)
+-- MARK:並べ替え
 applyReorder : DragTarget -> Int -> Int -> Model -> Model
 applyReorder target from to model =
     let
@@ -800,7 +828,7 @@ decodeIncomingMsg value =
                 Err _ -> NoOp
         Ok "EDITOR_CHANGED" ->
             case Decode.decodeValue (Decode.field "payload" Decode.string) value of
-                Ok content -> UpdateContent content
+                Ok content -> EditorInput content
                 Err _ -> NoOp
         Ok "SCROLL_CHANGED" ->
             case Decode.decodeValue (Decode.field "payload" Decode.float) value of

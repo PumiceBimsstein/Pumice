@@ -129,9 +129,13 @@ update msg model =
             appendShelfAndSave model
 
         DeleteShelf shelfId ->
-            model.present
-                |> removeShelf shelfId
-                |> (\state -> updateAppState state model)
+            -- model.present
+            --     |> removeShelf shelfId
+            --     |> (\state -> updateAppState state model)
+            --     |> ensureSidebarTabOnEmpty
+            --     |> notifyAndSave
+            model
+                |> updatePresent (removeShelf shelfId)
                 |> ensureSidebarTabOnEmpty
                 |> notifyAndSave
 
@@ -150,10 +154,15 @@ update msg model =
             in
             appendBookAndSave newId newModel
 
+        -- DeleteBook bookId ->
+        --     model.present
+        --         |> removeBookFromState bookId
+        --         |> (\state -> updateAppState state model)
+        --         |> notifyAndSave
+        
         DeleteBook bookId ->
-            model.present
-                |> removeBookFromState bookId
-                |> (\state -> updateAppState state model)
+            model
+                |> updatePresent (removeBookFromState bookId)
                 |> notifyAndSave
 
         SelectBook bookId ->
@@ -166,30 +175,40 @@ update msg model =
                 |> notifyAndSave
 
         CreateNextPage page ->
-            let
-                -- 1. 追加前の状態を履歴に保存
-                recordedModel =
-                    recordHistory model
-
-                -- 2. ページをビルド（生成）
-                builtModel =
-                    buildPage page recordedModel
-
-                -- 3. 新しいページインデックスへ切り替え
-                newPresent =
-                    builtModel.present
-            in
-            { builtModel
-                | present =
-                    { newPresent | currentPageIndex = page }
-                , mode = EditMode
-            }
+            model
+                |> createNextPage page
                 |> notifyAndSave
 
+        -- CreateNextPage page ->
+        --     let
+        --         -- 1. 追加前の状態を履歴に保存
+        --         recordedModel =
+        --             recordHistory model
+
+        --         -- 2. ページをビルド（生成）
+        --         builtModel =
+        --             buildPage page recordedModel
+
+        --         -- 3. 新しいページインデックスへ切り替え
+        --         newPresent =
+        --             builtModel.present
+        --     in
+        --     { builtModel
+        --         | present =
+        --             { newPresent | currentPageIndex = page }
+        --         , mode = EditMode
+        --     }
+        --         |> notifyAndSave
+
+        -- DeletePage pageId ->
+        --     model.present
+        --         |> removeCurrentPage pageId
+        --         |> (\state -> updateAppState state model)
+        --         |> notifyAndSave
+        
         DeletePage pageId ->
-            model.present
-                |> removeCurrentPage pageId
-                |> (\state -> updateAppState state model)
+            model
+                |> updatePresent (removeCurrentPage pageId)
                 |> notifyAndSave
 
         SelectPage index ->
@@ -208,38 +227,43 @@ update msg model =
                 |> applyPrevPage
                 |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, Ports.scrollToTocHeading () ])
 
-        ChangeMode newMode ->
-            let
-                ( nextModel, nextCmd ) =
-                    model |> applyModeChange newMode
+        -- ChangeMode newMode ->
+        --     let
+        --         ( nextModel, nextCmd ) =
+        --             model |> applyModeChange newMode
 
-                syncCmd =
-                    case newMode of
-                        EditMode ->
-                            syncScroll { targetId = "editor-area", ratio = nextModel.scrollRatio }
-                        ViewMode ->
-                            Browser.Dom.getViewportOf "page-view-area"
-                                |> Task.andThen
-                                    (\vp ->
-                                        let
-                                            maxScroll =
-                                                vp.scene.height - vp.viewport.height
-                                        in
-                                        Browser.Dom.setViewportOf "page-view-area" 0 (nextModel.scrollRatio * maxScroll)
-                                    )
-                                |> Task.attempt (\_ -> NoOp)
-                        _ ->
-                            Cmd.none
-            in
-            ( nextModel
-            , Cmd.batch
-                [ nextCmd
-                , syncCmd
-                , if newMode == EditMode then
-                    focusEditor
-                  else
-                    Cmd.none
-                ]
+        --         syncCmd =
+        --             case newMode of
+        --                 EditMode ->
+        --                     syncScroll { targetId = "editor-area", ratio = nextModel.scrollRatio }
+        --                 ViewMode ->
+        --                     Browser.Dom.getViewportOf "page-view-area"
+        --                         |> Task.andThen
+        --                             (\vp ->
+        --                                 let
+        --                                     maxScroll =
+        --                                         vp.scene.height - vp.viewport.height
+        --                                 in
+        --                                 Browser.Dom.setViewportOf "page-view-area" 0 (nextModel.scrollRatio * maxScroll)
+        --                             )
+        --                         |> Task.attempt (\_ -> NoOp)
+        --                 _ ->
+        --                     Cmd.none
+        --     in
+        --     ( nextModel
+        --     , Cmd.batch
+        --         [ nextCmd
+        --         , syncCmd
+        --         , if newMode == EditMode then
+        --             focusEditor
+        --           else
+        --             Cmd.none
+        --         ]
+        --     )
+
+        ChangeMode newMode ->
+            ( model |> setMode newMode
+            , modeTransitionCmd newMode model.scrollRatio
             )
 
         ChangeSidebarTab tab ->
@@ -250,15 +274,18 @@ update msg model =
                 |> renameShelfInState shelfId newName
                 |> (\m -> ( m, Cmd.none ))
 
-        UpdateContent content ->
-            let
-                ( newModel, cmd ) =
-                    model.present
-                        |> updateCurrentPageContent content
-                        |> (\state -> updateAppState state model)
-                        |> notifyAndSave
-            in
-            ( newModel, Cmd.batch [ cmd ] )
+        EditorInput content ->
+            model
+                |> updatePresent (updateCurrentPageContent content)
+                |> notifyAndSave
+            -- let
+            --     ( newModel, cmd ) =
+            --         model.present
+            --             |> updateCurrentPageContent content
+            --             |> (\state -> updateAppState state model)
+            --             |> notifyAndSave
+            -- in
+            -- ( newModel, Cmd.batch [ cmd ] )
 
         UpdateSearchText text ->
             ( { model | searchText = text }, Cmd.none
@@ -287,9 +314,10 @@ update msg model =
             ( applyReorder target from to model, Cmd.none )
 
         ReorderPages oldIndex newIndex ->
-            model.present
-                |> reorderPagesInCurrentBook oldIndex newIndex
-                |> (\state -> updateAppState state model)
+            model
+                --|> reorderPagesInCurrentBook oldIndex newIndex
+                --|> (\state -> updateAppState state model)
+                |> updatePresent (reorderPagesInCurrentBook oldIndex newIndex)
                 |> notifyAndSave
 
         RequestImport target ->
@@ -301,42 +329,60 @@ update msg model =
         PageFileSelected value ->
             processFileDrop value model
 
+        -- ImportBook newId importedBook ->
+        --     case model.mainViewMode of
+        --         ShelfDetailView _ ->
+        --             -- 本棚詳細画面（本の一覧）の時のみ受け入れる
+        --             let
+        --                 newBook = { importedBook | id = newId }
+        --                 ( newModel, saveCmd ) =
+        --                     model.present
+        --                         |> appendBookData newBook
+        --                         |> (\state -> updateAppState state model)
+        --                         |> notifyAndSave
+        --             in
+        --             ( newModel, saveCmd )
+
+        --         _ ->
+        --             -- それ以外の画面では無視
+        --             ( model, Cmd.none )
+
+        -- ImportShelf newId importedShelf ->
+        --     case model.mainViewMode of
+        --         ShelfListView ->
+        --             -- 本棚一覧画面の時のみ受け入れる
+        --             let
+        --                 newShelf = { importedShelf | id = newId }
+        --                 ( newModel, saveCmd ) =
+        --                     model.present
+        --                         |> appendShelfData newShelf
+        --                         |> (\state -> updateAppState state model)
+        --                         |> notifyAndSave
+        --             in
+        --             ( newModel, saveCmd )
+
+        --         _ ->
+        --             -- それ以外の画面では無視
+        --             ( model, Cmd.none )
+        
         ImportBook newId importedBook ->
             case model.mainViewMode of
                 ShelfDetailView _ ->
-                    -- 本棚詳細画面（本の一覧）の時のみ受け入れる
-                    let
-                        newBook = { importedBook | id = newId }
-                        ( newModel, saveCmd ) =
-                            model.present
-                                |> appendBookData newBook
-                                |> (\state -> updateAppState state model)
-                                |> notifyAndSave
-                    in
-                    ( newModel, saveCmd )
-
+                    model
+                        |> addImportedBook newId importedBook
+                        |> notifyAndSave
                 _ ->
-                    -- それ以外の画面では無視
                     ( model, Cmd.none )
 
         ImportShelf newId importedShelf ->
             case model.mainViewMode of
                 ShelfListView ->
-                    -- 本棚一覧画面の時のみ受け入れる
-                    let
-                        newShelf = { importedShelf | id = newId }
-                        ( newModel, saveCmd ) =
-                            model.present
-                                |> appendShelfData newShelf
-                                |> (\state -> updateAppState state model)
-                                |> notifyAndSave
-                    in
-                    ( newModel, saveCmd )
-
+                    model
+                        |> addImportedShelf newId importedShelf
+                        |> notifyAndSave
                 _ ->
-                    -- それ以外の画面では無視
                     ( model, Cmd.none )
-        
+
         ImportData jsonString ->
             model
                 |> processImportedString jsonString
@@ -413,28 +459,36 @@ update msg model =
         EditSubmit ->
             case model.editing of
                 Just buffer ->
-                    let
-                        -- 空白を除去して判定
-                        trimmedValue =
-                            String.trim buffer.value
+                    model
+                        |> applyEdit (normalizeEditBuffer buffer)
 
-                        -- 本のタイトルの場合は空チェックを行う
-                        finalValue =
-                            if buffer.target == BookTitle && String.isEmpty trimmedValue then
-                                "無題の本"
-                            else if buffer.target == ShelfTitle && String.isEmpty trimmedValue then
-                                "無題の本棚"
-                            else
-                                buffer.value
-
-                        -- 値を差し替えたバッファで更新処理を実行
-                        updatedBuffer =
-                            { buffer | value = finalValue }
-                    in
-                    applyEdit updatedBuffer model
-                    
                 Nothing ->
                     ( model, Cmd.none )
+            
+            -- case model.editing of
+            --     Just buffer ->
+            --         let
+            --             -- 空白を除去して判定
+            --             trimmedValue =
+            --                 String.trim buffer.value
+
+            --             -- 本のタイトルの場合は空チェックを行う
+            --             finalValue =
+            --                 if buffer.target == BookTitle && String.isEmpty trimmedValue then
+            --                     "無題の本"
+            --                 else if buffer.target == ShelfTitle && String.isEmpty trimmedValue then
+            --                     "無題の本棚"
+            --                 else
+            --                     buffer.value
+
+            --             -- 値を差し替えたバッファで更新処理を実行
+            --             updatedBuffer =
+            --                 { buffer | value = finalValue }
+            --         in
+            --         applyEdit updatedBuffer model
+                    
+            --     Nothing ->
+            --         ( model, Cmd.none )
 
         EditCancel ->
             ( { model | editing = Nothing }, Cmd.none )
@@ -489,6 +543,22 @@ update msg model =
 
 -- MARK: HELPER
 
+-- AppState を更新し、履歴を保存する
+updatePresent : (AppState -> AppState) -> Model -> Model
+updatePresent updater model =
+    updateAppState (updater model.present) model
+
+-- 本データを本棚に追加し、履歴を保存する
+addImportedBook : String -> Book -> Model -> Model
+addImportedBook newId importedBook =
+    updatePresent (appendBookData { importedBook | id = newId })
+
+-- 本棚データを追加し、履歴を保存する
+addImportedShelf : String -> Shelf -> Model -> Model
+addImportedShelf newId importedShelf =
+    updatePresent (appendShelfData { importedShelf | id = newId })
+
+
 applyImportedModel : Model -> Model -> Model
 applyImportedModel prevModel importedModel =
     let
@@ -523,26 +593,48 @@ ensureSidebarTabOnEmpty model =
 
 
 
+-- applyEdit : EditBuffer -> Model -> ( Model, Cmd Msg )
+-- applyEdit buffer model =
+--     let
+--         -- 1. ターゲットに応じて AppState を書き換える
+--         updatedState =
+--             case buffer.target of
+--                 ShelfTitle ->
+--                     updateShelfTitle buffer.id buffer.value model.present
+
+--                 BookTitle ->
+--                     updateBookTitle buffer.id buffer.value model.present
+
+--         -- 2. 状態を確定させて保存（共通フロー）
+--         ( finalModel, saveCmd ) =
+--             updatedState
+--                 |> (\state -> updateAppState state model)
+--                 |> (\m -> { m | editing = Nothing }) -- 編集モードを終了
+--                 |> notifyAndSave
+--     in
+--     ( finalModel, saveCmd )
+
 applyEdit : EditBuffer -> Model -> ( Model, Cmd Msg )
 applyEdit buffer model =
-    let
-        -- 1. ターゲットに応じて AppState を書き換える
-        updatedState =
-            case buffer.target of
-                ShelfTitle ->
-                    updateShelfTitle buffer.id buffer.value model.present
+    model
+        |> updatePresent (updateTitleByBuffer buffer)
+        |> clearEditing
+        |> notifyAndSave
 
-                BookTitle ->
-                    updateBookTitle buffer.id buffer.value model.present
 
-        -- 2. 状態を確定させて保存（共通フロー）
-        ( finalModel, saveCmd ) =
-            updatedState
-                |> (\state -> updateAppState state model)
-                |> (\m -> { m | editing = Nothing }) -- 編集モードを終了
-                |> notifyAndSave
-    in
-    ( finalModel, saveCmd )
+{-| 編集ターゲット（本棚か本か）に応じて AppState のタイトルを更新する -}
+updateTitleByBuffer : EditBuffer -> AppState -> AppState
+updateTitleByBuffer buffer state =
+    case buffer.target of
+        ShelfTitle ->
+            updateShelfTitle buffer.id buffer.value state
+
+        BookTitle ->
+            updateBookTitle buffer.id buffer.value state
+
+clearEditing : Model -> Model
+clearEditing model =
+    { model | editing = Nothing }
 
 -- AppState内の指定した本棚のタイトルを更新する
 updateShelfTitle : String -> String -> AppState -> AppState
@@ -691,20 +783,52 @@ calculateScroll _ vp model =
 
 {-| モード変更と、それに伴うスクロール位置の同期コマンドを生成します -}
 
-applyModeChange : Mode -> Model -> ( Model, Cmd Msg )
-applyModeChange newMode model =
-    let
-        newModel = { model | mode = newMode }
-        syncCmd =
-            case newMode of
-                EditMode ->
-                    syncScroll { targetId = "editor-area", ratio = model.scrollRatio }
-                ViewMode ->
-                    syncScroll { targetId = "page-view-area", ratio = model.scrollRatio }
-                ReorderMode ->
-                    Cmd.none
-    in
-    ( newModel, syncCmd )
+-- applyModeChange : Mode -> Model -> ( Model, Cmd Msg )
+-- applyModeChange newMode model =
+--     let
+--         newModel = { model | mode = newMode }
+--         syncCmd =
+--             case newMode of
+--                 EditMode ->
+--                     syncScroll { targetId = "editor-area", ratio = model.scrollRatio }
+--                 ViewMode ->
+--                     syncScroll { targetId = "page-view-area", ratio = model.scrollRatio }
+--                 ReorderMode ->
+--                     Cmd.none
+--     in
+--     ( newModel, syncCmd )
+
+-- 閲覧画面を指定された比率までスクロールさせるコマンド
+syncViewerScroll : Float -> Cmd Msg
+syncViewerScroll ratio =
+    Browser.Dom.getViewportOf "page-view-area"
+        |> Task.andThen
+            (\vp ->
+                let
+                    maxScroll =
+                        vp.scene.height - vp.viewport.height
+                in
+                Browser.Dom.setViewportOf "page-view-area" 0 (ratio * maxScroll)
+            )
+        |> Task.attempt (\_ -> NoOp)
+
+{-| モード変更に伴う非対称な副作用（スクロール同期とフォーカス）を一元管理するコマンド生成関数 -}
+modeTransitionCmd : Mode -> Float -> Cmd Msg
+modeTransitionCmd newMode scrollRatio =
+    case newMode of
+        EditMode ->
+            -- 閲覧 → 編集: JSポートへ比率を送り、エディタにフォーカスを当てる
+            Cmd.batch
+                [ syncScroll { targetId = "editor-area", ratio = scrollRatio }
+                , focusEditor
+                ]
+
+        ViewMode ->
+            -- 編集 → 閲覧: Elmネイティブの Browser.Dom でプレビュー画面のスクロールを復元
+            syncViewerScroll scrollRatio
+
+        ReorderMode ->
+            Cmd.none
 
 
 -- MARK:UNDO

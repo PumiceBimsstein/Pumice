@@ -205,7 +205,8 @@ type Msg
     | ChangeMode Mode
     | ChangeSidebarTab SidebarTab
     | UpdateShelfName String String
-    | UpdateContent String
+    --| UpdateContent String
+    | EditorInput String
     | UpdateSearchText String
     | ChangeColorTheme String
     | ChangeRenderStyle String
