@@ -58,43 +58,6 @@ importTargetToString target =
             "all"
 
 
--- handleFileDrop : String -> List String -> AppState -> AppState
--- handleFileDrop fileName contentList present =
---     case present.currentBookId of
---         Just bookId ->
---             let
---                 updater =
---                     \book ->
---                         let
---                             -- 各コンテンツ片に ID (空文字) とタイトルを付与して Page 型のリストにする
---                             newPages =
---                                 contentList
---                                     |> List.map (\c -> { id = "", title = fileName, content = c })
-
---                             -- 既存の全ページの後に新しいページ群を結合
---                             before =
---                                 book.pages
-
---                             after =
---                                 []
---                         in
---                         { book | pages = before ++ newPages ++ after }
-
---                 -- 挿入前の全ページ数を取得
---                 currentTotalPages =
---                     getCurrentBook present
---                         |> Maybe.map (\b -> List.length b.pages)
---                         |> Maybe.withDefault 0
---             in
---             { present
---                 | shelves = updateBookInShelves bookId updater present.shelves
---                 -- 追加された最初のページへ移動
---                 , currentPageIndex = currentTotalPages
---             }
-
---         Nothing ->
---             present
-
 -- .txt/.mdがドロップされたときにページを追加するかどうかの条件分岐
 handleFileDropped : Decode.Value -> Model -> ( Model, Cmd Msg )
 handleFileDropped value model =
@@ -122,7 +85,7 @@ isEditorArea value =
     Decode.decodeValue idDecoder value == Ok "editor-area"
 
 
--- .txt/.mdが読み込まれたかドロップされたとき、
+-- .txt/.mdが読み込まれたかドロップされたとき
 processFileDrop : Decode.Value -> Model -> ( Model, Cmd Msg )
 processFileDrop value model =
     case decodeDropPayload value of
@@ -146,34 +109,6 @@ processFileDrop value model =
 
         Err _ ->
             ( model, Cmd.none )
-
-
--- processFileDrop : Decode.Value -> Model -> ( Model, Cmd Msg )
--- processFileDrop value model =
---     case decodeDropPayload value of
---         Ok ( fileName, fullContent ) ->
---             let
---                 insertIndex =
---                     getCurrentBook model.present
---                         |> Maybe.map (.pages >> List.length)
---                         |> Maybe.withDefault 0
-
---                 updateModel =
---                     { model
---                         | pageCreationBuffer = [ fullContent ]
---                         , pageCreationTitle = fileName
---                     }
-
---                 nextIndex =
---                     model.present.currentPageIndex + 1
-
---                 newModel =
---                     applyPageSelection nextIndex updateModel
---             in
---             ( newModel, nextMsg (CreatePage insertIndex) )
-
---         Err _ ->
---             ( model, Cmd.none )
 
 
 -- JavaScriptからの[ファイル名, 内容]をデコードする
@@ -236,46 +171,6 @@ createShelf model =
         |> buildPage 0
 
 
--- appendShelfAndSave : Model -> ( Model, Cmd Msg )
--- appendShelfAndSave model =
---     model
---         |> recordHistory
---         |> registerShelf
---         |> buildPage 0
---         |> notifyAndSave
-
-
--- registerShelf : Model -> Model
--- registerShelf model =
---     let
---         ( shelfId, seed1 ) =
---             Random.step uuidStringGenerator model.seed
-
---         ( bookId, seed2 ) =
---             Random.step uuidStringGenerator seed1
-
---         -- updateAppStateを呼ばないように修正したappendShelfの処理をここに直接、または純粋なデータ更新として記述
---         present =
---             model.present
-
---         newShelf =
---             { id = shelfId, name = "New Shelf", books = [] }
-
---         newPresent =
---             { present | shelves = present.shelves ++ [ newShelf ] }
-
---         newModel =
---             { model | present = newPresent, seed = seed2 }
-
---         finalPresent =
---             newModel.present
---                 |> (\state -> { state | currentShelfId = shelfId })
---                 |> addBookToCurrentShelf bookId
---                 |> (\state -> { state | currentBookId = Just bookId })
---     in
---     { newModel | present = finalPresent }
-
-
 createBook : Model -> Model
 createBook model =
     let
@@ -291,16 +186,6 @@ createBook model =
         |> setMode EditMode
         |> buildPage 0
 
--- 本を追加して選択状態にし、ページ作成リクエストのコマンドを生成する
-
--- appendBookAndSave : String -> Model -> ( Model, Cmd Msg )
--- appendBookAndSave newId model =
---     model
---         |> recordHistory
---         |> (\m -> { m | present = appendBook newId m.present, mode = EditMode })
---         |> buildPage 0
---         |> notifyAndSave
-
 
 --MARK:ページ追加
 createPage : Int -> Model -> Model
@@ -309,18 +194,11 @@ createPage insertIndex model =
         |> pushToHistory
         |> buildPage insertIndex
 
--- createPage : Int -> Model -> Model
--- createPage insertIndex model =
---     model
---         |> recordHistory
---         |> buildPage insertIndex
-
 createNextPage : Int -> Model -> Model
 createNextPage pageIndex model =
     model
         |> pushToHistory
         |> buildPage pageIndex
-        --|> selectCreatedPage pageIndex
         |> applyPageSelection pageIndex
         |> setMode EditMode
 
@@ -331,13 +209,6 @@ selectCreatedPage index model =
     in
     { model | present = { present | currentPageIndex = index } }
 
-
--- recordHistory : Model -> Model
--- recordHistory model =
---     { model
---         | past = List.take 100 (model.present :: model.past)
---         , future = []
---     }
 
 buildPage : Int -> Model -> Model
 buildPage insertIndex model =
@@ -365,7 +236,7 @@ addPageToCurrentBook newId insertIndex content state =
     let
         contents =
             if content == "" then
-                "# NewPage"
+                "# NewPage\n\n"
             else
                 content
 
@@ -380,8 +251,7 @@ addPageToCurrentBook newId insertIndex content state =
                     { id = newId, title = extractTitleFromContent index content, content = contents }
             in
             List.take index pages
-                ++ [ targetPage ]
-                ++ List.drop index pages
+                ++ (targetPage :: List.drop index pages)
 
         updateBooks books =
             List.map

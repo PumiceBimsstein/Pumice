@@ -23,12 +23,31 @@ window.elmAppPromise.then(app => {
 
     // 見出しにスクロール
     // requestAnimationFrameでページ遷移を待ってからスクロールさせている
+    // if (app.ports.scrollToIndex) {
+    //     app.ports.scrollToIndex.subscribe((headingText) => {
+    //         requestAnimationFrame(() => {
+    //             const headings = document.querySelectorAll('h1, h2, h3');
+    //             const target = Array.from(headings)
+    //                 .find(el => el.textContent.includes(headingText));
+
+    //             if (target) {
+    //                 target.scrollIntoView({
+    //                     behavior: 'smooth',
+    //                     block: 'start'
+    //                 });
+    //             }
+    //         });
+    //     });
+    // }
+    
+    // 見出しにスクロール
     if (app.ports.scrollToIndex) {
-        app.ports.scrollToIndex.subscribe((headingText) => {
+        app.ports.scrollToIndex.subscribe((targetIndex) => {
             requestAnimationFrame(() => {
-                const headings = document.querySelectorAll('h1, h2, h3');
-                const target = Array.from(headings)
-                    .find(el => el.textContent.includes(headingText));
+                // page-view-area 内の見出しを対象にする
+                const headings = document.querySelectorAll('#page-view-area h1, #page-view-area h2, #page-view-area h3');
+                const idx = parseInt(targetIndex, 10);
+                const target = !isNaN(idx) ? headings[idx] : null;
 
                 if (target) {
                     target.scrollIntoView({
@@ -39,6 +58,8 @@ window.elmAppPromise.then(app => {
             });
         });
     }
+
+
 
     // 最上部へスクロール
     if (app.ports.scrollToTop) {

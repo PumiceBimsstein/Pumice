@@ -32,9 +32,6 @@ rightSideStyle theme =
 
 viewModeButtonGroup : Model -> Mode -> Html Msg
 viewModeButtonGroup model currentMode =
-    let
-        theme = model.colorTheme
-    in
     div [ class "p-3 space-y-1" ]
         [ viewModeButton model ViewMode "VIEW" (currentMode == ViewMode)
         , viewModeButton model EditMode "EDIT" (currentMode == EditMode)

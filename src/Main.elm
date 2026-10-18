@@ -4,9 +4,7 @@ import Browser
 import Browser.Events
 import Browser.Dom
 import Task
-import Dict exposing (Dict)
 import Random
-import Uuid.Barebones exposing (uuidStringGenerator)
 import Html.Attributes exposing (..)
 import Html exposing (..)
 import Json.Decode as Decode
@@ -16,17 +14,14 @@ import View.Contents
 import Domain.Helper exposing (..)
 import Domain.AddItem exposing (..)
 import Domain.Selector exposing (..)
+import Domain.Guide exposing (defaultAppState)
 import Ports exposing
-    ( saveToStorage
-    , syncScroll
+    ( syncScroll
     , scrollToIndex
     , scrollToTop
-    , scrollToTocHeading
     , triggerDownload
     , fileDropped
     , incomingMsg
-    , requestCreate
-    , pageChanged
     , fileContentReceiver
     , exportFile
     , exportZip
@@ -48,13 +43,13 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
         -- 1. 完全にデータがない、またはデコード失敗時のデフォルトデータ（AppState）
-        defaultAppState =
-            { shelves = [ { id = "default-shelf", name = "New Shelf", books = [] } ]
-            , currentShelfId = "default-shelf"
-            , currentBookId = Nothing
-            , currentPageIndex = 0
-            , currentHeading = []
-            }
+        -- defaultAppState =
+        --     { shelves = [ { id = "default-shelf", name = "New Shelf", books = [] } ]
+        --     , currentShelfId = "default-shelf"
+        --     , currentBookId = Nothing
+        --     , currentPageIndex = 0
+        --     , currentHeading = []
+        --     }
 
         -- 2. デコードの試行
         -- Model 全体としての復元を試みる（履歴や設定も含む）
@@ -80,7 +75,7 @@ init flags =
                     , present = appState
                     , future = []
                     , seed = Random.initialSeed 0
-                    , mainViewMode = ShelfListView
+                    , mainViewMode = PageView--ShelfListView
                     , mode = ViewMode
                     , sidebarTab = ShelfListTab
                     , sidebarMode = NormalSidebar
@@ -126,8 +121,6 @@ update msg model =
         ChangeMainView viewMode ->
             ( { model | mainViewMode = viewMode }, Cmd.none )
 
-        -- CreateShelf ->
-        --     appendShelfAndSave model
         CreateShelf ->
             model
                 |> createShelf
@@ -144,16 +137,6 @@ update msg model =
                 |> applyShelfSelection shelfId
                 |> (\m -> ( m, Cmd.none ))
         
-        -- CreateBook ->
-        --     let
-        --         ( newId, nextSeed ) =
-        --             Random.step uuidStringGenerator model.seed
-
-        --         newModel =
-        --             { model | seed = nextSeed }
-        --     in
-        --     appendBookAndSave newId newModel
-
         CreateBook ->
             model
                 |> createBook
@@ -168,10 +151,6 @@ update msg model =
             model
                 |> applyBookSelection bookId
                 |> notifyAndSaveWithCmd (scrollToTop ())
-
-        -- CreatePage page ->
-        --     createPage page model
-        --         |> notifyAndSave
 
         CreatePage page ->
             model
@@ -188,26 +167,10 @@ update msg model =
                 |> updatePresent (removeCurrentPage pageId)
                 |> notifyAndSave
 
-        -- SelectPage index ->
-        --     model
-        --         |> applyPageSelection index
-        --         |> (\m -> { m | scrollRatio = 0 })
-        --         |> notifyAndSaveWithCmd (scrollToTop ())
-
         SelectPage index ->
             model
                 |> applyPageSelection index
                 |> notifyAndSaveWithCmd (scrollToTop ())
-
-        -- NextPage ->
-        --     model
-        --         |> applyNextPage
-        --         |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, Ports.scrollToTocHeading () ])
-
-        -- PrevPage ->
-        --     model
-        --         |> applyPrevPage
-        --         |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, Ports.scrollToTocHeading () ])
 
         NextPage ->
             if hasNextPage model.present then
@@ -235,11 +198,6 @@ update msg model =
         ChangeSidebarTab tab ->
             ( { model | sidebarTab = tab }, Cmd.none )
 
-        -- UpdateShelfName shelfId newName ->
-        --     model
-        --         |> updatePresent (updateShelfTitle shelfId newName)
-        --         |> notifyAndSave
-
         EditorInput content ->
             model
                 |> updatePresent (updateCurrentPageContent content)
@@ -257,13 +215,6 @@ update msg model =
             model
                 |> applyRenderStyle styleStr
                 |> notifyAndSave
-
-        -- JumpToHeading index anchor ->
-        --     model
-        --         |> applyPageSelection index
-        --         |> (\m -> { m | mainViewMode = PageView, mode = ViewMode })
-        --         |> notifyAndSaveWithCmd 
-        --             (Cmd.batch [ scrollToIndex anchor ])
 
         JumpToHeading index anchor ->
             model
@@ -578,72 +529,6 @@ applyExportPage extension state =
             Cmd.none
 
 
--- MARK:ページ切り替え
--- applyPrevPage : Model -> ( Model, Cmd Msg )
--- applyPrevPage model =
---     let
---         present = model.present
---     in
---     if present.currentPageIndex > 0 then
---         let
---             prevIndex =
---                 present.currentPageIndex - 1
---         in
---         model
---             |> applyPageSelection prevIndex
---             |> notifyAndSaveWithCmd (scrollToTop ())
-
---     else
---         ( model, Cmd.none )
-
-
--- 次のページが存在するかを確認し、存在する場合はページ選択処理を実行
--- applyNextPage : Model -> ( Model, Cmd Msg )
--- applyNextPage model =
---     let
---         present = model.present
---     in
---     case getCurrentBook present of
---         Just book ->
---             if present.currentPageIndex < List.length book.pages - 1 then
---                 -- 内部でSelectPageのロジックを再利用
---                 let
---                     nextIndex =
---                         present.currentPageIndex + 1
---                 in
---                 model
---                     |> applyPageSelection nextIndex
---                     |> notifyAndSaveWithCmd (scrollToTop ())
---             else
---                 ( model, Cmd.none )
-
---         Nothing ->
---             ( model, Cmd.none )
-
-
-
-
-
--- 本棚の名前を更新します
-renameShelfInState : String -> String -> Model -> Model
-renameShelfInState shelfId newName model =
-    let
-        oldPresent = model.present
-        newShelves =
-            List.map
-                (\shelf ->
-                    if shelf.id == shelfId then
-                        { shelf | name = newName }
-                    else
-                        shelf
-                )
-                oldPresent.shelves
-
-        newPresent = { oldPresent | shelves = newShelves }
-    in
-    { model | present = newPresent }
-
-
 -- MARK:スクロール同期
 -- スクロール位置から比率を計算
 calculateScroll : String -> Browser.Dom.Viewport -> Model -> Model
@@ -660,23 +545,6 @@ calculateScroll _ vp model =
     in
     { model | scrollRatio = newRatio }
 
-
-{-| モード変更と、それに伴うスクロール位置の同期コマンドを生成します -}
-
--- applyModeChange : Mode -> Model -> ( Model, Cmd Msg )
--- applyModeChange newMode model =
---     let
---         newModel = { model | mode = newMode }
---         syncCmd =
---             case newMode of
---                 EditMode ->
---                     syncScroll { targetId = "editor-area", ratio = model.scrollRatio }
---                 ViewMode ->
---                     syncScroll { targetId = "page-view-area", ratio = model.scrollRatio }
---                 ReorderMode ->
---                     Cmd.none
---     in
---     ( newModel, syncCmd )
 
 -- 閲覧画面を指定された比率までスクロールさせるコマンド
 syncViewerScroll : Float -> Cmd Msg

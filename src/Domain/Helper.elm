@@ -8,7 +8,7 @@ import Html.Events exposing (on, preventDefaultOn)
 import Html exposing (Attribute)
 import Json.Decode as Decode
 import JsonConverter exposing (decodeBook, decodeShelf)
-import Ports exposing (saveToStorage, scrollToTop, scrollToTocHeading)
+import Ports exposing (saveToStorage, scrollToTop)
 
 -- MARK: 基本的な処理
 
@@ -54,16 +54,13 @@ getCurrentPage state =
             )
 
 
-
--- Helper.elm に追加
-
-{-| メインビューモードを更新する純粋関数 -}
+-- VIEWモードに変える
 setMainViewMode : MainViewMode -> Model -> Model
 setMainViewMode viewMode model =
     { model | mainViewMode = viewMode }
 
 
-{-| 次のページが存在するか判定する -}
+-- 次のページが存在するか判定
 hasNextPage : AppState -> Bool
 hasNextPage state =
     case getCurrentBook state of
@@ -74,13 +71,13 @@ hasNextPage state =
             False
 
 
-{-| 前のページが存在するか判定する -}
+-- 前のページが存在するか判定
 hasPrevPage : AppState -> Bool
 hasPrevPage state =
     state.currentPageIndex > 0
 
 
-{-| ページ送り時に実行するスクロールコマンド群 -}
+-- ページ送り時に実行するスクロールコマンド群
 pageNavigationCmd : Cmd Msg
 pageNavigationCmd =
     Cmd.batch
@@ -89,20 +86,10 @@ pageNavigationCmd =
         ]
 
 
-
-{-| ミニウィンドウの表示状態を更新する純粋関数 -}
+-- ミニコントローラーの表示
 setRightSideWindowVisible : Bool -> Model -> Model
 setRightSideWindowVisible isVisible model =
     { model | isRightSideWindowVisible = isVisible }
-
-
-
-
-
-
-
-
-
 
 
 -- MARK:検索
@@ -172,13 +159,13 @@ extractHeadings pageIdx content =
                         let
                             maybeHeading =
                                 if String.startsWith "### " line then
-                                    Just { level = 3, text = String.trim (String.dropLeft 4 line), pageIndex = pageIdx }
+                                    Just { level = 3, text = String.trim (String.dropLeft 4 line), pageIndex = pageIdx, order = 0 }
 
                                 else if String.startsWith "## " line then
-                                    Just { level = 2, text = String.trim (String.dropLeft 3 line), pageIndex = pageIdx }
+                                    Just { level = 2, text = String.trim (String.dropLeft 3 line), pageIndex = pageIdx, order = 0 }
 
                                 else if String.startsWith "# " line then
-                                    Just { level = 1, text = String.trim (String.dropLeft 2 line), pageIndex = pageIdx }
+                                    Just { level = 1, text = String.trim (String.dropLeft 2 line), pageIndex = pageIdx, order = 0 }
 
                                 else
                                     Nothing
@@ -192,16 +179,22 @@ extractHeadings pageIdx content =
 
         raw =
             parseLines (String.lines content) False []
+                |> List.indexedMap (\i h -> { h | order = i })
     in
     if List.isEmpty raw then
         [ { level = 1
           , text = "Page " ++ String.fromInt (pageIdx + 1)
           , pageIndex = pageIdx
+          , order = 0
           }
         ]
 
     else
         raw
+
+
+
+
 
 
 {-| 編集バッファの空白を除去し、空の場合はデフォルト名を補正する末端関数 -}

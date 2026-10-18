@@ -39,6 +39,7 @@ type alias Heading =
     { level : Int
     , text : String
     , pageIndex : Int
+    , order : Int
     }
 
 type alias HeadingData =

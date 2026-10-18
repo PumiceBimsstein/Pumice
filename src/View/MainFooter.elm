@@ -40,7 +40,7 @@ viewFooter model state book theme =
 {-| 右側コントロールの出し分け -}
 viewFooterRightControls : Model -> String -> ColorTheme -> Html Msg
 viewFooterRightControls model currentPageId theme =
-    if not model.isRightSideWindowVisible then
+    if isMiniWindowCollapsed model then
         viewCollapsedControls model theme
 
     else if model.mode == EditMode then
@@ -48,6 +48,15 @@ viewFooterRightControls model currentPageId theme =
 
     else
         viewWidthSlider theme model.contentWidth
+
+isMiniWindowCollapsed : Model -> Bool
+isMiniWindowCollapsed model =
+    let
+        usesMiniWindow =
+            model.sidebarMode == OverlaySidebar || model.sidebarMode == LeftSidebar
+    in
+    usesMiniWindow && not model.isRightSideWindowVisible
+
 
 {-| ミニウィンドウ非表示時の代替ボタン群 -}
 viewCollapsedControls : Model -> ColorTheme -> Html Msg

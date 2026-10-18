@@ -111,7 +111,6 @@ stopClickPropagation msg =
 
 
 -- Bookを選択していない場合の表示
--- おそらくこの画面は表示される機会がない
 viewEmptyState : Model -> Html Msg
 viewEmptyState model =
     main_
