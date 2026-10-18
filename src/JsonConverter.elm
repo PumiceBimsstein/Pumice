@@ -99,6 +99,7 @@ decodeModel =
         |> andMap (Decode.oneOf [ Decode.field "visibleHeadingLevel" decodeHeadingLevel, Decode.succeed H3 ])
         |> andMap (Decode.oneOf [ Decode.field "contentWidth" decodeContentWidth, Decode.succeed Normal ])
         |> andMap (Decode.succeed False)
+        |> andMap (Decode.succeed False)
         |> andMap (Decode.oneOf [ Decode.field "exportFormat" decodeExportFormat, Decode.succeed FormatTxt ])
         |> andMap (Decode.succeed Nothing)
 

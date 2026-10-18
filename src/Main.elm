@@ -97,6 +97,7 @@ init flags =
                     , visibleHeadingLevel = H3
                     , contentWidth = Wide
                     , isSidebarOverlaid = False
+                    , isRightSideWindowVisible = True
                     , exportFormat = FormatTxt
                     , openExportMenuId = Nothing
                     }
@@ -125,15 +126,14 @@ update msg model =
         ChangeMainView viewMode ->
             ( { model | mainViewMode = viewMode }, Cmd.none )
 
+        -- CreateShelf ->
+        --     appendShelfAndSave model
         CreateShelf ->
-            appendShelfAndSave model
+            model
+                |> createShelf
+                |> notifyAndSave
 
         DeleteShelf shelfId ->
-            -- model.present
-            --     |> removeShelf shelfId
-            --     |> (\state -> updateAppState state model)
-            --     |> ensureSidebarTabOnEmpty
-            --     |> notifyAndSave
             model
                 |> updatePresent (removeShelf shelfId)
                 |> ensureSidebarTabOnEmpty
@@ -144,22 +144,21 @@ update msg model =
                 |> applyShelfSelection shelfId
                 |> (\m -> ( m, Cmd.none ))
         
+        -- CreateBook ->
+        --     let
+        --         ( newId, nextSeed ) =
+        --             Random.step uuidStringGenerator model.seed
+
+        --         newModel =
+        --             { model | seed = nextSeed }
+        --     in
+        --     appendBookAndSave newId newModel
+
         CreateBook ->
-            let
-                ( newId, nextSeed ) =
-                    Random.step uuidStringGenerator model.seed
+            model
+                |> createBook
+                |> notifyAndSave
 
-                newModel =
-                    { model | seed = nextSeed }
-            in
-            appendBookAndSave newId newModel
-
-        -- DeleteBook bookId ->
-        --     model.present
-        --         |> removeBookFromState bookId
-        --         |> (\state -> updateAppState state model)
-        --         |> notifyAndSave
-        
         DeleteBook bookId ->
             model
                 |> updatePresent (removeBookFromState bookId)
@@ -170,8 +169,13 @@ update msg model =
                 |> applyBookSelection bookId
                 |> notifyAndSaveWithCmd (scrollToTop ())
 
+        -- CreatePage page ->
+        --     createPage page model
+        --         |> notifyAndSave
+
         CreatePage page ->
-            createPage page model
+            model
+                |> createPage page
                 |> notifyAndSave
 
         CreateNextPage page ->
@@ -179,87 +183,49 @@ update msg model =
                 |> createNextPage page
                 |> notifyAndSave
 
-        -- CreateNextPage page ->
-        --     let
-        --         -- 1. 追加前の状態を履歴に保存
-        --         recordedModel =
-        --             recordHistory model
-
-        --         -- 2. ページをビルド（生成）
-        --         builtModel =
-        --             buildPage page recordedModel
-
-        --         -- 3. 新しいページインデックスへ切り替え
-        --         newPresent =
-        --             builtModel.present
-        --     in
-        --     { builtModel
-        --         | present =
-        --             { newPresent | currentPageIndex = page }
-        --         , mode = EditMode
-        --     }
-        --         |> notifyAndSave
-
-        -- DeletePage pageId ->
-        --     model.present
-        --         |> removeCurrentPage pageId
-        --         |> (\state -> updateAppState state model)
-        --         |> notifyAndSave
-        
         DeletePage pageId ->
             model
                 |> updatePresent (removeCurrentPage pageId)
                 |> notifyAndSave
 
+        -- SelectPage index ->
+        --     model
+        --         |> applyPageSelection index
+        --         |> (\m -> { m | scrollRatio = 0 })
+        --         |> notifyAndSaveWithCmd (scrollToTop ())
+
         SelectPage index ->
             model
                 |> applyPageSelection index
-                |> (\m -> { m | scrollRatio = 0 })
                 |> notifyAndSaveWithCmd (scrollToTop ())
 
+        -- NextPage ->
+        --     model
+        --         |> applyNextPage
+        --         |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, Ports.scrollToTocHeading () ])
+
+        -- PrevPage ->
+        --     model
+        --         |> applyPrevPage
+        --         |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, Ports.scrollToTocHeading () ])
+
         NextPage ->
-            model
-                |> applyNextPage
-                |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, Ports.scrollToTocHeading () ])
+            if hasNextPage model.present then
+                model
+                    |> applyPageSelection (model.present.currentPageIndex + 1)
+                    |> notifyAndSaveWithCmd pageNavigationCmd
+
+            else
+                ( model, Cmd.none )
 
         PrevPage ->
-            model
-                |> applyPrevPage
-                |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, Ports.scrollToTocHeading () ])
+            if hasPrevPage model.present then
+                model
+                    |> applyPageSelection (model.present.currentPageIndex - 1)
+                    |> notifyAndSaveWithCmd pageNavigationCmd
 
-        -- ChangeMode newMode ->
-        --     let
-        --         ( nextModel, nextCmd ) =
-        --             model |> applyModeChange newMode
-
-        --         syncCmd =
-        --             case newMode of
-        --                 EditMode ->
-        --                     syncScroll { targetId = "editor-area", ratio = nextModel.scrollRatio }
-        --                 ViewMode ->
-        --                     Browser.Dom.getViewportOf "page-view-area"
-        --                         |> Task.andThen
-        --                             (\vp ->
-        --                                 let
-        --                                     maxScroll =
-        --                                         vp.scene.height - vp.viewport.height
-        --                                 in
-        --                                 Browser.Dom.setViewportOf "page-view-area" 0 (nextModel.scrollRatio * maxScroll)
-        --                             )
-        --                         |> Task.attempt (\_ -> NoOp)
-        --                 _ ->
-        --                     Cmd.none
-        --     in
-        --     ( nextModel
-        --     , Cmd.batch
-        --         [ nextCmd
-        --         , syncCmd
-        --         , if newMode == EditMode then
-        --             focusEditor
-        --           else
-        --             Cmd.none
-        --         ]
-        --     )
+            else
+                ( model, Cmd.none )
 
         ChangeMode newMode ->
             ( model |> setMode newMode
@@ -269,28 +235,18 @@ update msg model =
         ChangeSidebarTab tab ->
             ( { model | sidebarTab = tab }, Cmd.none )
 
-        UpdateShelfName shelfId newName ->
-            model
-                |> renameShelfInState shelfId newName
-                |> (\m -> ( m, Cmd.none ))
+        -- UpdateShelfName shelfId newName ->
+        --     model
+        --         |> updatePresent (updateShelfTitle shelfId newName)
+        --         |> notifyAndSave
 
         EditorInput content ->
             model
                 |> updatePresent (updateCurrentPageContent content)
                 |> notifyAndSave
-            -- let
-            --     ( newModel, cmd ) =
-            --         model.present
-            --             |> updateCurrentPageContent content
-            --             |> (\state -> updateAppState state model)
-            --             |> notifyAndSave
-            -- in
-            -- ( newModel, Cmd.batch [ cmd ] )
 
         UpdateSearchText text ->
-            ( { model | searchText = text }, Cmd.none
-            --, delaySearch 500 -- 500ms待ってから何かを実行するCmd（必要なら）
-            )
+            ( { model | searchText = text }, Cmd.none )
 
         ChangeColorTheme theme ->
             model
@@ -302,21 +258,25 @@ update msg model =
                 |> applyRenderStyle styleStr
                 |> notifyAndSave
 
+        -- JumpToHeading index anchor ->
+        --     model
+        --         |> applyPageSelection index
+        --         |> (\m -> { m | mainViewMode = PageView, mode = ViewMode })
+        --         |> notifyAndSaveWithCmd 
+        --             (Cmd.batch [ scrollToIndex anchor ])
+
         JumpToHeading index anchor ->
             model
                 |> applyPageSelection index
-                |> (\m -> { m | mainViewMode = PageView, mode = ViewMode })
-                |> notifyAndSaveWithCmd 
-                    (Cmd.batch [ scrollToIndex anchor ])
-                    --(Cmd.batch [ scrollToTop (), scrollToIndex anchor ])
+                |> setMainViewMode PageView
+                |> setMode ViewMode
+                |> notifyAndSaveWithCmd (scrollToIndex anchor)
 
         Reorder target from to ->
             ( applyReorder target from to model, Cmd.none )
 
         ReorderPages oldIndex newIndex ->
             model
-                --|> reorderPagesInCurrentBook oldIndex newIndex
-                --|> (\state -> updateAppState state model)
                 |> updatePresent (reorderPagesInCurrentBook oldIndex newIndex)
                 |> notifyAndSave
 
@@ -329,42 +289,6 @@ update msg model =
         PageFileSelected value ->
             processFileDrop value model
 
-        -- ImportBook newId importedBook ->
-        --     case model.mainViewMode of
-        --         ShelfDetailView _ ->
-        --             -- 本棚詳細画面（本の一覧）の時のみ受け入れる
-        --             let
-        --                 newBook = { importedBook | id = newId }
-        --                 ( newModel, saveCmd ) =
-        --                     model.present
-        --                         |> appendBookData newBook
-        --                         |> (\state -> updateAppState state model)
-        --                         |> notifyAndSave
-        --             in
-        --             ( newModel, saveCmd )
-
-        --         _ ->
-        --             -- それ以外の画面では無視
-        --             ( model, Cmd.none )
-
-        -- ImportShelf newId importedShelf ->
-        --     case model.mainViewMode of
-        --         ShelfListView ->
-        --             -- 本棚一覧画面の時のみ受け入れる
-        --             let
-        --                 newShelf = { importedShelf | id = newId }
-        --                 ( newModel, saveCmd ) =
-        --                     model.present
-        --                         |> appendShelfData newShelf
-        --                         |> (\state -> updateAppState state model)
-        --                         |> notifyAndSave
-        --             in
-        --             ( newModel, saveCmd )
-
-        --         _ ->
-        --             -- それ以外の画面では無視
-        --             ( model, Cmd.none )
-        
         ImportBook newId importedBook ->
             case model.mainViewMode of
                 ShelfDetailView _ ->
@@ -396,7 +320,6 @@ update msg model =
             ( { model | exportFormat = stringToExportFormat formatStr }, Cmd.none )
         
         ExportPage extension ->
-            -- ページの書き出し処理をヘルパーへ委譲
             ( model, applyExportPage extension model.present )
         
         FileDropped value ->
@@ -465,31 +388,6 @@ update msg model =
                 Nothing ->
                     ( model, Cmd.none )
             
-            -- case model.editing of
-            --     Just buffer ->
-            --         let
-            --             -- 空白を除去して判定
-            --             trimmedValue =
-            --                 String.trim buffer.value
-
-            --             -- 本のタイトルの場合は空チェックを行う
-            --             finalValue =
-            --                 if buffer.target == BookTitle && String.isEmpty trimmedValue then
-            --                     "無題の本"
-            --                 else if buffer.target == ShelfTitle && String.isEmpty trimmedValue then
-            --                     "無題の本棚"
-            --                 else
-            --                     buffer.value
-
-            --             -- 値を差し替えたバッファで更新処理を実行
-            --             updatedBuffer =
-            --                 { buffer | value = finalValue }
-            --         in
-            --         applyEdit updatedBuffer model
-                    
-            --     Nothing ->
-            --         ( model, Cmd.none )
-
         EditCancel ->
             ( { model | editing = Nothing }, Cmd.none )
         
@@ -537,6 +435,12 @@ update msg model =
             in
             ( { model | sidebarMode = nextMode }, Cmd.none )
 
+        OpenRightSideWindow ->
+            ( setRightSideWindowVisible True model, Cmd.none )
+
+        CloseRightSideWindow ->
+            ( setRightSideWindowVisible False model, Cmd.none )
+
         NoOp ->
             ( model, Cmd.none )
 
@@ -572,9 +476,7 @@ applyImportedModel prevModel importedModel =
     }
 
 
-pushToHistory : Model -> Model
-pushToHistory model =
-    updateAppState model.present model
+
 
 
 processImportedString : String -> Model -> Result Decode.Error Model
@@ -591,28 +493,6 @@ ensureSidebarTabOnEmpty model =
     else
         model
 
-
-
--- applyEdit : EditBuffer -> Model -> ( Model, Cmd Msg )
--- applyEdit buffer model =
---     let
---         -- 1. ターゲットに応じて AppState を書き換える
---         updatedState =
---             case buffer.target of
---                 ShelfTitle ->
---                     updateShelfTitle buffer.id buffer.value model.present
-
---                 BookTitle ->
---                     updateBookTitle buffer.id buffer.value model.present
-
---         -- 2. 状態を確定させて保存（共通フロー）
---         ( finalModel, saveCmd ) =
---             updatedState
---                 |> (\state -> updateAppState state model)
---                 |> (\m -> { m | editing = Nothing }) -- 編集モードを終了
---                 |> notifyAndSave
---     in
---     ( finalModel, saveCmd )
 
 applyEdit : EditBuffer -> Model -> ( Model, Cmd Msg )
 applyEdit buffer model =
@@ -699,46 +579,46 @@ applyExportPage extension state =
 
 
 -- MARK:ページ切り替え
-applyPrevPage : Model -> ( Model, Cmd Msg )
-applyPrevPage model =
-    let
-        present = model.present
-    in
-    if present.currentPageIndex > 0 then
-        let
-            prevIndex =
-                present.currentPageIndex - 1
-        in
-        model
-            |> applyPageSelection prevIndex
-            |> notifyAndSaveWithCmd (scrollToTop ())
+-- applyPrevPage : Model -> ( Model, Cmd Msg )
+-- applyPrevPage model =
+--     let
+--         present = model.present
+--     in
+--     if present.currentPageIndex > 0 then
+--         let
+--             prevIndex =
+--                 present.currentPageIndex - 1
+--         in
+--         model
+--             |> applyPageSelection prevIndex
+--             |> notifyAndSaveWithCmd (scrollToTop ())
 
-    else
-        ( model, Cmd.none )
+--     else
+--         ( model, Cmd.none )
 
 
 -- 次のページが存在するかを確認し、存在する場合はページ選択処理を実行
-applyNextPage : Model -> ( Model, Cmd Msg )
-applyNextPage model =
-    let
-        present = model.present
-    in
-    case getCurrentBook present of
-        Just book ->
-            if present.currentPageIndex < List.length book.pages - 1 then
-                -- 内部でSelectPageのロジックを再利用
-                let
-                    nextIndex =
-                        present.currentPageIndex + 1
-                in
-                model
-                    |> applyPageSelection nextIndex
-                    |> notifyAndSaveWithCmd (scrollToTop ())
-            else
-                ( model, Cmd.none )
+-- applyNextPage : Model -> ( Model, Cmd Msg )
+-- applyNextPage model =
+--     let
+--         present = model.present
+--     in
+--     case getCurrentBook present of
+--         Just book ->
+--             if present.currentPageIndex < List.length book.pages - 1 then
+--                 -- 内部でSelectPageのロジックを再利用
+--                 let
+--                     nextIndex =
+--                         present.currentPageIndex + 1
+--                 in
+--                 model
+--                     |> applyPageSelection nextIndex
+--                     |> notifyAndSaveWithCmd (scrollToTop ())
+--             else
+--                 ( model, Cmd.none )
 
-        Nothing ->
-            ( model, Cmd.none )
+--         Nothing ->
+--             ( model, Cmd.none )
 
 
 

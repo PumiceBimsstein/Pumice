@@ -40,8 +40,8 @@ viewLayout model present =
             
             LeftSidebar ->
                 text ""
-        , if model.sidebarMode == OverlaySidebar
-                || model.sidebarMode == LeftSidebar then
+        , if (model.sidebarMode == OverlaySidebar || model.sidebarMode == LeftSidebar)
+                && model.isRightSideWindowVisible then
             overlaySidebarArea model present
           else
             text ""

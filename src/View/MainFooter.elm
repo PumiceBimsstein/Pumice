@@ -26,14 +26,75 @@ viewFooter model state book theme =
             [ class "flex-1 flex justify-center" ]
             [ viewSeekBar model state total ]
         , div
-            [ class "flex-none w-[20%]" ]
-            [ if model.mode == EditMode then
-                deletePageButton currentPageId
-              else
-                viewWidthSlider theme model.contentWidth
-            ]
+            [ class "flex-none w-[20%] flex justify-end" ]
+            [ viewFooterRightControls model currentPageId theme ]
+        -- , div
+        --     [ class "flex-none w-[20%]" ]
+        --     [ if model.mode == EditMode then
+        --         deletePageButton currentPageId
+        --       else
+        --         viewWidthSlider theme model.contentWidth
+        --     ]
         ]
 
+{-| 右側コントロールの出し分け -}
+viewFooterRightControls : Model -> String -> ColorTheme -> Html Msg
+viewFooterRightControls model currentPageId theme =
+    if not model.isRightSideWindowVisible then
+        viewCollapsedControls model theme
+
+    else if model.mode == EditMode then
+        deletePageButton currentPageId
+
+    else
+        viewWidthSlider theme model.contentWidth
+
+{-| ミニウィンドウ非表示時の代替ボタン群 -}
+viewCollapsedControls : Model -> ColorTheme -> Html Msg
+viewCollapsedControls model theme =
+    let
+        nextMode =
+            if model.mode == ViewMode then
+                EditMode
+
+            else
+                ViewMode
+
+        modeLabel =
+            if model.mode == ViewMode then
+                "EDIT"
+
+            else
+                "VIEW"
+    in
+    div [ class "flex items-center gap-2" ]
+        [ button
+            [ class (footerMiniBtnStyle theme)
+            , onClick (ChangeMode nextMode)
+            ]
+            [ text modeLabel ]
+        , button
+            [ class (footerMiniBtnStyle theme)
+            , onClick OpenRightSideWindow
+            , title "Open side menu"
+            ]
+            [ text "MENU ▴" ]
+        ]
+
+
+footerMiniBtnStyle : ColorTheme -> String
+footerMiniBtnStyle theme =
+    tw
+        [ "px-2.5"
+        , "py-1"
+        , "text-xs"
+        , "font-semibold"
+        , "border"
+        , (basecolors theme).rounded
+        , (basecolors theme).borderBtn
+        , (basecolors theme).text
+        , "hover:opacity-70"
+        ]
 
 viewBookTitle : Model -> Book -> Html Msg
 viewBookTitle model book =

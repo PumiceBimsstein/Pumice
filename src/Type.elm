@@ -176,6 +176,7 @@ type alias Model =
     , visibleHeadingLevel : HeadingLevel
     , contentWidth : ContentWidth
     , isSidebarOverlaid : Bool
+    , isRightSideWindowVisible : Bool -- 追加
     , exportFormat : ExportFormat
     , openExportMenuId : Maybe String
     }
@@ -204,8 +205,7 @@ type Msg
       -- 表示設定・その他
     | ChangeMode Mode
     | ChangeSidebarTab SidebarTab
-    | UpdateShelfName String String
-    --| UpdateContent String
+    -- | UpdateShelfName String String
     | EditorInput String
     | UpdateSearchText String
     | ChangeColorTheme String
@@ -244,4 +244,6 @@ type Msg
     | CloseExportMenu
     | ToggleNormalSidebar
     | ToggleLeftSidebar
+    | OpenRightSideWindow   -- 追加
+    | CloseRightSideWindow  -- 追加
     | NoOp

@@ -8,20 +8,24 @@ import Html.Events exposing (on, preventDefaultOn)
 import Html exposing (Attribute)
 import Json.Decode as Decode
 import JsonConverter exposing (decodeBook, decodeShelf)
-import Ports exposing (saveToStorage)
+import Ports exposing (saveToStorage, scrollToTop, scrollToTocHeading)
 
--- MARK: 基本的な処理を行う関数
+-- MARK: 基本的な処理
 
 setMode : Mode -> Model -> Model
 setMode newMode model =
     { model | mode = newMode }
 
 
+pushToHistory : Model -> Model
+pushToHistory model =
+    updateAppState model.present model
+
 -- 全ての本棚から特定のIDを持つ本を探索
 findBookById : String -> List Shelf -> Maybe Book
 findBookById targetId shelves =
     shelves
-        |> List.concatMap .books -- 全ての本棚の本をフラットな1つのリストにする
+        |> List.concatMap .books
         |> List.filter (\b -> b.id == targetId)
         |> List.head
 
@@ -48,6 +52,57 @@ getCurrentPage state =
                     |> List.drop state.currentPageIndex
                     |> List.head
             )
+
+
+
+-- Helper.elm に追加
+
+{-| メインビューモードを更新する純粋関数 -}
+setMainViewMode : MainViewMode -> Model -> Model
+setMainViewMode viewMode model =
+    { model | mainViewMode = viewMode }
+
+
+{-| 次のページが存在するか判定する -}
+hasNextPage : AppState -> Bool
+hasNextPage state =
+    case getCurrentBook state of
+        Just book ->
+            state.currentPageIndex < List.length book.pages - 1
+
+        Nothing ->
+            False
+
+
+{-| 前のページが存在するか判定する -}
+hasPrevPage : AppState -> Bool
+hasPrevPage state =
+    state.currentPageIndex > 0
+
+
+{-| ページ送り時に実行するスクロールコマンド群 -}
+pageNavigationCmd : Cmd Msg
+pageNavigationCmd =
+    Cmd.batch
+        [ scrollToTop ()
+        , Ports.scrollToTocHeading ()
+        ]
+
+
+
+{-| ミニウィンドウの表示状態を更新する純粋関数 -}
+setRightSideWindowVisible : Bool -> Model -> Model
+setRightSideWindowVisible isVisible model =
+    { model | isRightSideWindowVisible = isVisible }
+
+
+
+
+
+
+
+
+
 
 
 -- MARK:検索
@@ -384,8 +439,6 @@ extractFirstPart : String -> String -> String
 extractFirstPart headingText acc =
     List.head (String.split headingText acc)
         |> Maybe.withDefault acc
-
-
 
 
 isCurrentHeading : Heading -> Int -> List String -> Bool

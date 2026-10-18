@@ -135,10 +135,22 @@ rightSideWindow : Model -> AppState -> Html Msg
 rightSideWindow model present =
     div
         [ class (rightSideWindowStyle model.colorTheme) ]
-        [ viewModeButtonGroup model model.mode
+        [ windowCloseHeader model.colorTheme
+        , viewModeButtonGroup model model.mode
         , sidebarModeSection model
         , controlSectionMini model
         , bottomStatusArea model present
+        ]
+
+windowCloseHeader : ColorTheme -> Html Msg
+windowCloseHeader theme =
+    div [ class "flex justify-end px-2 py-1.5" ]
+        [ button
+            [ class (tw [ "w-full", "flex", "items-center", "justify-center", "text-xs", "opacity-60", "hover:opacity-100", (basecolors theme).text ])
+            , onClick CloseRightSideWindow
+            , title "Close window"
+            ]
+            [ text "Close" ]
         ]
 
 sidebarModeSection : Model -> Html Msg
