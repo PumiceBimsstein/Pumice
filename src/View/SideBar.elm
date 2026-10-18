@@ -228,7 +228,7 @@ sidebarFooter model =
         [ class (sideFooter model.colorTheme) ]
         [ fileFunctionTrigger model
         , exportButton model.colorTheme
-        , functionButton model.colorTheme
+        , functionButton model
         ]
 
 
@@ -250,18 +250,32 @@ fileFunctionTrigger model =
             Above
             model.colorTheme
             [ ( "Import", RequestImport AllImport )
-            , ( "Zip", ExportAllZip )
+            , ( "Download Zip", ExportAllZip )
             ]
         ]
 
 
-functionButton : ColorTheme -> Html Msg
-functionButton theme =
-    button
-        [ class (footerButton theme)
-        --, onClick (RequestImport AllImport)
+functionButton : Model -> Html Msg
+functionButton model =
+    let
+        menuId = "file-functions"
+        isOpen = model.openExportMenuId == Just menuId
+    in
+    div
+        [ class "relative flex flex-1 h-full" ]
+        [ button
+            [ class (footerButton model.colorTheme)
+            , stopClickPropagation (ToggleExportMenu menuId)
+            ]
+            [ text "etc ▾" ]
+        , openDropdown
+            isOpen
+            Above
+            model.colorTheme
+            [ ( "Reset", ExportData )
+            , ( "Guide Pages", ExportData )
+            ]
         ]
-        [ text "etc" ]
 
 
 exportButton : ColorTheme -> Html Msg

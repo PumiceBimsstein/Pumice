@@ -5454,8 +5454,8 @@ var $author$project$Type$Light = 0;
 var $author$project$Type$Medium = 1;
 var $author$project$Type$NormalSidebar = 0;
 var $author$project$Type$PageView = {$: 0};
-var $author$project$Type$ShelfListTab = 0;
 var $author$project$Type$Standard = 0;
+var $author$project$Type$TocTab = 2;
 var $author$project$Type$ViewMode = 0;
 var $author$project$Type$Wide = 2;
 var $author$project$Type$Book = F3(
@@ -5613,7 +5613,6 @@ var $author$project$Type$Model = function (past) {
 	};
 };
 var $author$project$Type$Normal = 1;
-var $author$project$Type$TocTab = 2;
 var $author$project$JsonConverter$andMap = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
 var $author$project$Type$Dark = 1;
 var $author$project$Type$Magical = 2;
@@ -5920,12 +5919,14 @@ var $author$project$Domain$Helper$extractHeadings = F2(
 			}
 			]) : raw;
 	});
-var $author$project$Domain$Guide$guidePage1 = {ce: '# ようこそ\r\n\r\nこのアプリは、本棚・本・ページという3つの層でMarkdown文書を整理・閲覧・編集できるノートアプリです。データはブラウザに保存され、ダウウンロードしてPCに保存することもできます。\r\n\r\n**サーバー通信なし**\r\n\r\n**AI機能なし✨**\r\n\r\n## 主な特徴\r\n\r\n- **階層管理**: 「本棚」の中に「本」を作り、「ページ」単位で閲覧・編集できます。\r\n- **閲覧・編集画面の同期**: 閲覧モード（VIEW）と編集モード（EDIT）を切り替えても、表示される位置が概ね保たれます。\r\n- **目次ジャンプ**: サイドバーの目次から、各見出しへ直接ジャンプできます。\r\n\r\n## 画面の見方\r\n\r\n1. **左サイドバー**: 本棚一覧、本一覧、目次（Toc）を切り替えられます。\r\n2. **フッター（下部）**: シークバーでページを前後にめくることができます。\r\n3. **右サイドバー**: テーマ切り替え、文字サイズ、エクスポートなどが行えます。\r\n', C: 'guide-page-1', b_: 'ようこそ'};
-var $author$project$Domain$Guide$guidePage2 = {ce: '# 操作のヒント\r\n\r\nさらに便利に使うためのショートカットや機能です。\r\n\r\n## ページの追加と削除\r\n- 右サイドバーの **「+ Next Page」** をクリックすると、次のページが作成されます。\r\n- 不要になったページは、編集モード（EDIT）時のフッター右側にある削除ボタンから削除できます。\r\n\r\n## インポートとエクスポート\r\n- テキストファイルやMarkdownファイルをドラッグ＆ドロップすると、新規ページとして取り込めます。\r\n- 本棚や本は、ZIP形式やJSON形式でバックアップ・書き出しが可能です。\r\n', C: 'guide-page-2', b_: '操作のヒント'};
+var $author$project$Domain$Guide$guidePage1 = {ce: '# ようこそ\r\n\r\nこのアプリは、本棚・本・ページという3つの層でMarkdown文書を整理・閲覧・編集できるノートアプリです。データはブラウザに保存され、ダウウンロードしてPCに保存することもできます。\r\n\r\n**サーバー通信なし**\r\n\r\n**AI機能なし✨**\r\n\r\n## 主な特徴\r\n\r\n- **階層管理**: 「本棚」の中に「本」を作り、「ページ」単位で閲覧・編集できます。\r\n- **閲覧・編集画面の同期**: 閲覧モード（VIEW）と編集モード（EDIT）を切り替えても、表示される位置が概ね保たれます。\r\n- **目次ジャンプ**: サイドバーの目次から、各見出しへ直接ジャンプできます。\r\n\r\n## 画面の見方\r\n\r\n1. **左サイドバー**: 本棚の一覧、本の一覧、目次を切り替えられます。\r\n2. **フッター（下部）**: シークバーでページを前後にめくることができます。\r\n3. **右サイドバー**: テーマ切り替え、文字サイズ、エクスポートなどが行えます。\r\n', C: 'guide-page-1', b_: 'ようこそ'};
+var $author$project$Domain$Guide$guidePage2 = {ce: '# 操作のヒント\r\n\r\n## ページの切り替え方法\r\n- VIEWモードでのみ、矢印キー（←/→）。\r\n- フッターのシークバーをクリック。\r\n- **フッターのシークバーの上でマウスホイール操作。**\r\n- 右サイドバー下部のアイコンをクリック。またはその付近でのマウスホイール操作。\r\n- 右サイドバーの何もない部分でマウスホイール操作。\r\n\r\n## 目次の表示切り替え\r\n- サイドバーの下部のセレクターで、目次として表示するマークダウンの見出しを「見出し1(H1)」から「見出し3(H3)」まで切り替えられます。\r\n\r\n## ページの入れ替え\r\n- 右サイドバーの「PAGES」で、マウス操作によるページの入れ替えと追加と削除ができます。\r\n\r\n## ページの追加と削除\r\n- 右サイドバーの **「+ Next Page」** をクリックすると、次のページが作成されます。\r\n- 不要になったページは、編集モード（EDIT）時のフッターにある削除ボタンから削除できます。\r\n\r\n## インポートとエクスポート\r\n- テキストファイルやMarkdownファイルをドラッグ＆ドロップすると、新規ページとして取り込めます。\r\n- 本棚や本は、ZIP形式やJSON形式で読み込み・書き出しが可能です。\r\n- **左サイドバー下部のアイコンをクリックすると、全データのバックアップファイルがダウンロードされます。**\r\n', C: 'guide-page-2', b_: '操作のヒント'};
+var $author$project$Domain$Guide$content = '### 数式として記述する方法\n\n※ EDITモードで確認してください。\n\n\n$$\nG_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}\n$$\n\n\n```math\nL = \\frac{1}{2}m\\dot{x}^2 - \\frac{1}{2}kx^2\n```\n\nインラインの書き方：$L(q, \\dot{q}, t) = T - V$\n\nガウスの法則：`math \\nabla \\cdot \\mathbf{B} = 0`\n\nシュレーディンガー方程式：\\(\\^{H}\\psi =E\\psi \\)\n\n種類が多いのはAIによって数式ブロックの記述方法が異なるためです。';
+var $author$project$Domain$Guide$guidePage3 = {ce: '# その他の機能\r\n\r\n## コードハイライト\r\n- コードブロック内はいくつかの言語でハイライトが付きます。\r\n\r\n\r\n\r\n\r\n## 数式レンダリング\r\n- LaTeX形式の数式をレンダリングします。\r\n- 不要になったページは、編集モード（EDIT）時のフッターにある削除ボタンから削除できます。\r\n\r\n\r\n\r\n' + $author$project$Domain$Guide$content, C: 'guide-page-3', b_: 'その他の機能'};
 var $author$project$Domain$Guide$guideBook = {
 	C: 'guide-book',
 	ap: _List_fromArray(
-		[$author$project$Domain$Guide$guidePage1, $author$project$Domain$Guide$guidePage2]),
+		[$author$project$Domain$Guide$guidePage1, $author$project$Domain$Guide$guidePage2, $author$project$Domain$Guide$guidePage3]),
 	b_: 'クイックスタートガイド'
 };
 var $author$project$Domain$Guide$guideShelf = {
@@ -6024,7 +6025,7 @@ var $author$project$Main$init = function (flags) {
 				bP: '',
 				as: $elm$random$Random$initialSeed(0),
 				_: 0,
-				aa: 0,
+				aa: 2,
 				c1: 2
 			};
 		}
@@ -7959,6 +7960,7 @@ var $author$project$JsonConverter$encodeExportShelf = function (shelf) {
 					$author$project$JsonConverter$encodeShelf(shelf))
 				])));
 };
+var $author$project$Type$ShelfListTab = 0;
 var $author$project$Main$ensureSidebarTabOnEmpty = function (model) {
 	return $elm$core$List$isEmpty(model.A.F) ? _Utils_update(
 		model,
@@ -23142,21 +23144,46 @@ var $author$project$View$SideBar$fileFunctionTrigger = function (model) {
 						_Utils_Tuple2(
 						'Import',
 						$author$project$Type$RequestImport(2)),
-						_Utils_Tuple2('Zip', $author$project$Type$ExportAllZip)
+						_Utils_Tuple2('Download Zip', $author$project$Type$ExportAllZip)
 					]))
 			]));
 };
-var $author$project$View$SideBar$functionButton = function (theme) {
+var $author$project$View$SideBar$functionButton = function (model) {
+	var menuId = 'file-functions';
+	var isOpen = _Utils_eq(
+		model.an,
+		$elm$core$Maybe$Just(menuId));
 	return A2(
-		$elm$html$Html$button,
+		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class(
-				$author$project$View$SideBar$footerButton(theme))
+				$elm$html$Html$Attributes$class('relative flex flex-1 h-full')
 			]),
 		_List_fromArray(
 			[
-				$elm$html$Html$text('etc')
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class(
+						$author$project$View$SideBar$footerButton(model.bb)),
+						$author$project$View$ViewHelper$stopClickPropagation(
+						$author$project$Type$ToggleExportMenu(menuId))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('etc ▾')
+					])),
+				A4(
+				$author$project$View$ViewHelper$openDropdown,
+				isOpen,
+				0,
+				model.bb,
+				_List_fromArray(
+					[
+						_Utils_Tuple2('Reset', $author$project$Type$ExportData),
+						_Utils_Tuple2('Guide Pages', $author$project$Type$ExportData)
+					]))
 			]));
 };
 var $author$project$View$SideBar$sideFooter = function (theme) {
@@ -23187,7 +23214,7 @@ var $author$project$View$SideBar$sidebarFooter = function (model) {
 			[
 				$author$project$View$SideBar$fileFunctionTrigger(model),
 				$author$project$View$SideBar$exportButton(model.bb),
-				$author$project$View$SideBar$functionButton(model.bb)
+				$author$project$View$SideBar$functionButton(model)
 			]));
 };
 var $elm$html$Html$header = _VirtualDom_node('header');
