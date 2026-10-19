@@ -249,7 +249,7 @@ fileFunctionTrigger model =
             isOpen
             Above
             model.colorTheme
-            [ ( "Import", RequestImport AllImport )
+            [ ( "Import BackUp Data", RequestImport AllImport )
             , ( "Download Zip", ExportAllZip )
             ]
         ]

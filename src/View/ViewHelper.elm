@@ -174,6 +174,7 @@ renderMenuItem : ColorTheme -> ( String, Msg ) -> Html Msg
 renderMenuItem theme ( label, msg ) =
     button
         [ class (dropdownItemStyle theme)
+        , style "font-family" (basecolors theme).fontDeco
         , stopClickPropagation (SelectMenuItem msg)
         ]
         [ text label ]

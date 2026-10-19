@@ -65,6 +65,7 @@ type MenuDirection
 type MenuId
     = ShelfExportMenu String   -- 本棚のIDを持つ
     | BookExportMenu String    -- 本のIDを持つ
+    | PageExportMenu String
     | FileMenu
     | AppMenu
 

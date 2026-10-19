@@ -111,9 +111,9 @@ class HighlightCode extends HTMLElement {
             <div style="position: relative;">
                 <button class="copy-button" style="
                     position: absolute;
-                    top: 0.5rem;
-                    right: 0.5rem;
-                    padding: 0.25rem 0.5rem;
+                    top: 0.3rem;
+                    right: 0.3rem;
+                    padding: 0.05rem 0.4rem;
                     font-size: 0.75rem;
                     cursor: pointer;
                     border-radius: 0.25rem;

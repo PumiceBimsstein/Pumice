@@ -79,11 +79,13 @@ viewCollapsedControls model theme =
     div [ class "flex items-center gap-2" ]
         [ button
             [ class (footerMiniBtnStyle theme)
+            , style "font-family" (basecolors theme).fontDeco
             , onClick (ChangeMode nextMode)
             ]
             [ text modeLabel ]
         , button
             [ class (footerMiniBtnStyle theme)
+            , style "font-family" (basecolors theme).fontDeco
             , onClick OpenRightSideWindow
             , title "Open side menu"
             ]
