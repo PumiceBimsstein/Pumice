@@ -174,7 +174,7 @@ renderMenuItem : ColorTheme -> ( String, Msg ) -> Html Msg
 renderMenuItem theme ( label, msg ) =
     button
         [ class (dropdownItemStyle theme)
-        , stopClickPropagation msg
+        , stopClickPropagation (SelectMenuItem msg)
         ]
         [ text label ]
 

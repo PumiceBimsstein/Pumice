@@ -3,6 +3,7 @@ module Domain.AddItem exposing (..)
 import Type exposing (..)
 import Json.Decode as Decode
 import Domain.Helper exposing (..)
+import Domain.Guide exposing (guideShelf, guideBook, guidePage1, guidePage2, guidePage3)
 import Random
 import Uuid.Barebones exposing (uuidStringGenerator)
 
@@ -185,6 +186,51 @@ createBook model =
     { m1 | present = newPresent }
         |> setMode EditMode
         |> buildPage 0
+
+--MARK:GuideをShelfとして追加
+
+addGuideShelf : Model -> Model
+addGuideShelf model =
+    let
+        historyModel =
+            pushToHistory model
+
+        -- ID の新規発行
+        ( newShelfId, m1 ) = stepUuid historyModel
+        ( newBookId, m2 ) = stepUuid m1
+        ( p1Id, m3 ) = stepUuid m2
+        ( p2Id, m4 ) = stepUuid m3
+        ( p3Id, m5 ) = stepUuid m4
+
+        newPages =
+            [ { guidePage1 | id = p1Id }
+            , { guidePage2 | id = p2Id }
+            , { guidePage3 | id = p3Id }
+            ]
+
+        newBook =
+            { guideBook | id = newBookId, pages = newPages }
+
+        newShelf =
+            { guideShelf | id = newShelfId, books = [ newBook ] }
+
+        oldPresent =
+            m5.present
+
+        newPresent =
+            { oldPresent
+                | shelves = oldPresent.shelves ++ [ newShelf ]
+                , currentShelfId = newShelfId
+                , currentBookId = Just newBookId
+                , currentPageIndex = 0
+            }
+    in
+    { m5
+        | present = newPresent
+        , mainViewMode = PageView
+        , mode = ViewMode
+        , sidebarTab = TocTab
+    }
 
 
 --MARK:ページ追加

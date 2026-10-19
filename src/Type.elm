@@ -259,4 +259,6 @@ type Msg
     | ToggleLeftSidebar
     | OpenRightSideWindow   -- 追加
     | CloseRightSideWindow  -- 追加
+    | AddGuideShelf
+    | SelectMenuItem Msg
     | NoOp

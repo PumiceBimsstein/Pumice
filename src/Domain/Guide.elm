@@ -1,4 +1,4 @@
-module Domain.Guide exposing (defaultAppState)
+module Domain.Guide exposing (defaultAppState, guideShelf, guideBook, guidePage1, guidePage2, guidePage3)
 
 import Type exposing (..)
 import Domain.Helper exposing (extractHeadings)

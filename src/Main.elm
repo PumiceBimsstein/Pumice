@@ -42,18 +42,6 @@ main =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
-        -- 1. 完全にデータがない、またはデコード失敗時のデフォルトデータ（AppState）
-        -- defaultAppState =
-        --     { shelves = [ { id = "default-shelf", name = "New Shelf", books = [] } ]
-        --     , currentShelfId = "default-shelf"
-        --     , currentBookId = Nothing
-        --     , currentPageIndex = 0
-        --     , currentHeading = []
-        --     }
-
-        -- 2. デコードの試行
-        -- Model 全体としての復元を試みる（履歴や設定も含む）
-        -- 失敗した場合は AppState 単体として復元を試みる
         initialModel =
             case Decode.decodeValue JsonConverter.decodeModel flags.storageData of
                 Ok model ->
@@ -396,6 +384,23 @@ update msg model =
 
         CloseRightSideWindow ->
             ( setRightSideWindowVisible False model, Cmd.none )
+        
+        AddGuideShelf ->
+            model
+                |> addGuideShelf
+                |> notifyAndSave
+
+        SelectMenuItem actionMsg ->
+            let
+                -- 1. メニューを閉じた状態のモデル
+                closedModel =
+                    { model | openMenuId = Nothing }
+
+                -- 2. 本来のアクションを実行
+                ( newModel, cmd ) =
+                    update actionMsg closedModel
+            in
+            ( newModel, cmd )
 
         NoOp ->
             ( model, Cmd.none )
@@ -403,17 +408,19 @@ update msg model =
 
 -- MARK: HELPER
 
--- AppState を更新し、履歴を保存する
+-- AppState を更新し、履歴を保存
 updatePresent : (AppState -> AppState) -> Model -> Model
 updatePresent updater model =
     updateAppState (updater model.present) model
 
--- 本データを本棚に追加し、履歴を保存する
+
+-- 本データを本棚に追加し、履歴を保存
 addImportedBook : String -> Book -> Model -> Model
 addImportedBook newId importedBook =
     updatePresent (appendBookData { importedBook | id = newId })
 
--- 本棚データを追加し、履歴を保存する
+
+-- 本棚データを追加し、履歴を保存
 addImportedShelf : String -> Shelf -> Model -> Model
 addImportedShelf newId importedShelf =
     updatePresent (appendShelfData { importedShelf | id = newId })
