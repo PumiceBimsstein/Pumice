@@ -17,7 +17,7 @@ var CMEditor = (() => {
   };
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-  // codemirror_editor.js
+  // src/codemirror_editor.js
   var codemirror_editor_exports = {};
   __export(codemirror_editor_exports, {
     setupSyncScroll: () => setupSyncScroll
@@ -30384,7 +30384,7 @@ var CMEditor = (() => {
     }
   });
 
-  // codemirror_editor.js
+  // src/codemirror_editor.js
   var baseColors = {
     Light: {
       text: "#3a3a3a",

@@ -158,7 +158,7 @@ renderMenuOverlay : Html Msg
 renderMenuOverlay =
     div
         [ class "fixed inset-0 z-20 cursor-default"
-        , stopClickPropagation CloseExportMenu
+        , stopClickPropagation CloseMenu
         ]
         []
 
@@ -181,13 +181,22 @@ renderMenuItem theme ( label, msg ) =
 
 dropdownMenuStyle : MenuDirection -> ColorTheme -> String
 dropdownMenuStyle direction theme =
+    let
+        bgcolor =
+            case theme of
+                Light   -> tw [(basecolors theme).bg, (basecolors theme).borderStrong]
+                Dark    -> tw [(basecolors theme).primary, "border-black"]
+                Magical -> tw [(basecolors theme).primary, (basecolors theme).borderBtn]
+    in
     tw
         [ dropdownPositionStyle direction
-        , "z-20", "flex", "flex-col", "gap-1", "p-1"
+        , "z-20", "flex", "flex-col"--, "gap-1", "py-1"
         , "border", "shadow-lg"
+        , "min-w-max"
         , (basecolors theme).brightAccent
-        , (basecolors theme).borderBtn
-        , (basecolors theme).rounded
+        --, (basecolors theme).borderBtn
+        --, (basecolors theme).rounded
+        , bgcolor
         ]
 
 
@@ -195,7 +204,7 @@ dropdownPositionStyle : MenuDirection -> String
 dropdownPositionStyle direction =
     case direction of
         Above ->
-            "absolute right-0 bottom-full mb-1"
+            "absolute left-0 bottom-full mb-1"
 
         Below ->
             "absolute right-0 top-full mt-1"
@@ -203,9 +212,18 @@ dropdownPositionStyle direction =
 
 dropdownItemStyle : ColorTheme -> String
 dropdownItemStyle theme =
+    let
+        bgcolor =
+            case theme of
+                Light -> tw [(basecolors theme).bg, (basecolors theme).text, (basecolors theme).borderStrong]
+                Dark -> tw [(basecolors theme).primary, "text-black", "border-black"]
+                Magical -> tw [(basecolors theme).bg, (basecolors theme).text, (basecolors theme).borderBtn]
+    in
     tw
-        [ "w-full", "px-3", "py-1", "text-left"
-        , "text-[12px]", "font-bold", "uppercase"
+        [ "w-full", "px-3", "py-1", "text-left", "border"
+        , "text-[12px]", "uppercase"--, "font-bold"
+        , "whitespace-nowrap"
         , "hover:bg-white/10", "transition-colors"
-        , (basecolors theme).textMuted
+        --, (basecolors theme).textMuted
+        , bgcolor
         ]

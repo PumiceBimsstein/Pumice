@@ -61,6 +61,13 @@ type MenuDirection
     = Above
     | Below
 
+-- 表示するドロップダウンメニューの型
+type MenuId
+    = ShelfExportMenu String   -- 本棚のIDを持つ
+    | BookExportMenu String    -- 本のIDを持つ
+    | FileMenu
+    | AppMenu
+
 type MainViewMode
     = PageView
     | ShelfListView
@@ -179,7 +186,8 @@ type alias Model =
     , isSidebarOverlaid : Bool
     , isRightSideWindowVisible : Bool -- 追加
     , exportFormat : ExportFormat
-    , openExportMenuId : Maybe String
+    , openMenuId : Maybe MenuId
+    --, openExportMenuId : Maybe String
     }
 
 -- メッセージ定義
@@ -201,6 +209,7 @@ type Msg
     | CreateNextPage Int
     | DeletePage String
     | SelectPage Int
+    | DuplicatePage Int
     | NextPage
     | PrevPage
       -- 表示設定・その他
@@ -241,8 +250,11 @@ type Msg
     | SetVisibleHeadingLevel HeadingLevel
     | SetContentWidth ContentWidth
     | ToggleSidebarOverlay
-    | ToggleExportMenu String
-    | CloseExportMenu
+    --| ToggleExportMenu String
+    --| ToggleAppMenu String
+    | ToggleMenu MenuId
+    --| CloseExportMenu
+    | CloseMenu
     | ToggleNormalSidebar
     | ToggleLeftSidebar
     | OpenRightSideWindow   -- 追加

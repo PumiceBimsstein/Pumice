@@ -235,14 +235,14 @@ sidebarFooter model =
 fileFunctionTrigger : Model -> Html Msg
 fileFunctionTrigger model =
     let
-        menuId = "file-functions"
-        isOpen = model.openExportMenuId == Just menuId
+        menuId = FileMenu
+        isOpen = model.openMenuId == Just menuId
     in
     div
         [ class "relative flex flex-1 h-full" ]
         [ button
             [ class (footerButton model.colorTheme)
-            , stopClickPropagation (ToggleExportMenu menuId)
+            , stopClickPropagation (ToggleMenu menuId)
             ]
             [ text "File ▾" ]
         , openDropdown
@@ -258,14 +258,14 @@ fileFunctionTrigger model =
 functionButton : Model -> Html Msg
 functionButton model =
     let
-        menuId = "file-functions"
-        isOpen = model.openExportMenuId == Just menuId
+        menuId = AppMenu
+        isOpen = model.openMenuId == Just menuId
     in
     div
         [ class "relative flex flex-1 h-full" ]
         [ button
             [ class (footerButton model.colorTheme)
-            , stopClickPropagation (ToggleExportMenu menuId)
+            , stopClickPropagation (ToggleMenu menuId)
             ]
             [ text "etc ▾" ]
         , openDropdown

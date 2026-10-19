@@ -231,6 +231,28 @@ buildPage insertIndex model =
     }
 
 
+duplicatePageAt : Int -> Model -> Model
+duplicatePageAt targetIndex model =
+    let
+        maybeTargetPage =
+            getCurrentBook model.present
+                |> Maybe.andThen (\book -> List.drop targetIndex book.pages |> List.head)
+    in
+    case maybeTargetPage of
+        Just page ->
+            let
+                insertIndex =
+                    targetIndex + 1
+            in
+            { model | pageCreationBuffer = [ page.content ] }
+                |> pushToHistory
+                |> buildPage insertIndex
+                |> applyPageSelection insertIndex
+
+        Nothing ->
+            model
+
+
 addPageToCurrentBook : String -> Int -> String -> AppState -> AppState
 addPageToCurrentBook newId insertIndex content state =
     let

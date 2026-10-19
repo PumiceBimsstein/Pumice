@@ -50,8 +50,17 @@ viewPageCardHeader model index pageId =
         [ span
             [ class (reorderStyle.pageCardNumber model.colorTheme) ]
             [ text ("Page. " ++ String.fromInt (index + 1)) ]
+        , copyButton model index
         , viewButton model.colorTheme Delete (DeletePage pageId) (text "×")
         ]
+
+copyButton : Model -> Int -> Html Msg
+copyButton model index =
+    button
+        [ class (reorderStyle.copyButtonStyle model.colorTheme)
+        , onClick (DuplicatePage index)
+        ]
+        [ text "copy" ]
 
 
 viewPageCardPreview : Model -> Int -> String -> Html Msg
@@ -128,6 +137,7 @@ reorderStyle :
     , pageCardNumber : ColorTheme -> String
     , pageCardPreviewContent : ColorTheme -> String
     , pageCardGradient : String
+    , copyButtonStyle : ColorTheme -> String
     }
 reorderStyle =
     { reorderGrid =
@@ -182,5 +192,10 @@ reorderStyle =
     , pageCardGradient =
         tw  [ "absolute", "inset-x-0", "bottom-0", "h-8"
             , "bg-gradient-to-t", "from-white", "to-transparent" ]
+    , copyButtonStyle = \theme ->
+        tw  [ "border", "text-xs", "px-1", "pb-1"
+            , (basecolors theme).accent
+            , (basecolors theme).borderBtn
+            ]
     }
 

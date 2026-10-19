@@ -10,25 +10,27 @@
 
     <title>Pumice</title>
     <!-- <script src="https://cdn.tailwindcss.com?plugins=typography"></script> -->
-    <link rel="stylesheet" href="output.css">
-    <link rel="stylesheet" href="custom_highlight.bundle.css">
-    <link rel="stylesheet" href="searchHighlight.css">
+    <link rel="stylesheet" href="dist/output.css">
+    <link rel="stylesheet" href="dist/custom_highlight.bundle.css">
+    <link rel="stylesheet" href="src/searchHighlight.css">
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/solarized-dark.min.css"> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script> -->
 </head>
 <body class="h-screen overflow-hidden bg-gray-50">
 
     <div id="app"></div>
     
-    <script src="custom_highlight.bundle.js"></script>
-    <script src="katex_renderer.js"></script>
-    <script src="codemirror_editor.bundle.js"></script>
-    <script src="file_handler.js"></script>
+    <script src="dist/custom_highlight.bundle.js"></script>
+    <script src="src/katex_renderer.js"></script>
+    <script src="dist/codemirror_editor.bundle.js"></script>
+    <script src="src/file_handler.js"></script>
+    <script src="lib/jszip.min.js"></script>
+    <script src="lib/FileSaver.min.js"></script>
 
     <script src="main.js"></script>
-    <script src="startElm.js"></script>
-    <script src="script.js"></script>
+    <script src="src/startElm.js"></script>
+    <script src="src/script.js"></script>
     
 </body>
 </html>

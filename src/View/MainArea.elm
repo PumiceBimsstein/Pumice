@@ -123,7 +123,7 @@ makeNewShelf theme isGuiding =
                 tw
                     [ "animate-pulse"
                     -- 速さ：秒数で自由に変更可能（例: 3s は標準よりさらにゆったり）
-                    , "[animation-duration:1s]"
+                    , "[animation-duration:2.5s]"
                     -- 色：amber（黄色/オレンジ系）や emerald（緑系）、sky（青系）などに変更可能
                     , "ring-2 ring-amber-400 ring-offset-1 ring-offset-transparent"
                     ]
@@ -201,8 +201,9 @@ viewShelfCard model shelf =
         theme = model.colorTheme
         isActive =
             model.present.currentShelfId == shelf.id
+        menuId = ShelfExportMenu shelf.id
         isOpen =
-            model.openExportMenuId == Just ("shelf-export-" ++ shelf.id)
+            model.openMenuId == Just menuId
     in
     div
         [ class (shelfCardStyle theme isActive isOpen)
@@ -235,7 +236,7 @@ shelfCardStyle theme isActive isOpen =
             , "flex", "flex-col", "border"
             , stackOrder
             , "cursor-pointer"
-            , "hover:shadow-xl hover:-translate-y-1 hover:brightness-105"
+            , "hover:shadow-xl"    --  hover:-translate-y-1 hover:brightness-105
             , (basecolors theme).text
             , (basecolors theme).surface
             , (basecolors theme).rounded
@@ -287,10 +288,10 @@ renderShelfExportControls : Model -> ColorTheme -> Shelf -> Html Msg
 renderShelfExportControls model theme shelf =
     let
         menuId =
-            "shelf-export-" ++ shelf.id
+            ShelfExportMenu shelf.id
 
         isOpen =
-            model.openExportMenuId == Just menuId
+            model.openMenuId == Just menuId
     in
     div [ class (exportContainerStyle isOpen) ]
         [ renderShelfTriggerButton theme menuId
@@ -298,11 +299,11 @@ renderShelfExportControls model theme shelf =
         ]
 
 
-renderShelfTriggerButton : ColorTheme -> String -> Html Msg
+renderShelfTriggerButton : ColorTheme -> MenuId -> Html Msg
 renderShelfTriggerButton theme menuId =
     button
         [ class (miniButtonStyle theme)
-        , stopClickPropagation (ToggleExportMenu menuId)
+        , stopClickPropagation (ToggleMenu menuId)
         ]
         [ text "Export ▾" ]
 
@@ -473,7 +474,7 @@ viewBookCard model book isEditing =
             model.present.currentBookId == Just book.id
 
         isOpen =
-            model.openExportMenuId == Just ("book-export-" ++ book.id)
+            model.openMenuId == Just (BookExportMenu book.id)
 
         cardEventHandlers =
             if isEditing then
@@ -539,10 +540,10 @@ renderExportControls : Model -> ColorTheme -> Book -> Html Msg
 renderExportControls model theme book =
     let
         menuId =
-            "book-export-" ++ book.id
+            BookExportMenu book.id
 
         isOpen =
-            model.openExportMenuId == Just menuId
+            model.openMenuId == Just menuId
     in
     div [ class (exportContainerStyle isOpen) ]
         [ renderTriggerButton theme menuId
@@ -562,11 +563,11 @@ exportContainerStyle isOpen =
         ]
 
 
-renderTriggerButton : ColorTheme -> String -> Html Msg
+renderTriggerButton : ColorTheme -> MenuId -> Html Msg
 renderTriggerButton theme menuId =
     button
         [ class (miniButtonStyle theme)
-        , stopClickPropagation (ToggleExportMenu menuId)
+        , stopClickPropagation (ToggleMenu menuId)
         ]
         [ text "Export ▾" ]
 

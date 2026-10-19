@@ -94,7 +94,7 @@ init flags =
                     , isSidebarOverlaid = False
                     , isRightSideWindowVisible = True
                     , exportFormat = FormatTxt
-                    , openExportMenuId = Nothing
+                    , openMenuId = Nothing
                     }
         
         initialSeed =
@@ -171,6 +171,11 @@ update msg model =
             model
                 |> applyPageSelection index
                 |> notifyAndSaveWithCmd (scrollToTop ())
+
+        DuplicatePage targetIndex ->
+            model
+                |> duplicatePageAt targetIndex
+                |> notifyAndSave
 
         NextPage ->
             if hasNextPage model.present then
@@ -351,18 +356,18 @@ update msg model =
         ToggleSidebarOverlay ->
             ( { model | isSidebarOverlaid = not model.isSidebarOverlaid }, Cmd.none )
         
-        ToggleExportMenu menuId ->
+        ToggleMenu menuId ->
             let
-                nextId =
-                    if model.openExportMenuId == Just menuId then
+                next =
+                    if model.openMenuId == Just menuId then
                         Nothing
                     else
                         Just menuId
             in
-            ( { model | openExportMenuId = nextId }, Cmd.none )
+            ( { model | openMenuId = next }, Cmd.none )
 
-        CloseExportMenu ->
-            ( { model | openExportMenuId = Nothing }, Cmd.none )
+        CloseMenu ->
+            ( { model | openMenuId = Nothing }, Cmd.none )
         
         ToggleNormalSidebar ->
             let
@@ -425,9 +430,6 @@ applyImportedModel prevModel importedModel =
         , present = importedModel.present
         , future = []
     }
-
-
-
 
 
 processImportedString : String -> Model -> Result Decode.Error Model
