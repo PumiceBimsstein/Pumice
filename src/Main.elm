@@ -4,6 +4,8 @@ import Browser
 import Browser.Events
 import Browser.Dom
 import Task
+import Time
+import File.Download as Download
 import Random
 import Html.Attributes exposing (..)
 import Html exposing (..)
@@ -19,7 +21,7 @@ import Init exposing (..)
 import Ports exposing
     ( scrollToIndex
     , scrollToTop
-    , triggerDownload
+    --, triggerDownload
     , fileDropped
     , incomingMsg
     , fileContentReceiver
@@ -234,8 +236,22 @@ update msg model =
                 |> Result.withDefault ( model, Cmd.none )
 
         ExportData ->
-            ( model, triggerDownload (JsonConverter.encodeModel model) )
+            ( model
+            , Task.perform ExportDataWithTime (Task.map2 Tuple.pair Time.here Time.now)
+            )
+            --( model, triggerDownload (JsonConverter.encodeModel model) )
         
+        ExportDataWithTime ( zone, time ) ->
+            let
+                fileName =
+                    formatBackupFileName zone time
+
+                jsonString =
+                    JsonConverter.encodeExportAll model
+            in
+            ( model, Download.string fileName "application/json" jsonString )
+
+
         ChangeExportFormat formatStr ->
             ( { model | exportFormat = stringToExportFormat formatStr }, Cmd.none )
         
@@ -277,18 +293,36 @@ update msg model =
         
         ExportBookJson book ->
             let
-                jsonString = JsonConverter.encodeExportBook book
+                jsonString =
+                    JsonConverter.encodeExportBook book
+
+                fileName =
+                    "Pumice-book-" ++ (if String.isEmpty book.title then "export" else book.title) ++ ".json"
             in
-            ( model, triggerDownload jsonString )
+            ( model, Download.string fileName "application/json" jsonString )
+
+            -- let
+            --     jsonString = JsonConverter.encodeExportBook book
+            -- in
+            -- ( model, triggerDownload jsonString )
 
         ExportShelfZip shelfId ->
             ( model, exportShelfById shelfId model.present.shelves )
 
         ExportShelfJson shelf ->
             let
-                jsonString = JsonConverter.encodeExportShelf shelf
+                jsonString =
+                    JsonConverter.encodeExportShelf shelf
+
+                fileName =
+                    "Pumice-category-" ++ (if String.isEmpty shelf.name then "export" else shelf.name) ++ ".json"
             in
-            ( model, triggerDownload jsonString )
+            ( model, Download.string fileName "application/json" jsonString )
+
+            -- let
+            --     jsonString = JsonConverter.encodeExportShelf shelf
+            -- in
+            -- ( model, triggerDownload jsonString )
 
         ExportAllZip ->
             ( model, exportZip (fullLibraryPayload model.present.shelves) )
@@ -367,7 +401,12 @@ update msg model =
             ( newModel, cmd )
 
         ResetApp ->
-            model |> resetWithBackup
+            ( model
+            , Task.perform ResetAppWithTime (Task.map2 Tuple.pair Time.here Time.now)
+            )
+
+        ResetAppWithTime ( zone, time ) ->
+            resetWithBackup zone time model
 
         NoOp ->
             ( model, Cmd.none )

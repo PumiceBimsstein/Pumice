@@ -157,7 +157,8 @@ renderDropdownMenu direction theme items =
 renderMenuOverlay : Html Msg
 renderMenuOverlay =
     div
-        [ class "fixed inset-0 z-20 cursor-default"
+        [ class "fixed inset-0 z-40 cursor-default bg-transparent"
+                --"fixed inset-0 z-20 cursor-default"
         , stopClickPropagation CloseMenu
         ]
         []
@@ -180,51 +181,129 @@ renderMenuItem theme ( label, msg ) =
         [ text label ]
 
 
+-- dropdownMenuStyle : MenuDirection -> ColorTheme -> String
+-- dropdownMenuStyle direction theme =
+--     let
+--         bgcolor =
+--             case theme of
+--                 Light   -> tw [(basecolors theme).bg, (basecolors theme).borderStrong]
+--                 Dark    -> tw [(basecolors theme).primary, "border-black"]
+--                 Magical -> tw [(basecolors theme).primary, (basecolors theme).borderBtn]
+--     in
+--     tw
+--         [ dropdownPositionStyle direction
+--         , "z-20", "flex", "flex-col"--, "gap-1", "py-1"
+--         , "border", "shadow-lg"
+--         , "min-w-max"
+--         , (basecolors theme).brightAccent
+--         --, (basecolors theme).borderBtn
+--         --, (basecolors theme).rounded
+--         , bgcolor
+--         ]
+
+
+{-| メニュー全体の浮遊パネルスタイル -}
 dropdownMenuStyle : MenuDirection -> ColorTheme -> String
 dropdownMenuStyle direction theme =
     let
-        bgcolor =
-            case theme of
-                Light   -> tw [(basecolors theme).bg, (basecolors theme).borderStrong]
-                Dark    -> tw [(basecolors theme).primary, "border-black"]
-                Magical -> tw [(basecolors theme).primary, (basecolors theme).borderBtn]
-    in
-    tw
-        [ dropdownPositionStyle direction
-        , "z-20", "flex", "flex-col"--, "gap-1", "py-1"
-        , "border", "shadow-lg"
-        , "min-w-max"
-        , (basecolors theme).brightAccent
-        --, (basecolors theme).borderBtn
-        --, (basecolors theme).rounded
-        , bgcolor
-        ]
+        base =
+            [ dropdownPositionStyle direction
+            , "z-50"
+            , "flex flex-col"
+            , "p-1.5"                  -- 内側に適度な余白を取る
+            , "min-w-[150px]"          -- 安定した横幅
+            , "border shadow-xl"       -- 浮かび上がる陰影
+            , "backdrop-blur-sm"       -- すりガラス風の上品な質感
+            , "animate-[fadeIn_0.1s_ease-out]" -- ふわっと表示
+            , (basecolors theme).rounded
+            ]
 
+        themeCard =
+            case theme of
+                Light ->
+                    [ "bg-[#FBF8F5]/95"
+                    , "border-[#DCD4C9]"
+                    , "shadow-black/10"
+                    ]
+
+                Dark ->
+                    [ "bg-[#1E1E1D]/95"
+                    , "border-[#3A3A36]"
+                    , "shadow-black/50"
+                    ]
+
+                Magical ->
+                    [ "bg-[#161626]/95"
+                    , "border-[#8B7355]/40"
+                    , "shadow-black/60"
+                    ]
+    in
+    tw (base ++ themeCard)
 
 dropdownPositionStyle : MenuDirection -> String
 dropdownPositionStyle direction =
     case direction of
         Above ->
-            "absolute left-0 bottom-full mb-1"
+            "absolute left-0 bottom-full mb-2"
 
         Below ->
-            "absolute right-0 top-full mt-1"
+            "absolute right-0 top-full mt-2"
 
 
+-- dropdownItemStyle : ColorTheme -> String
+-- dropdownItemStyle theme =
+--     let
+--         bgcolor =
+--             case theme of
+--                 Light -> tw [(basecolors theme).bg, (basecolors theme).text, (basecolors theme).borderStrong]
+--                 Dark -> tw [(basecolors theme).primary, "text-black", "border-black"]
+--                 Magical -> tw [(basecolors theme).bg, (basecolors theme).text, (basecolors theme).borderBtn]
+--     in
+--     tw
+--         [ "w-full", "px-3", "py-1", "text-left", "border"
+--         , "text-[12px]", "uppercase"--, "font-bold"
+--         , "whitespace-nowrap"
+--         , "hover:bg-white/10", "transition-colors"
+--         --, (basecolors theme).textMuted
+--         , bgcolor
+--         ]
+
+{-| メニュー項目（枠線をなくし、ホバーで優しくハイライト） -}
 dropdownItemStyle : ColorTheme -> String
 dropdownItemStyle theme =
     let
-        bgcolor =
+        base =
+            [ "w-full"
+            , "px-3"
+            , "py-1.5"
+            , "text-left"
+            , "text-xs"
+            , "font-medium"
+            , "tracking-wide"
+            , "rounded-md"             -- 項目自体もほんのり角丸
+            , "whitespace-nowrap"
+            , "cursor-pointer"
+            , "transition-colors duration-150"
+            ]
+
+        themeItem =
             case theme of
-                Light -> tw [(basecolors theme).bg, (basecolors theme).text, (basecolors theme).borderStrong]
-                Dark -> tw [(basecolors theme).primary, "text-black", "border-black"]
-                Magical -> tw [(basecolors theme).bg, (basecolors theme).text, (basecolors theme).borderBtn]
+                Light ->
+                    [ "text-[#4A453E]"
+                    , "hover:bg-black/5"
+                    , "hover:text-[#C86D51]"
+                    ]
+
+                Dark ->
+                    [ "text-[#CCCCCC]"
+                    , "hover:bg-white/10"
+                    , "hover:text-[#C9A84C]"
+                    ]
+
+                Magical ->
+                    [ "text-[#E0D5C0]"
+                    , "hover:bg-[#8B7355]/30"
+                    , "hover:text-[#D9A74A]"
+                    ]
     in
-    tw
-        [ "w-full", "px-3", "py-1", "text-left", "border"
-        , "text-[12px]", "uppercase"--, "font-bold"
-        , "whitespace-nowrap"
-        , "hover:bg-white/10", "transition-colors"
-        --, (basecolors theme).textMuted
-        , bgcolor
-        ]
+    tw (base ++ themeItem)

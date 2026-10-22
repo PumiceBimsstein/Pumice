@@ -3,6 +3,7 @@ module Type exposing (..)
 import Json.Decode as Decode
 import Random
 import Browser.Dom
+import Time
 
 type alias Flags =
     { storageData : Decode.Value
@@ -231,6 +232,7 @@ type Msg
     | ImportShelf String Shelf
     | ImportData String
     | ExportData
+    | ExportDataWithTime ( Time.Zone, Time.Posix )
     | ChangeExportFormat String
     | ExportPage String
     | FileDropped Decode.Value
@@ -263,4 +265,5 @@ type Msg
     | AddGuideShelf
     | SelectMenuItem Msg
     | ResetApp
+    | ResetAppWithTime ( Time.Zone, Time.Posix )
     | NoOp

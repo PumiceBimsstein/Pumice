@@ -1,7 +1,7 @@
 module JsonConverter 
     exposing
         ( encodeModel, decodeModel, encodeAppState, decodeAppState
-        , encodeExportBook, encodeExportShelf
+        , encodeExportBook, encodeExportShelf, encodeExportAll
         , decodeBook, decodeShelf
         , stringToExportFormat
         )
@@ -13,8 +13,14 @@ import Type exposing (..)
 
 -- MARK:エンコーダー
 
+-- ローカルストレージ保存用
 encodeModel : Model -> String
 encodeModel model =
+    encodeModelValue model
+        |> Encode.encode 0
+
+encodeModelValue : Model -> Encode.Value
+encodeModelValue model =
     Encode.object
         [ ( "present", encodeAppState model.present )
         , ( "fontSize", encodeFontSize model.fontSize )
@@ -24,7 +30,28 @@ encodeModel model =
         , ( "contentWidth", encodeContentWidth model.contentWidth )
         , ( "exportFormat", encodeExportFormat model.exportFormat )
         ]
+
+-- 全体バックアップ用エクスポート
+encodeExportAll : Model -> String
+encodeExportAll model =
+    Encode.object
+        [ ( "type", Encode.string "all" )
+        , ( "payload", encodeModelValue model )
+        ]
         |> Encode.encode 0
+
+-- encodeModel : Model -> String
+-- encodeModel model =
+--     Encode.object
+--         [ ( "present", encodeAppState model.present )
+--         , ( "fontSize", encodeFontSize model.fontSize )
+--         , ( "colorTheme", encodeColorTheme model.colorTheme )
+--         , ( "renderStyle", encodeRenderStyle model.renderStyle )
+--         , ( "visibleHeadingLevel", encodeHeadingLevel model.visibleHeadingLevel )
+--         , ( "contentWidth", encodeContentWidth model.contentWidth )
+--         , ( "exportFormat", encodeExportFormat model.exportFormat )
+--         ]
+--         |> Encode.encode 0
 
 
 -- AppStateのエンコーダーを新構造に合わせて定義します

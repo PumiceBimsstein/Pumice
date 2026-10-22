@@ -5,10 +5,12 @@ import Random
 import Json.Decode as Decode
 import JsonConverter exposing (..)
 import Type exposing (..)
+import Time
+import File.Download as Download
 import Domain.Helper exposing (..)
 import Domain.AddItem exposing (..)
 import Domain.Guide exposing (defaultAppState)
-import Ports exposing (saveToStorage, scrollToTop, triggerDownload)
+import Ports exposing (saveToStorage, scrollToTop)
 
 -- 初期状態のデフォルトModelを生成
 initDefaultModel : Random.Seed -> Model
@@ -72,11 +74,34 @@ initModelWithAppState seed appState =
 
 -- MARK:リセット
 {-| 現状のバックアップデータを出力し、UNDO履歴を残した上で初期状態に戻す -}
-resetWithBackup : Model -> ( Model, Cmd Msg )
-resetWithBackup model =
+-- resetWithBackup : Model -> ( Model, Cmd Msg )
+-- resetWithBackup model =
+--     let
+--         backupJson =
+--             JsonConverter.encodeModel model
+
+--         newModel =
+--             model
+--                 |> applyResetWithHistory
+--     in
+--     ( newModel
+--     , Cmd.batch
+--         [ triggerDownload backupJson                         -- PCへバックアップを出力
+--         , saveToStorage (JsonConverter.encodeModel newModel) -- ローカルストレージを初期化
+--         , scrollToTop ()
+--         ]
+--     )
+
+
+-- バックアップを出力し、UNDO履歴を残した上で初期状態に戻す
+resetWithBackup : Time.Zone -> Time.Posix -> Model -> ( Model, Cmd Msg )
+resetWithBackup zone time model =
     let
+        fileName =
+            formatBackupFileName zone time
+
         backupJson =
-            JsonConverter.encodeModel model
+            JsonConverter.encodeExportAll model
 
         newModel =
             model
@@ -84,8 +109,8 @@ resetWithBackup model =
     in
     ( newModel
     , Cmd.batch
-        [ triggerDownload backupJson                         -- PCへバックアップを出力
-        , saveToStorage (JsonConverter.encodeModel newModel) -- ローカルストレージを初期化
+        [ Download.string fileName "application/json" backupJson -- 直接ダウンロード
+        , saveToStorage (JsonConverter.encodeModel newModel)
         , scrollToTop ()
         ]
     )

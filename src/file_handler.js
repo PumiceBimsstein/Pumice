@@ -68,57 +68,57 @@ function initFileHandlers(app) {
     // --- 2. エクスポート関連 (Elm -> JS) ---
 
     // JSONエクスポート (本、本棚、全体バックアップ共通)
-    app.ports.triggerDownload.subscribe((jsonString) => {
-        try {
-            const data = JSON.parse(jsonString);
-            let outputString = jsonString;
-            //let fileName = 'Pumice-backup.json';
+    // app.ports.triggerDownload.subscribe((jsonString) => {
+    //     try {
+    //         const data = JSON.parse(jsonString);
+    //         let outputString = jsonString;
+    //         //let fileName = 'Pumice-backup.json';
 
-            if (data.type === 'book') {
-                fileName = `Pumice-book-${data.payload.title || 'export'}.json`;
-            } else if (data.type === 'shelf') {
-                fileName = `Pumice-category-${data.payload.name || 'export'}.json`;
-            }  else {
-                // [変更] type がない場合は全体バックアップとして { type: 'all', payload } の形にラップし、ファイル名に日時を追加
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0')
-                fileName = `Pumice-backup_${year}${month}${day}-${hours}-${minutes}-${seconds}.json`;
-                outputString = JSON.stringify({ type: 'all', payload: data });
-            }
+    //         if (data.type === 'book') {
+    //             fileName = `Pumice-book-${data.payload.title || 'export'}.json`;
+    //         } else if (data.type === 'shelf') {
+    //             fileName = `Pumice-category-${data.payload.name || 'export'}.json`;
+    //         }  else {
+    //             // [変更] type がない場合は全体バックアップとして { type: 'all', payload } の形にラップし、ファイル名に日時を追加
+    //             const now = new Date();
+    //             const year = now.getFullYear();
+    //             const month = String(now.getMonth() + 1).padStart(2, '0');
+    //             const day = String(now.getDate()).padStart(2, '0');
+    //             const hours = String(now.getHours()).padStart(2, '0');
+    //             const minutes = String(now.getMinutes()).padStart(2, '0');
+    //             const seconds = String(now.getSeconds()).padStart(2, '0')
+    //             fileName = `Pumice-backup_${year}${month}${day}-${hours}-${minutes}-${seconds}.json`;
+    //             outputString = JSON.stringify({ type: 'all', payload: data });
+    //         }
 
-            const blob = new Blob([outputString], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName;
-            a.click();
-            URL.revokeObjectURL(url);
-        } catch (e) {
-            console.error("Export failed", e);
-        }
-    });
+    //         const blob = new Blob([outputString], { type: 'application/json' });
+    //         const url = URL.createObjectURL(blob);
+    //         const a = document.createElement('a');
+    //         a.href = url;
+    //         a.download = fileName;
+    //         a.click();
+    //         URL.revokeObjectURL(url);
+    //     } catch (e) {
+    //         console.error("Export failed", e);
+    //     }
+    // });
 
     // ページのエクスポート (単一テキストファイル)
-    if (app.ports.exportFile) {
-        app.ports.exportFile.subscribe(function(data) {
-            const blob = new Blob([data.content], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = data.fileName;
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => {
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-            }, 0);
-        });
-    }
+    // if (app.ports.exportFile) {
+    //     app.ports.exportFile.subscribe(function(data) {
+    //         const blob = new Blob([data.content], { type: 'text/plain' });
+    //         const url = window.URL.createObjectURL(blob);
+    //         const a = document.createElement('a');
+    //         a.href = url;
+    //         a.download = data.fileName;
+    //         document.body.appendChild(a);
+    //         a.click();
+    //         setTimeout(() => {
+    //             document.body.removeChild(a);
+    //             window.URL.revokeObjectURL(url);
+    //         }, 0);
+    //     });
+    // }
 
     // 本・本棚の ZIP エクスポート
     if (app.ports.exportZip) {

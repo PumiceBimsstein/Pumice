@@ -4,12 +4,14 @@ import Type exposing (..)
 import Browser.Dom
 import Random
 import Task
+import Time
+import File.Download as Download
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, preventDefaultOn)
 import Html exposing (Attribute)
 import Json.Decode as Decode
 import JsonConverter exposing (decodeBook, decodeShelf)
-import Ports exposing (syncScroll, saveToStorage, scrollToTop, exportFile, exportZip)
+import Ports exposing (syncScroll, saveToStorage, scrollToTop, exportZip)
 
 -- MARK: 基本的な処理
 
@@ -1056,12 +1058,64 @@ applyExportPage extension state =
             let
                 fileName =
                     page.title ++ "." ++ extension
+                mimeType =
+                    if extension == "md" then
+                        "text/markdown"
+                    else
+                        "text/plain"
             in
+            Download.string fileName mimeType page.content
             -- 新しく作成するポートを呼び出す
-            exportFile { fileName = fileName, content = page.content }
+            --exportFile { fileName = fileName, content = page.content }
 
         Nothing ->
             Cmd.none
+
+-- 追加: バックアップ用のファイル名生成 (Pumice-backup_YYYYMMDD-HH-mm-ss.json)
+formatBackupFileName : Time.Zone -> Time.Posix -> String
+formatBackupFileName zone time =
+    let
+        year =
+            String.fromInt (Time.toYear zone time)
+
+        month =
+            String.fromInt (monthToInt (Time.toMonth zone time))
+                |> String.padLeft 2 '0'
+
+        day =
+            String.fromInt (Time.toDay zone time)
+                |> String.padLeft 2 '0'
+
+        hours =
+            String.fromInt (Time.toHour zone time)
+                |> String.padLeft 2 '0'
+
+        minutes =
+            String.fromInt (Time.toMinute zone time)
+                |> String.padLeft 2 '0'
+
+        seconds =
+            String.fromInt (Time.toSecond zone time)
+                |> String.padLeft 2 '0'
+    in
+    "Pumice-backup_" ++ year ++ month ++ day ++ "-" ++ hours ++ "-" ++ minutes ++ "-" ++ seconds ++ ".json"
+
+
+monthToInt : Time.Month -> Int
+monthToInt month =
+    case month of
+        Time.Jan -> 1
+        Time.Feb -> 2
+        Time.Mar -> 3
+        Time.Apr -> 4
+        Time.May -> 5
+        Time.Jun -> 6
+        Time.Jul -> 7
+        Time.Aug -> 8
+        Time.Sep -> 9
+        Time.Oct -> 10
+        Time.Nov -> 11
+        Time.Dec -> 12
 
 -- MARK:ファイルインポート
 
