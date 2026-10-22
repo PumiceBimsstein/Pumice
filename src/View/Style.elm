@@ -56,12 +56,12 @@ basecolors theme =
             }
 
         Dark ->
-            { text         = "text-[#CCC]"          -- 本文（やや温かいオフホワイト）
+            { text         = "text-zinc-300"--"text-[#CCC]"          -- 本文（やや温かいオフホワイト）
             , deco         = "text-[#333]"          -- ボタン上テキスト
             , accent       = "text-[#BBB9B0]"       -- テキスト用アクセント（primary の text 版）
             , textMuted    = "text-[#8B8980]"       -- ラベル・補助テキスト
-            , bg           = "bg-[#0F0F0E]"         -- ページ背景
-            , surface      = "bg-[#171716]"         -- パネル・サイドバー背景
+            , bg           = "bg-zinc-900"--"bg-[#0F0F0E]"         -- ページ背景
+            , surface      = "bg-zinc-950"--"bg-[#171716]"         -- パネル・サイドバー背景
             , brightAccent = "bg-[#303030]"         -- サイドバーボタン
             , primary      = "bg-[#C8A74B]"         -- ボタン背景（ゴールドアクセント）
             , searchbg     = "bg-yellow-200"         -- 検索ボックス背景

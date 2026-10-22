@@ -124,35 +124,7 @@ decodeDropPayload value =
     Decode.decodeValue decoder value
 
 
--- AppStateにインポートした本棚を追加する
-appendShelfData : Shelf -> AppState -> AppState
-appendShelfData newShelf state =
-    { state
-        | shelves = state.shelves ++ [ newShelf ]
-        , currentShelfId = newShelf.id
-        , currentBookId = Nothing
-        , currentPageIndex = 0
-    }
 
--- AppStateにインポートした本を追加する
-appendBookData : Book -> AppState -> AppState
-appendBookData newBook state =
-    let
-        updateShelves =
-            List.map
-                (\shelf ->
-                    if shelf.id == state.currentShelfId then
-                        { shelf | books = shelf.books ++ [ newBook ] }
-                    else
-                        shelf
-                )
-                state.shelves
-    in
-    { state
-        | shelves = updateShelves
-        , currentBookId = Just newBook.id
-        , currentPageIndex = 0
-    }
 
 
 --MARK:Shelf追加

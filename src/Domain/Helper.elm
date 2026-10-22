@@ -8,9 +8,14 @@ import Html.Events exposing (on, preventDefaultOn)
 import Html exposing (Attribute)
 import Json.Decode as Decode
 import JsonConverter exposing (decodeBook, decodeShelf)
-import Ports exposing (saveToStorage, scrollToTop)
+import Ports exposing (syncScroll, saveToStorage, scrollToTop, exportFile, exportZip)
 
 -- MARK: 基本的な処理
+
+-- Cmd なしの (Model, Cmd Msg) を生成
+withoutCmd : Model -> ( Model, Cmd Msg )
+withoutCmd m =
+    ( m, Cmd.none )
 
 setMode : Mode -> Model -> Model
 setMode newMode model =
@@ -53,11 +58,106 @@ getCurrentPage state =
                     |> List.head
             )
 
+-- 本棚を選択
+applyShelfSelection : String -> Model -> Model
+applyShelfSelection shelfId model =
+    let
+        oldPresent =
+            model.present
+    in
+    { model
+        | present = { oldPresent | currentShelfId = shelfId }
+        , mainViewMode = ShelfDetailView shelfId
+        , sidebarTab = BookListTab
+    }
+
+
+--MARK:モード変更
 
 -- VIEWモードに変える
 setMainViewMode : MainViewMode -> Model -> Model
 setMainViewMode viewMode model =
     { model | mainViewMode = viewMode }
+
+
+{-| 通常サイドバーの表示・非表示を切り替える -}
+toggleNormalSidebar : Model -> Model
+toggleNormalSidebar model =
+    let
+        nextMode =
+            if model.sidebarMode == NormalSidebar then
+                OverlaySidebar
+
+            else
+                NormalSidebar
+    in
+    model
+        |> updateSidebarMode nextMode
+
+
+{-| 左サイドバーの表示・非表示を切り替える -}
+toggleLeftSidebar : Model -> Model
+toggleLeftSidebar model =
+    let
+        nextMode =
+            if model.sidebarMode == LeftSidebar then
+                OverlaySidebar
+
+            else
+                LeftSidebar
+    in
+    model
+        |> updateSidebarMode nextMode
+
+
+{-| サイドバーモードを更新し、NormalSidebar 以外になった直後は必ずコントロールウィンドウを表示する -}
+updateSidebarMode : SidebarMode -> Model -> Model
+updateSidebarMode nextMode model =
+    let
+        nextWindowVisible =
+            if nextMode /= NormalSidebar then
+                True
+
+            else
+                model.isRightSideWindowVisible
+    in
+    { model
+        | sidebarMode = nextMode
+        , isRightSideWindowVisible = nextWindowVisible
+    }
+
+ensureSidebarTabOnEmpty : Model -> Model
+ensureSidebarTabOnEmpty model =
+    if List.isEmpty model.present.shelves then
+        { model | sidebarTab = ShelfListTab }
+    else
+        model
+
+--MARK:ページ変更
+
+{-| 指定された本を選択し、初期状態として1ページ目を表示する設定を行います -}
+applyBookSelection : String -> Model -> Model
+applyBookSelection bookId model =
+    let
+        present =
+            model.present
+
+        basePresent =
+            { present
+                | currentBookId = Just bookId
+                , currentPageIndex = 0
+            }
+
+        newPresent =
+            applyPageChange 0 basePresent
+    in
+    { model
+        | present = newPresent
+        , mainViewMode = PageView
+        , mode = ViewMode
+        , sidebarTab = TocTab
+        , scrollRatio = 0
+    }
 
 
 -- 次のページが存在するか判定
@@ -90,6 +190,67 @@ pageNavigationCmd =
 setRightSideWindowVisible : Bool -> Model -> Model
 setRightSideWindowVisible isVisible model =
     { model | isRightSideWindowVisible = isVisible }
+
+
+
+
+
+-- AppStateにインポートした本棚を追加する
+appendShelfData : Shelf -> AppState -> AppState
+appendShelfData newShelf state =
+    { state
+        | shelves = state.shelves ++ [ newShelf ]
+        , currentShelfId = newShelf.id
+        , currentBookId = Nothing
+        , currentPageIndex = 0
+    }
+
+-- AppStateにインポートした本を追加する
+appendBookData : Book -> AppState -> AppState
+appendBookData newBook state =
+    let
+        updateShelves =
+            List.map
+                (\shelf ->
+                    if shelf.id == state.currentShelfId then
+                        { shelf | books = shelf.books ++ [ newBook ] }
+                    else
+                        shelf
+                )
+                state.shelves
+    in
+    { state
+        | shelves = updateShelves
+        , currentBookId = Just newBook.id
+        , currentPageIndex = 0
+    }
+
+-- MARK:UNDO
+applyUndo : Model -> Model
+applyUndo model =
+    case model.past of
+        prev :: rest ->
+            { model
+                | past = rest
+                , present = prev
+                , future = model.present :: model.future
+            }
+
+        [] ->
+            model
+
+applyRedo : Model -> Model
+applyRedo model =
+    case model.future of
+        next :: rest ->
+            { model
+                | past = List.take 100 (model.present :: model.past)
+                , present = next
+                , future = rest
+            }
+
+        [] ->
+            model
 
 
 -- MARK:検索
@@ -219,6 +380,55 @@ normalizeEditBuffer buffer =
     { buffer | value = finalValue }
 
 
+-- MARK:スクロール同期
+-- スクロール位置から比率を計算
+calculateScroll : String -> Browser.Dom.Viewport -> Model -> Model
+calculateScroll _ vp model =
+    let
+        maxScroll =
+            vp.scene.height - vp.viewport.height
+
+        newRatio =
+            if maxScroll <= 0 then
+                0
+            else
+                vp.viewport.y / maxScroll
+    in
+    { model | scrollRatio = newRatio }
+
+
+-- 閲覧画面を指定された比率までスクロールさせるコマンド
+syncViewerScroll : Float -> Cmd Msg
+syncViewerScroll ratio =
+    Browser.Dom.getViewportOf "page-view-area"
+        |> Task.andThen
+            (\vp ->
+                let
+                    maxScroll =
+                        vp.scene.height - vp.viewport.height
+                in
+                Browser.Dom.setViewportOf "page-view-area" 0 (ratio * maxScroll)
+            )
+        |> Task.attempt (\_ -> NoOp)
+
+{-| モード変更に伴う非対称な副作用（スクロール同期とフォーカス）を一元管理するコマンド生成関数 -}
+modeTransitionCmd : Mode -> Float -> Cmd Msg
+modeTransitionCmd newMode scrollRatio =
+    case newMode of
+        EditMode ->
+            -- 閲覧 → 編集: JSポートへ比率を送り、エディタにフォーカスを当てる
+            Cmd.batch
+                [ syncScroll { targetId = "editor-area", ratio = scrollRatio }
+                , focusEditor
+                ]
+
+        ViewMode ->
+            -- 編集 → 閲覧: Elmネイティブの Browser.Dom でプレビュー画面のスクロールを復元
+            syncViewerScroll scrollRatio
+
+        ReorderMode ->
+            Cmd.none
+
 --MARK:scrollDecoder
 scrollDecoder : Decode.Decoder Browser.Dom.Viewport
 scrollDecoder =
@@ -279,7 +489,7 @@ dropWhileList predicate list =
                 list
 
 
--- MARK:マウス操作イベント
+-- MARK:マウス操作
 onDragStart : Msg -> Attribute Msg
 onDragStart msg =
     Html.Events.on "dragstart" (Decode.succeed msg)
@@ -329,7 +539,7 @@ stripEmphasis input =
         |> String.replace "**" ""
 
 
--- MARK:目次一覧(サイドバー)
+-- MARK:目次一覧
 -- viewHeadingList関連関数
 
 toHeadingData : List Heading -> HeadingData
@@ -814,6 +1024,114 @@ deleteBookFromShelves bookId shelves =
         )
         shelves
 
+-- MARK:ファイルエクスポート
+
+-- 指定された ID のブックを探してエクスポート用コマンドを発行する
+exportBookById : String -> AppState -> Cmd Msg
+exportBookById bookId state =
+    state.shelves
+        |> List.concatMap .books
+        |> List.filter (\b -> b.id == bookId)
+        |> List.head
+        |> Maybe.map (bookZipPayload >> exportZip)
+        |> Maybe.withDefault Cmd.none
+
+-- IDから本棚を探し、存在すれば ZIP コマンドを発行する
+exportShelfById : String -> List Shelf -> Cmd Msg
+exportShelfById shelfId shelves =
+    shelves
+        |> List.filter (\s -> s.id == shelfId)
+        |> List.head
+        |> Maybe.map (shelfZipPayload >> exportZip)
+        |> Maybe.withDefault Cmd.none
+
+applyExportPage : String -> AppState -> Cmd Msg
+applyExportPage extension state =
+    case getCurrentPage state of
+        Just page ->
+            let
+                fileName =
+                    page.title ++ "." ++ extension
+            in
+            -- 新しく作成するポートを呼び出す
+            exportFile { fileName = fileName, content = page.content }
+
+        Nothing ->
+            Cmd.none
+
+-- MARK:ファイルインポート
+
+processImportedString : String -> Model -> Result Decode.Error Model
+processImportedString jsonString currentModel =
+    jsonString
+        |> Decode.decodeString JsonConverter.decodeModel
+        |> Result.map (applyImportedModel currentModel)
+
+
+applyImportedModel : Model -> Model -> Model
+applyImportedModel prevModel importedModel =
+    let
+        historyModel =
+            pushToHistory prevModel
+    in
+    { importedModel
+        | past = historyModel.past
+        , present = importedModel.present
+        , future = []
+    }
+
+
+-- MARK:タイトル編集
+applyEdit : EditBuffer -> Model -> ( Model, Cmd Msg )
+applyEdit buffer model =
+    model
+        |> updatePresent (updateTitleByBuffer buffer)
+        |> clearEditing
+        |> notifyAndSave
+
+
+{-| 編集ターゲット（本棚か本か）に応じて AppState のタイトルを更新する -}
+updateTitleByBuffer : EditBuffer -> AppState -> AppState
+updateTitleByBuffer buffer state =
+    case buffer.target of
+        ShelfTitle ->
+            updateShelfTitle buffer.id buffer.value state
+
+        BookTitle ->
+            updateBookTitle buffer.id buffer.value state
+
+clearEditing : Model -> Model
+clearEditing model =
+    { model | editing = Nothing }
+
+-- AppState内の指定した本棚のタイトルを更新する
+updateShelfTitle : String -> String -> AppState -> AppState
+updateShelfTitle shelfId newTitle state =
+    let
+        updateFn shelf =
+            if shelf.id == shelfId then
+                { shelf | name = newTitle }
+            else
+                shelf
+    in
+    { state | shelves = List.map updateFn state.shelves }
+
+-- AppState内の指定した本のタイトルを更新する
+updateBookTitle : String -> String -> AppState -> AppState
+updateBookTitle bookId newTitle state =
+    let
+        -- 各本棚の中の「本リスト」に対して更新をかける
+        updateBookInList book =
+            if book.id == bookId then
+                { book | title = newTitle }
+            else
+                book
+
+        updateShelf shelf =
+            { shelf | books = List.map updateBookInList shelf.books }
+    in
+    { state | shelves = List.map updateShelf state.shelves }
+
 
 -- MARK:ホイールの回転を判定
 wheelDecoder : Msg -> Msg -> Decode.Decoder Msg
@@ -917,3 +1235,20 @@ updateAppState newPresent model =
         , present = newPresent
         , future = []
     }
+
+-- AppState を更新し、履歴を保存
+updatePresent : (AppState -> AppState) -> Model -> Model
+updatePresent updater model =
+    updateAppState (updater model.present) model
+
+
+-- 本データを本棚に追加し、履歴を保存
+addImportedBook : String -> Book -> Model -> Model
+addImportedBook newId importedBook =
+    updatePresent (appendBookData { importedBook | id = newId })
+
+
+-- 本棚データを追加し、履歴を保存
+addImportedShelf : String -> Shelf -> Model -> Model
+addImportedShelf newId importedShelf =
+    updatePresent (appendShelfData { importedShelf | id = newId })

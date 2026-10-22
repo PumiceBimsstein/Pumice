@@ -13,7 +13,7 @@ highlight-code .theme-White {
 
 
 /* Darkテーマ */
-.theme-Dark .hljs-keyword { color: #41d497; font-weight: bold; }
+.theme-Dark .hljs-keyword { color: #35ac7a; font-weight: bold; }
 .theme-Dark .hljs-string { color: #e07130; } /* 枯草色に近い緑 */
 .theme-Dark .hljs-comment { color: #6B6960; font-style: italic; } /* textMutedを使用 */
 .theme-Dark .hljs-title { color: #C9A84C; } /* より明るいゴールド */

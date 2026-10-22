@@ -98,13 +98,13 @@ footerMiniBtnStyle theme =
     tw
         [ "px-2.5"
         , "py-1"
-        , "text-xs"
+        , "text-xs", "opacity-70"
         , "font-semibold"
         , "border"
         , (basecolors theme).rounded
         , (basecolors theme).borderBtn
         , (basecolors theme).text
-        , "hover:opacity-70"
+        , "hover:opacity-90"
         ]
 
 viewBookTitle : Model -> Book -> Html Msg

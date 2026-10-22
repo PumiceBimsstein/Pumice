@@ -69,7 +69,7 @@ viewSortableShelfCard model index shelf =
 shelfListView : Model -> Html Msg
 shelfListView model =
     div
-        (class (shelfListContainerStyle model.colorTheme)
+        (class (shelfListContainerStyle model)
             :: Style.scrollbarStyle model.colorTheme
         )
         [ shelfListTitle model
@@ -98,6 +98,7 @@ shelfListMenu model =
         in
         div [ class shelfListMenuStyle ]
             [ shelfFileImport model.colorTheme
+            , p [class (menuButtonStyle model.colorTheme)][text "/"]
             , makeNewShelf model.colorTheme isGuiding
             ]
     else
@@ -114,7 +115,7 @@ shelfFileImport theme =
         [ text "Import" ]
 
 
--- 2つ以下のときに animate-pulse（ゆっくり点滅）を付与
+-- 2つ以下のときに animate-pulse（点滅）を付与
 makeNewShelf : ColorTheme -> Bool -> Html Msg
 makeNewShelf theme isGuiding =
     let
@@ -122,9 +123,7 @@ makeNewShelf theme isGuiding =
             if isGuiding then
                 tw
                     [ "animate-pulse"
-                    -- 速さ：秒数で自由に変更可能（例: 3s は標準よりさらにゆったり）
                     , "[animation-duration:2.5s]"
-                    -- 色：amber（黄色/オレンジ系）や emerald（緑系）、sky（青系）などに変更可能
                     , "ring-2 ring-amber-400 ring-offset-1 ring-offset-transparent"
                     ]
 
@@ -135,35 +134,58 @@ makeNewShelf theme isGuiding =
         [ class (tw [ menuButtonStyle theme, pulseClass ])
         , onClick CreateShelf
         ]
-        [ text "New Shelf" ]
+        [ text "+ Shelf" ]
+
+-- shelfListMenuStyle : String
+-- shelfListMenuStyle =
+--     tw  [ "absolute"
+--         , "top-4"
+--         , "right-4"
+--         , "z-10"
+--         , "flex"
+--         , "flex-col"
+--         , "gap-1.5"
+--         , "p-1.5"
+--         ]
 
 shelfListMenuStyle : String
 shelfListMenuStyle =
     tw  [ "absolute"
-        , "top-4"
-        , "right-4"
+        , "top-6"
+        , "right-8"
         , "z-10"
         , "flex"
-        , "flex-col"
-        , "gap-1.5"
-        , "p-1.5"
+        , "items-center"
+        , "gap-3"               -- 横並びの間隔
+        , "font-mono"
         ]
 
 
 menuButtonStyle : ColorTheme -> String
 menuButtonStyle theme =
-    tw  [ "px-2.5"
-        , "py-1"
-        , "text-xs"
-        , "font-medium", "shadow-sm"
-        , "border"
-        , "transition-all duration-100"
-        , "hover:scale-105 hover:brightness-110 hover:shadow-md"
-        , (basecolors theme).borderBtn
-        , (basecolors theme).text
-        , (basecolors theme).rounded
-        , (basecolors theme).bg
+    tw  [ "text-sm"
+        , "cursor-pointer"
+        , "bg-transparent"      -- 背景なし
+        , "border-0"            -- 枠線なし
+        , "p-0"                 -- 余白なし
+        , "opacity-70"
+        , "hover:opacity-100"
+        , "hover:underline"     -- ホバーで下線
+        , "transition-opacity"
+        , (basecolors theme).accent
         ]
+    -- tw  [ "px-2.5"
+    --     , "py-1"
+    --     , "text-xs"
+    --     , "font-medium", "shadow-sm"
+    --     , "border"
+    --     , "transition-all duration-100"
+    --     , "hover:scale-105 hover:brightness-110 hover:shadow-md"
+    --     , (basecolors theme).borderBtn
+    --     , (basecolors theme).text
+    --     , (basecolors theme).rounded
+    --     , (basecolors theme).bg
+    --     ]
 
 
 shelfGrid : Model -> List Shelf -> Html Msg
@@ -172,11 +194,24 @@ shelfGrid model shelves =
         (List.indexedMap (viewSortableShelfCard model) shelves)
 
 
-shelfListContainerStyle : ColorTheme -> String
-shelfListContainerStyle theme =
-    tw  [ "px-8", "py-8", "h-full", "overflow-y-auto"
-        , (basecolors theme).bg
+shelfListContainerStyle : Model -> String
+shelfListContainerStyle model =
+    tw  [ shelfViewPadding model.sidebarMode
+        , "py-8"
+        , "h-full"
+        , "overflow-y-auto"
+        , (basecolors model.colorTheme).bg
         ]
+
+
+shelfViewPadding : SidebarMode -> String
+shelfViewPadding sidebarMode =
+    case sidebarMode of
+        NormalSidebar ->
+            "px-8"
+
+        _ ->
+            "px-32"
 
 
 shelfListTitleStyle : ColorTheme -> String
@@ -368,7 +403,7 @@ shelfDetailView model shelfId =
     case maybeShelf of
         Just shelf ->
             div
-                (class (shelfDetailViewStyle model.colorTheme)
+                (class (shelfDetailViewStyle model)
                     :: Style.scrollbarStyle model.colorTheme
                 )
                 [ shelfDetailTitle model shelf.name
@@ -380,13 +415,14 @@ shelfDetailView model shelfId =
             viewEmptyState model
 
 
-shelfDetailViewStyle : ColorTheme -> String
-shelfDetailViewStyle theme =
-    tw  [ "p-8"
+shelfDetailViewStyle : Model -> String
+shelfDetailViewStyle model =
+    tw  [ shelfViewPadding model.sidebarMode
+        , "py-8"
         , "overflow-y-auto"
         , "h-full"
-        , (basecolors theme).text
-        , (basecolors theme).bg
+        , (basecolors model.colorTheme).text
+        , (basecolors model.colorTheme).bg
         ]
 
 
@@ -407,6 +443,7 @@ bookListMenu model shelfId =
     if model.mainViewMode == (ShelfDetailView shelfId) then
         div [ class shelfListMenuStyle ]
             [ bookFileImport model.colorTheme
+            , p [class (menuButtonStyle model.colorTheme)][text "/"]
             , makeNewBook model.colorTheme
             ]
     else
@@ -429,7 +466,7 @@ makeNewBook theme =
         [ class (menuButtonStyle theme)
         , onClick CreateBook
         ]
-        [ text "New Book" ]
+        [ text "+ Book" ]
 
 
 -- 本一覧グリッド

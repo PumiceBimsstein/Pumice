@@ -40,12 +40,12 @@ viewLayout model present =
             
             LeftSidebar ->
                 text ""
-        , if (model.sidebarMode == OverlaySidebar || model.sidebarMode == LeftSidebar)
-                && model.isRightSideWindowVisible then
+        , if isMiniWindowMode model.sidebarMode then
             overlaySidebarArea model present
           else
             text ""
         ]
+
 
 
 layoutContainer : ColorTheme -> String
@@ -62,11 +62,46 @@ rightsidebarWrapper : String
 rightsidebarWrapper =
     tw [ "flex-shrink-0", "h-full" ]
 
+isMiniWindowMode : SidebarMode -> Bool
+isMiniWindowMode sidebarMode =
+    sidebarMode == OverlaySidebar || sidebarMode == LeftSidebar
 
 overlaySidebarArea : Model -> AppState -> Html Msg
 overlaySidebarArea model present =
     div
-        [ class (tw [ "fixed", "bottom-12", "right-4", "z-40", "scale-[0.85]", "origin-bottom-right", "shadow-xl" ]) 
-        , preventDefaultOn "wheel" (Decode.succeed ( NoOp, True ))
-        ]
+        (overlaySidebarAttrs model.isRightSideWindowVisible)
         [ rightSideWindow model present ]
+
+-- overlaySidebarArea : Model -> AppState -> Html Msg
+-- overlaySidebarArea model present =
+--     div
+--         [ class (tw [ "fixed", "bottom-12", "right-4", "z-40", "scale-[0.85]", "origin-bottom-right", "shadow-xl" ]) 
+--         , preventDefaultOn "wheel" (Decode.succeed ( NoOp, True ))
+--         ]
+--         [ rightSideWindow model present ]
+
+{-| インラインスタイルを用いて、Tailwindのビルド環境に依存せず確実にアニメーションさせる属性リスト -}
+overlaySidebarAttrs : Bool -> List (Html.Attribute Msg)
+overlaySidebarAttrs isVisible =
+    let
+        baseAttrs =
+            [ class (tw [ "fixed", "bottom-12", "right-4", "z-40", "shadow-xl" ])
+            , preventDefaultOn "wheel" (Decode.succeed ( NoOp, True ))
+            , style "transform-origin" "bottom right"
+            , style "transition" "transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.18s ease-out"
+            ]
+
+        visibilityAttrs =
+            if isVisible then
+                [ style "opacity" "1"
+                , style "transform" "scale(0.85) translateY(0)"
+                , style "pointer-events" "auto"
+                ]
+
+            else
+                [ style "opacity" "0"
+                , style "transform" "scale(0) translateY(12px)"
+                , style "pointer-events" "none"
+                ]
+    in
+    baseAttrs ++ visibilityAttrs

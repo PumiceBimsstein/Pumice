@@ -22,25 +22,6 @@ window.elmAppPromise.then(app => {
 
 
     // 見出しにスクロール
-    // requestAnimationFrameでページ遷移を待ってからスクロールさせている
-    // if (app.ports.scrollToIndex) {
-    //     app.ports.scrollToIndex.subscribe((headingText) => {
-    //         requestAnimationFrame(() => {
-    //             const headings = document.querySelectorAll('h1, h2, h3');
-    //             const target = Array.from(headings)
-    //                 .find(el => el.textContent.includes(headingText));
-
-    //             if (target) {
-    //                 target.scrollIntoView({
-    //                     behavior: 'smooth',
-    //                     block: 'start'
-    //                 });
-    //             }
-    //         });
-    //     });
-    // }
-    
-    // 見出しにスクロール
     if (app.ports.scrollToIndex) {
         app.ports.scrollToIndex.subscribe((targetIndex) => {
             requestAnimationFrame(() => {
@@ -71,23 +52,6 @@ window.elmAppPromise.then(app => {
         });
     }
 
-    // 目次のハイライト項目へスクロール追従
-    // if (app.ports && app.ports.scrollToTocHeading) {
-    //     app.ports.scrollToTocHeading.subscribe(() => {
-    //         requestAnimationFrame(() => {
-    //             const tocArea = document.getElementById('toc-area');
-    //             if (tocArea) {
-    //                 const activeItem = tocArea.querySelector('.border-l-4');
-    //                 if (activeItem) {
-    //                     activeItem.scrollIntoView({
-    //                         behavior: 'smooth',
-    //                         block: 'start'
-    //                     });
-    //                 }
-    //             }
-    //         });
-    //     });
-    // }
 
     if (app.ports && app.ports.scrollToTocHeading) {
         app.ports.scrollToTocHeading.subscribe(() => {

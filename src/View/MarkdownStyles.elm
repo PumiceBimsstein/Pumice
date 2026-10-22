@@ -9,6 +9,7 @@ module View.MarkdownStyles exposing
 import Html exposing (Attribute, Html)
 import Html.Attributes exposing (class)
 import Type exposing (ColorTheme(..), FontSize(..), RenderStyle(..))
+import View.Style as Style exposing (..)
 
 
 markdownContainer : ColorTheme -> RenderStyle -> FontSize -> List (Attribute msg)
@@ -48,40 +49,62 @@ themeColors theme style =
     case theme of
         Light ->
             let
+                base = basecolors theme
                 common = "bg-[#fbf8f5] text-[#4a453e] border-[rgba(74,69,62,0.12)]"
                 elements =
                     [ "[&_h1]:text-[#c86d51] [&_h1]:border-b-0"
                     , "[&_h2]:text-[#c86d51] [&_h2]:border-b-0"
                     , "[&_h3]:text-[#c86d51]"
-                    , "[&_h4]:text-[#c86d51]", "[&_h5]:text-[#c86d51]", "[&_h6]:text-[#c86d51]"
-                    , "[&_strong]:text-[#38332c] [&_strong]:font-bold"
-                    , "[&_a]:text-[#b85d41] [&_a]:underline-offset-4 [&_a]:decoration-[#b85d41]/30 hover:[&_a]:decoration-[#b85d41]"
-                    , "[&_blockquote]:border-l-[#b85d41] [&_blockquote]:text-[#7a7267] [&_blockquote]:italic"
+                    , "[&_h4]:text-[#c86d51]"
+                    , "[&_h5]:text-[#c86d51]"
+                    , "[&_h6]:text-[#c86d51]"
+                    , "[&_strong]:text-[#38332c]"
+                    , "[&_strong]:font-bold"
+                    , "[&_a]:text-[#b85d41]"
+                    , "[&_a]:underline-offset-4"
+                    , "[&_a]:decoration-[#b85d41]/30"
+                    , "hover:[&_a]:decoration-[#b85d41]"
+                    , "[&_blockquote]:border-l-[#b85d41]"
+                    , "[&_blockquote]:text-[#7a7267]"
+                    , "[&_blockquote]:italic"
                     , "[&_hr]:border-[rgba(74,69,62,0.12)]"
-                    , "[&_th]:text-[#38332c] [&_th]:bg-[#f3efe6] [&_th]:border-[rgba(74,69,62,0.12)]"
+                    , "[&_th]:text-[#38332c]"
+                    , "[&_th]:bg-[#f3efe6]"
+                    , "[&_th]:border-[rgba(74,69,62,0.12)]"
                     , "[&_td]:border-[rgba(74,69,62,0.12)]"
                     ]
             in
-            String.join " " (common :: elements)
+            --String.join " " (common :: elements)
+            tw (common :: elements)
 
         Dark ->
             let
-                common = "bg-[#0F0F0E] text-[#D3D3D3] border-[#2A2A27]"
-                
+                c = basecolors theme
+                --common = "bg-[#0F0F0E] text-[#D3D3D3] border-[#2A2A27]"
+                common = tw [c.bg, c.text, "border-[#2A2A27]"]
                 elements =
-                    [ "[&_h1]:text-[#C9A84C] [&_h1]:border-b-0"
+                    tw [ "[&_h1]:text-[#C9A84C] [&_h1]:border-b-0"
                     , "[&_h2]:text-[#C9A84C] [&_h2]:border-b-0"
                     , "[&_h3]:text-[#C9A84C]"
-                    , "[&_h4]:text-[#C9A84C]", "[&_h5]:text-[#C9A84C]", "[&_h6]:text-[#C9A84C]"
-                    , "[&_strong]:text-white [&_strong]:font-bold"
-                    , "[&_a]:text-[#C9A84C] [&_a]:no-underline hover:[&_a]:text-[#E8E6E0]" --transition-colors"
-                    , "[&_blockquote]:border-l-[#C9A84C] [&_blockquote]:text-[#6B6960] [&_blockquote]:italic"
+                    , "[&_h4]:text-[#C9A84C]"
+                    , "[&_h5]:text-[#C9A84C]"
+                    , "[&_h6]:text-[#C9A84C]"
+                    , "[&_strong]:text-white"
+                    , "[&_strong]:font-bold"
+                    , "[&_a]:text-[#C9A84C]"
+                    , "[&_a]:no-underline"
+                    , "hover:[&_a]:text-[#E8E6E0]" --transition-colors"
+                    , "[&_blockquote]:border-l-[#C9A84C]"
+                    , "[&_blockquote]:text-[#6B6960]"
+                    , "[&_blockquote]:italic"
                     , "[&_hr]:border-[#2A2A27]"
-                    , "[&_th]:text-[#C9A84C] [&_th]:bg-[#171716] [&_th]:border-[#444]"
+                    , "[&_th]:text-[#C9A84C]"
+                    , "[&_th]:bg-[#171716]"
+                    , "[&_th]:border-[#444]"
                     , "[&_td]:border-[#2A2A27]"
                     ]
             in
-            String.join " " (common :: elements)
+            tw [common, elements]
 
         Magical ->
             let
@@ -91,14 +114,24 @@ themeColors theme style =
                     case style of
                         Academic ->
                             [ "[&_h1]:border-b-[#d9a74a]/30"
-                            , "[&_h1]:bg-gradient-to-r [&_h1]:from-transparent [&_h1]:via-[#d9a74a]/80 [&_h1]:to-transparent"
-                            , "[&_h1]:bg-[length:100%_1px] [&_h1]:bg-bottom [&_h1]:bg-no-repeat"
+                            , "[&_h1]:bg-gradient-to-r"
+                            , "[&_h1]:from-transparent"
+                            , "[&_h1]:via-[#d9a74a]/80"
+                            , "[&_h1]:to-transparent"
+                            , "[&_h1]:bg-[length:100%_1px]"
+                            , "[&_h1]:bg-bottom"
+                            , "[&_h1]:bg-no-repeat"
                             ]
 
                         Mystical ->
                             [ "[&_h1]:border-b-[#d9a74a]/30"
-                            , "[&_h1]:bg-gradient-to-r [&_h1]:from-transparent [&_h1]:via-[#d9a74a]/80 [&_h1]:to-transparent"
-                            , "[&_h1]:bg-[length:100%_1px] [&_h1]:bg-bottom [&_h1]:bg-no-repeat"
+                            , "[&_h1]:bg-gradient-to-r"
+                            , "[&_h1]:from-transparent"
+                            , "[&_h1]:via-[#d9a74a]/80"
+                            , "[&_h1]:to-transparent"
+                            , "[&_h1]:bg-[length:100%_1px]"
+                            , "[&_h1]:bg-bottom"
+                            , "[&_h1]:bg-no-repeat"
                             ]
 
                         _ ->
@@ -115,17 +148,22 @@ themeColors theme style =
                     , "[&_h6]:text-[#d9a74a] [&_h6]:opacity-80"
                     , "[&_strong]:text-[#e0d5c0]"
                     , "[&_strong]:font-bold"
-                    , "[&_a]:text-[#d9a74a] [&_a]:no-underline hover:[&_a]:underline"
-                    , "[&_blockquote]:border-l-[#d9a74a] [&_blockquote]:text-[#8b7355] [&_blockquote]:italic"
+                    , "[&_a]:text-[#d9a74a]"
+                    , "[&_a]:no-underline"
+                    , "hover:[&_a]:underline"
+                    , "[&_blockquote]:border-l-[#d9a74a]"
+                    , "[&_blockquote]:text-[#8b7355]"
+                    , "[&_blockquote]:italic"
                     , "[&_hr]:border-[#8b7355]/30"
-                    , "[&_th]:text-[#d9a74a] [&_th]:border-[#8b7355]/40"
+                    , "[&_th]:text-[#d9a74a]"
+                    , "[&_th]:border-[#8b7355]/40"
                     , "[&_td]:border-[#8b7355]/20"
                     ]
             in
-            String.join " " (common :: elements)
+            tw (common :: elements)
 
 
--- 検索結果ハイライト
+-- MARK:検索結果ハイライト
 highlightText : String -> String -> List (Html msg)
 highlightText query txt =
     if String.isEmpty query then
@@ -213,7 +251,7 @@ fontSizeClass size =
         Large -> "text-2xl prose-2xl"
 
 
--- コードスパンとコードブロックのスタイルはテーマに応じて変える
+-- MARK:コードスパン
 codeSpanStyle : ColorTheme -> RenderStyle -> Attribute msg
 codeSpanStyle theme _ =
     let
@@ -221,15 +259,16 @@ codeSpanStyle theme _ =
         colors =
             case theme of
                 Light   -> "bg-[#f4efe6] text-[#24292e] border-gray-300 rounded"
-                Dark    -> "bg-[#171716] text-[#d2691e] border-[#3A3A36] [&_code]:text-[#54cfe8] rounded"
+                Dark    -> tw [(basecolors theme).surface, "text-[#d2691e] border-[#3A3A36] [&_code]:text-[#54cfe8] rounded"]
                 Magical -> "bg-[#1a1a2e] text-[#a07d42] border-[#8b7355]/40 [&_code]:text-[#a07d42]"
     in
     class (common ++ " " ++ colors)
 
-
+-- MARK:コードブロック
 codeBlockStyle : ColorTheme -> Attribute msg
 codeBlockStyle theme =
     let
+        c = basecolors theme
         common = "my-4 overflow-x-auto border block font-mono min-h-[3rem]"
         colors =    -- highlight.jsが効かなかった場合はここの設定が反映される
             case theme of
@@ -237,7 +276,8 @@ codeBlockStyle theme =
                     tw  ["bg-[#f4efe6]", "text-[#3c4043]", "rounded-lg"--edeef1--f4efe6
                         , "border-[#dadce0]", "[&_code]:text-[#3c4043]"]
                 Dark -> 
-                    tw  ["bg-[#171716]", "text-[#E8E6E0]", "rounded-lg"
+                    tw  [ c.surface, "text-[#E8E6E0]", "bg-[#171716]"
+                        , "rounded-lg"
                         , "border-[#3A3A36]", "[&_code]:text-[#E8E6E0]"]
                 Magical -> 
                     tw  ["bg-[#1a1a2e]", "text-[#a07d42]"

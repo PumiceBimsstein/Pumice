@@ -157,28 +157,12 @@ fileMenuButtonStyle theme =
         ]
 
 
--- sidebarToggle : Model -> Html Msg
--- sidebarToggle model =
---     button
---         [ class (tw ["mt-3", (categoryBtn model.colorTheme)])
---         , onClick ToggleNormalSidebar
---         ]
---         [ text "Hide Sidebar" ]
-
 scrollableArea : Html Msg
 scrollableArea =
     div [ class "flex-1 overflow-y-auto px-3 py-2"
         , Html.Events.on "wheel" (wheelDecoder PrevPage NextPage)
         , title "Scroll to change page"][]
 
-
--- bottomStatusArea : Model -> AppState -> Html Msg
--- bottomStatusArea model present =
---     div
---         [ class "flex flex-col gap-2 mt-auto" ]
---         [ viewShelfBookIcon model
---         , bookPageCounter model.colorTheme present
---         ]
 
 bottomStatusArea : Model -> AppState -> Html Msg
 bottomStatusArea model present =
