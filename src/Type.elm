@@ -262,4 +262,5 @@ type Msg
     | CloseRightSideWindow  -- 追加
     | AddGuideShelf
     | SelectMenuItem Msg
+    | ResetApp
     | NoOp

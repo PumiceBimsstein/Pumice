@@ -272,7 +272,7 @@ functionButton model =
             isOpen
             Above
             model.colorTheme
-            [ ( "Reset", ExportData )
+            [ ( "Reset", ResetApp )
             , ( "Guide Pages", AddGuideShelf )
             ]
         ]

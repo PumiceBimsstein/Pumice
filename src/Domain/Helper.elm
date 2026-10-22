@@ -2,6 +2,7 @@ module Domain.Helper exposing (..)
 
 import Type exposing (..)
 import Browser.Dom
+import Random
 import Task
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, preventDefaultOn)
@@ -1024,6 +1025,9 @@ deleteBookFromShelves bookId shelves =
         )
         shelves
 
+
+
+
 -- MARK:ファイルエクスポート
 
 -- 指定された ID のブックを探してエクスポート用コマンドを発行する
@@ -1210,6 +1214,7 @@ decodeIncomingMsg value =
                 _ -> NoOp
         _ ->
             NoOp
+
 
 
 -- MARK:履歴保存

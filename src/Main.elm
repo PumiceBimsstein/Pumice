@@ -15,6 +15,7 @@ import Domain.Helper exposing (..)
 import Domain.AddItem exposing (..)
 import Domain.Selector exposing (..)
 import Domain.Guide exposing (defaultAppState)
+import Init exposing (..)
 import Ports exposing
     ( scrollToIndex
     , scrollToTop
@@ -58,39 +59,6 @@ init flags =
     in
     ( initialModel, Cmd.none )
 
-initDefaultModel : Random.Seed -> Model
-initDefaultModel seed =
-    initModelWithAppState seed defaultAppState
-
-
--- 指定した AppState と Seed で初期UI状態を組み立てる基底関数
-initModelWithAppState : Random.Seed -> AppState -> Model
-initModelWithAppState seed appState =
-    { past = []
-    , present = appState
-    , future = []
-    , seed = seed
-    , mainViewMode = PageView
-    , mode = ViewMode
-    , sidebarTab = TocTab
-    , sidebarMode = NormalSidebar
-    , searchText = ""
-    , editing = Nothing
-    , fontSize = Medium
-    , colorTheme = Light
-    , renderStyle = Standard
-    , scrollRatio = 0
-    , headingPositions = []
-    , draggingState = Nothing
-    , pageCreationBuffer = []
-    , pageCreationTitle = ""
-    , visibleHeadingLevel = H3
-    , contentWidth = Wide
-    , isSidebarOverlaid = False
-    , isRightSideWindowVisible = True
-    , exportFormat = FormatTxt
-    , openMenuId = Nothing
-    }
 
 -- Model全体のデコード失敗時に、AppState単体での復元を試みる
 restoreFallbackAppState : Decode.Value -> AppState
@@ -397,6 +365,9 @@ update msg model =
                     update actionMsg closedModel
             in
             ( newModel, cmd )
+
+        ResetApp ->
+            model |> resetWithBackup
 
         NoOp ->
             ( model, Cmd.none )
