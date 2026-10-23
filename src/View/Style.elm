@@ -35,17 +35,17 @@ basecolors : ColorTheme -> ThemeColors
 basecolors theme =
     case theme of
         Light ->
-            { text         = "text-[#2D2A26]"--"text-[#2D2A26]"
+            { text         = "text-[#2D2A26]"
             , deco         = "text-white"
             , accent       = "text-[#C86D51]"
             , textMuted    = "text-[#7A7870]"
-            , bg           = "bg-[#FBF8F5]"--"bg-[#F5F4F0]"
-            , surface      = "bg-[#E9E3DB]"--"bg-white"
-            , brightAccent = "bg-[#DCD4C9]"--"bg-[#F8F9FA]"
+            , bg           = "bg-[#FBF8F5]"
+            , surface      = "bg-[#E9E3DB]"
+            , brightAccent = "bg-[#DCD4C9]"
             , primary      = "bg-[#C86D51]"
             , searchbg     = "bg-[#C86D51]"
             , border       = "border-[#F5F4F0]"
-            , borderBtn    = "border-[#c6c3be]"--"border-[#EED]" [#DAD2C7]
+            , borderBtn    = "border-[#c6c3be]"
             , borderUnder  = "border-[#C86D51]"
             , borderStrong = "border-[#C86D51]"
             , rounded      = "rounded-lg"
@@ -56,19 +56,19 @@ basecolors theme =
             }
 
         Dark ->
-            { text         = "text-zinc-300"--"text-[#CCC]"          -- 本文（やや温かいオフホワイト）
-            , deco         = "text-[#333]"          -- ボタン上テキスト
-            , accent       = "text-[#BBB9B0]"       -- テキスト用アクセント（primary の text 版）
-            , textMuted    = "text-[#8B8980]"       -- ラベル・補助テキスト
-            , bg           = "bg-zinc-900"--"bg-[#0F0F0E]"         -- ページ背景
-            , surface      = "bg-[#151515]"--"bg-[#171716]"         -- パネル・サイドバー背景
+            { text         = "text-zinc-300"        -- 本文
+            , deco         = "text-[#333]"          -- ボタン
+            , accent       = "text-[#BBB9B0]"       -- アクセント
+            , textMuted    = "text-[#8B8980]"       -- ラベル
+            , bg           = "bg-zinc-900"          -- ページ背景
+            , surface      = "bg-[#151515]"         -- パネル・サイドバー背景
             , brightAccent = "bg-[#303030]"         -- サイドバーボタン
-            , primary      = "bg-[#C8A74B]"         -- ボタン背景（ゴールドアクセント）
-            , searchbg     = "bg-yellow-200"         -- 検索ボックス背景
-            , border       = "border-[#171716]"     -- 通常ボーダー
+            , primary      = "bg-[#C8A74B]"         -- ボタンアクセント
+            , searchbg     = "bg-yellow-200"        -- 検索ボックス背景
+            , border       = "border-[#171716]"
             , borderBtn    = "border-[#505050]"
             , borderUnder  = "border-[#333]"
-            , borderStrong = "border-[#C9A84C]"     -- フォーカス・強調ボーダー
+            , borderStrong = "border-[#C9A84C]"
             , rounded      = "rounded"
             , scrollThumb  = "#969696"
             , scrollTrack  = "#0F0F0E"

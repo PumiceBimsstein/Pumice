@@ -69,7 +69,6 @@ viewHeadingItem theme currentPageIndex currentHeading h isSectionHit =
     div
         [ class (tw (buildHeadingItemClass theme h currentPageIndex currentHeading isSectionHit))
         , style "font-family" (basecolors theme).fontMono
-        --, onClick (JumpToHeading h.pageIndex h.text)
         , onClick (JumpToHeading h.pageIndex (String.fromInt h.order))
         ]
         [ text (stripEmphasis h.text) ]

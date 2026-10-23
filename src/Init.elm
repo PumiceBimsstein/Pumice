@@ -2,7 +2,7 @@ module Init exposing (initDefaultModel, initModelWithAppState, resetWithBackup)
 
 
 import Random
-import Json.Decode as Decode
+-- import Json.Decode as Decode
 import JsonConverter exposing (..)
 import Type exposing (..)
 import Time
@@ -40,9 +40,9 @@ initModelWithAppState seed appState =
     , pageCreationTitle = ""
     , visibleHeadingLevel = H3
     , contentWidth = Wide
-    , isSidebarOverlaid = False
+    -- , isSidebarOverlaid = False
     , isRightSideWindowVisible = True
-    , exportFormat = FormatTxt
+    -- , exportFormat = FormatTxt
     , openMenuId = Nothing
     , modalAlert = Nothing
     }
@@ -66,7 +66,7 @@ resetWithBackup zone time model =
     in
     ( newModel
     , Cmd.batch
-        [ Download.string fileName "application/json" backupJson -- 直接ダウンロード
+        [ Download.string fileName "application/json" backupJson
         , saveToStorage (JsonConverter.encodeModel newModel)
         , scrollToTop ()
         ]

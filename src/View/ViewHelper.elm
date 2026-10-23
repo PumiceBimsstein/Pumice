@@ -16,9 +16,7 @@ import Json.Decode as Decode
 import Domain.Helper exposing (..)
 
 
--- ================================================================
--- 汎用セレクター
--- ================================================================
+-- MARK:汎用セレクター
 
 viewBaseSelector :
     (String -> msg)
@@ -158,7 +156,6 @@ renderMenuOverlay : Html Msg
 renderMenuOverlay =
     div
         [ class "fixed inset-0 z-40 cursor-default bg-transparent"
-                --"fixed inset-0 z-20 cursor-default"
         , stopClickPropagation CloseMenu
         ]
         []
@@ -181,28 +178,7 @@ renderMenuItem theme ( label, msg ) =
         [ text label ]
 
 
--- dropdownMenuStyle : MenuDirection -> ColorTheme -> String
--- dropdownMenuStyle direction theme =
---     let
---         bgcolor =
---             case theme of
---                 Light   -> tw [(basecolors theme).bg, (basecolors theme).borderStrong]
---                 Dark    -> tw [(basecolors theme).primary, "border-black"]
---                 Magical -> tw [(basecolors theme).primary, (basecolors theme).borderBtn]
---     in
---     tw
---         [ dropdownPositionStyle direction
---         , "z-20", "flex", "flex-col"--, "gap-1", "py-1"
---         , "border", "shadow-lg"
---         , "min-w-max"
---         , (basecolors theme).brightAccent
---         --, (basecolors theme).borderBtn
---         --, (basecolors theme).rounded
---         , bgcolor
---         ]
-
-
-{-| メニュー全体の浮遊パネルスタイル -}
+-- メニュー全体の浮遊パネルスタイル
 dropdownMenuStyle : MenuDirection -> ColorTheme -> String
 dropdownMenuStyle direction theme =
     let
@@ -210,11 +186,11 @@ dropdownMenuStyle direction theme =
             [ dropdownPositionStyle direction
             , "z-50"
             , "flex flex-col"
-            , "p-1.5"                  -- 内側に適度な余白を取る
-            , "min-w-[150px]"          -- 安定した横幅
-            , "border shadow-xl"       -- 浮かび上がる陰影
-            , "backdrop-blur-sm"       -- すりガラス風の上品な質感
-            , "animate-[fadeIn_0.1s_ease-out]" -- ふわっと表示
+            , "p-1.5"
+            , "min-w-[150px]"
+            , "border shadow-xl"       -- 陰影
+            , "backdrop-blur-sm"       -- すりガラス風
+            , "animate-[fadeIn_0.1s_ease-out]"
             , (basecolors theme).rounded
             ]
 
@@ -250,24 +226,6 @@ dropdownPositionStyle direction =
             "absolute right-0 top-full mt-2"
 
 
--- dropdownItemStyle : ColorTheme -> String
--- dropdownItemStyle theme =
---     let
---         bgcolor =
---             case theme of
---                 Light -> tw [(basecolors theme).bg, (basecolors theme).text, (basecolors theme).borderStrong]
---                 Dark -> tw [(basecolors theme).primary, "text-black", "border-black"]
---                 Magical -> tw [(basecolors theme).bg, (basecolors theme).text, (basecolors theme).borderBtn]
---     in
---     tw
---         [ "w-full", "px-3", "py-1", "text-left", "border"
---         , "text-[12px]", "uppercase"--, "font-bold"
---         , "whitespace-nowrap"
---         , "hover:bg-white/10", "transition-colors"
---         --, (basecolors theme).textMuted
---         , bgcolor
---         ]
-
 {-| メニュー項目（枠線をなくし、ホバーで優しくハイライト） -}
 dropdownItemStyle : ColorTheme -> String
 dropdownItemStyle theme =
@@ -280,7 +238,7 @@ dropdownItemStyle theme =
             , "text-xs"
             , "font-medium"
             , "tracking-wide"
-            , "rounded-md"             -- 項目自体もほんのり角丸
+            , "rounded-md"
             , "whitespace-nowrap"
             , "cursor-pointer"
             , "transition-colors duration-150"

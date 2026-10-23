@@ -35,7 +35,7 @@ encodeModelValue model =
         , ( "renderStyle", encodeRenderStyle model.renderStyle )
         , ( "visibleHeadingLevel", encodeHeadingLevel model.visibleHeadingLevel )
         , ( "contentWidth", encodeContentWidth model.contentWidth )
-        , ( "exportFormat", encodeExportFormat model.exportFormat )
+        --, ( "exportFormat", encodeExportFormat model.exportFormat )
         ]
 
 -- 全体バックアップ用エクスポート
@@ -112,16 +112,16 @@ andMap =
 decodeModel : Decode.Decoder Model
 decodeModel =
     Decode.succeed Model
-        |> andMap (Decode.succeed []) -- past: 保存せず空リストで初期化
+        |> andMap (Decode.succeed [])       -- past: 保存せず空リストで初期化
         |> andMap (Decode.field "present" decodeAppState) -- present: 保存データから復元
-        |> andMap (Decode.succeed []) -- future: 保存せず空リストで初期化
+        |> andMap (Decode.succeed [])       -- future: 保存せず空リストで初期化
         |> andMap (Decode.succeed (Random.initialSeed 0))
         |> andMap (Decode.succeed PageView) -- mainViewMode: 初期画面を指定
         |> andMap (Decode.succeed ViewMode) -- mode: 初期モードを指定
-        |> andMap (Decode.succeed TocTab) -- sidebarTab: 初期タブを指定
+        |> andMap (Decode.succeed TocTab)   -- sidebarTab: 初期タブを指定
         |> andMap (Decode.succeed NormalSidebar)
-        |> andMap (Decode.succeed "") -- searchText: 空文字で初期化
-        |> andMap (Decode.succeed Nothing) -- editing
+        |> andMap (Decode.succeed "")       -- searchText: 空文字で初期化
+        |> andMap (Decode.succeed Nothing)  -- editing
         |> andMap (Decode.field "fontSize" decodeFontSize)
         |> andMap (Decode.field "colorTheme" decodeColorTheme)
         |> andMap (Decode.field "renderStyle" decodeRenderStyle)
@@ -132,9 +132,9 @@ decodeModel =
         |> andMap (Decode.succeed "")
         |> andMap (Decode.oneOf [ Decode.field "visibleHeadingLevel" decodeHeadingLevel, Decode.succeed H3 ])
         |> andMap (Decode.oneOf [ Decode.field "contentWidth" decodeContentWidth, Decode.succeed Normal ])
+        --|> andMap (Decode.succeed False)
         |> andMap (Decode.succeed False)
-        |> andMap (Decode.succeed False)
-        |> andMap (Decode.oneOf [ Decode.field "exportFormat" decodeExportFormat, Decode.succeed FormatTxt ])
+        --|> andMap (Decode.oneOf [ Decode.field "exportFormat" decodeExportFormat, Decode.succeed FormatTxt ])
         |> andMap (Decode.succeed Nothing)
         |> andMap (Decode.succeed Nothing)
 
@@ -166,7 +166,6 @@ decodeAppState =
             (Decode.field "currentShelfId" Decode.string)
             (Decode.field "currentBookId" (Decode.maybe Decode.string))
             (Decode.field "currentPageIndex" Decode.int)
-            -- 型が合わなかったり、フィールドが存在しない場合はmaybeを先頭につけてデコード
             (Decode.maybe (Decode.field "currentHeading" (Decode.list Decode.string)))
         ]
 
@@ -223,8 +222,7 @@ encodeColorTheme theme =
         Dark -> Encode.string "Dark"
         Magical -> Encode.string "Magical"
 
--- Themeは保存していないので必ず「_」が選ばれる。
--- 実質的に起動時のThemeをここで決めている。
+
 decodeColorTheme : Decode.Decoder ColorTheme
 decodeColorTheme =
     Decode.string
@@ -240,7 +238,7 @@ encodeRenderStyle : RenderStyle -> Encode.Value
 encodeRenderStyle style =
     case style of
         Standard -> Encode.string "Standard"
-        Minimal -> Encode.string "Minimal"
+        Minimal  -> Encode.string "Minimal"
         Academic -> Encode.string "Academic"
         Mystical -> Encode.string "Mystical"
 
@@ -248,27 +246,17 @@ encodeRenderStyle style =
 encodeHeadingLevel : HeadingLevel -> Encode.Value
 encodeHeadingLevel level =
     case level of
-        H1 ->
-            Encode.string "H1"
-
-        H2 ->
-            Encode.string "H2"
-
-        H3 ->
-            Encode.string "H3"
+        H1 -> Encode.string "H1"
+        H2 -> Encode.string "H2"
+        H3 -> Encode.string "H3"
 
 
 encodeContentWidth : ContentWidth -> Encode.Value
 encodeContentWidth width =
     case width of
-        Narrow ->
-            Encode.string "Narrow"
-
-        Normal ->
-            Encode.string "Normal"
-
-        Wide ->
-            Encode.string "Wide"
+        Narrow -> Encode.string "Narrow"
+        Normal -> Encode.string "Normal"
+        Wide   -> Encode.string "Wide"
 
 encodeExportFormat : ExportFormat -> Encode.Value
 encodeExportFormat format =
@@ -297,17 +285,10 @@ decodeHeadingLevel =
         |> Decode.andThen
             (\str ->
                 case str of
-                    "H1" ->
-                        Decode.succeed H1
-
-                    "H2" ->
-                        Decode.succeed H2
-
-                    "H3" ->
-                        Decode.succeed H3
-
-                    _ ->
-                        Decode.succeed H1
+                    "H1" -> Decode.succeed H1
+                    "H2" -> Decode.succeed H2
+                    "H3" -> Decode.succeed H3
+                    _    -> Decode.succeed H1
             )
 
 
@@ -317,14 +298,9 @@ decodeContentWidth =
         |> Decode.andThen
             (\str ->
                 case str of
-                    "Narrow" ->
-                        Decode.succeed Narrow
-
-                    "Wide" ->
-                        Decode.succeed Wide
-
-                    _ ->
-                        Decode.succeed Normal
+                    "Narrow" -> Decode.succeed Narrow
+                    "Wide" -> Decode.succeed Wide
+                    _ -> Decode.succeed Normal
             )
 
 decodeExportFormat : Decode.Decoder ExportFormat
@@ -339,7 +315,6 @@ encodeMaybe encoder maybe =
         Nothing -> Encode.null
 
 
-
 -- 本のエクスポート用
 encodeExportBook : Book -> String
 encodeExportBook book =
@@ -348,6 +323,7 @@ encodeExportBook book =
         , ( "payload", encodeBook book )
         ]
         |> Encode.encode 0
+
 
 -- 本棚のエクスポート用
 encodeExportShelf : Shelf -> String
@@ -362,11 +338,8 @@ encodeExportShelf shelf =
 stringToExportFormat : String -> ExportFormat
 stringToExportFormat str =
     case str of
-        "md" ->
-            FormatMd
-
-        _ ->
-            FormatTxt
+        "md" -> FormatMd
+        _ ->  FormatTxt
 
 
 decodeImportPayload : Decode.Decoder ParsedImport
@@ -398,5 +371,3 @@ decodeAnyAllBackup =
         [ Decode.field "payload" decodeModel
         , decodeModel
         ]
-
-

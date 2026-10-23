@@ -4,8 +4,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Type exposing (..)
-import View.Markdown
-import View.Style as Style exposing (..)
+-- import View.Markdown
+import View.Style exposing (..)
 import Domain.Helper exposing (..)
 import View.ViewHelper exposing ( viewSortableItem, viewButton )
 
@@ -146,11 +146,11 @@ reorderStyle =
             ]
     , pageCard = \theme isSelected ->
         let
-            borderClass =
-                case theme of
-                    Light   -> ""
-                    Dark    -> ""
-                    Magical -> ""
+            -- borderClass =
+            --     case theme of
+            --         Light   -> ""
+            --         Dark    -> ""
+            --         Magical -> ""
             
             base =
                 [ "aspect-[3/4]", "flex", "flex-col"
@@ -181,10 +181,9 @@ reorderStyle =
             , (basecolors theme).text
             ]
     , pageCardPreviewContent = \theme ->
-        tw  [ "absolute", "inset-0", "origin-top-left"--, "scale-[0.9]"
-            --, "w-[250%]", "h-[250%]"
+        tw  [ "absolute", "inset-0", "origin-top-left"
             , "font-bold", "text-xs"
-            , "p-2", "pointer-events-none"--, "opacity-80"
+            , "p-2", "pointer-events-none"
             , "whitespace-normal", "break-words"
             , (basecolors theme).accent
             , (basecolors theme).brightAccent

@@ -1,13 +1,13 @@
 module Domain.Selector exposing (..)
 
 import Type exposing (..)
-import Browser.Dom
-import Task
+--import Browser.Dom
+--import Task
 import Html.Attributes exposing (..)
-import Html.Events exposing (on, preventDefaultOn)
-import Html exposing (Attribute)
-import Json.Decode as Decode
-import JsonConverter exposing (decodeBook, decodeShelf)
+--import Html.Events exposing (on, preventDefaultOn)
+--import Html exposing (Attribute)
+--import Json.Decode as Decode
+--import JsonConverter exposing (decodeBook, decodeShelf)
 
 
 -- スタイルの切り替えに関連する関数群
@@ -125,11 +125,11 @@ getSiblingHeadingLevel level =
         H3 -> ( H2, H1 )
 
 -- MARK:エクスポートセレクター
-exportFormatToString : ExportFormat -> String
-exportFormatToString format =
-    case format of
-        FormatTxt ->
-            "txt"
+-- exportFormatToString : ExportFormat -> String
+-- exportFormatToString format =
+--     case format of
+--         FormatTxt ->
+--             "txt"
 
-        FormatMd ->
-            "md"
+--         FormatMd ->
+--             "md"

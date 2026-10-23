@@ -155,9 +155,9 @@ type alias EditBuffer =
     }
 
 -- インポート時の判別用デコーダー
-type ImportData
-    = ImportedBook Book
-    | ImportedShelf Shelf
+-- type ImportData
+--     = ImportedBook Book
+--     | ImportedShelf Shelf
 
 
 type ExportFormat
@@ -186,9 +186,9 @@ type alias Model =
     , pageCreationTitle : String
     , visibleHeadingLevel : HeadingLevel
     , contentWidth : ContentWidth
-    , isSidebarOverlaid : Bool
+    -- , isSidebarOverlaid : Bool
     , isRightSideWindowVisible : Bool
-    , exportFormat : ExportFormat
+    -- , exportFormat : ExportFormat
     , openMenuId : Maybe MenuId
     , modalAlert : Maybe String
     }
@@ -223,12 +223,12 @@ type Msg
     | ReorderPages Int Int
     | RequestImport ImportTarget
     | RequestPageImport
-    | ImportBook String Book
-    | ImportShelf String Shelf
-    | ImportData String
+    -- | ImportBook String Book
+    -- | ImportShelf String Shelf
+    -- | ImportData String
     | ExportData
     | ExportDataWithTime ( Time.Zone, Time.Posix )
-    | ChangeExportFormat String
+    -- | ChangeExportFormat String
     | ExportPage String
     | DismissAlert
     | ChangeFontSize String
@@ -252,7 +252,7 @@ type Msg
     | FilesDropped (List File)
     | SetVisibleHeadingLevel HeadingLevel
     | SetContentWidth ContentWidth
-    | ToggleSidebarOverlay
+    -- | ToggleSidebarOverlay
     | ToggleMenu MenuId
     | CloseMenu
     | ToggleNormalSidebar

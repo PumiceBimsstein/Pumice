@@ -3,7 +3,7 @@ module View.Contents exposing (viewLayout)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 -- import Html.Events exposing (..)
-import File exposing (File)
+import File
 import Html.Events exposing (preventDefaultOn)
 import Type exposing (..)
 import View.Style exposing (..)

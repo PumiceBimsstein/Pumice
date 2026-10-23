@@ -2,7 +2,6 @@ module Domain.Helper exposing (..)
 
 import Type exposing (..)
 import Browser.Dom
---import Random
 import Task
 import Time
 import File.Download as Download
@@ -10,15 +9,16 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (on, preventDefaultOn)
 import Html exposing (Attribute)
 import Json.Decode as Decode
-import JsonConverter exposing (decodeBook, decodeShelf)
+import JsonConverter
+    --exposing (decodeBook, decodeShelf)
 import Ports exposing (syncScroll, saveToStorage, scrollToTop, exportZip)
 
 -- MARK: 基本的な処理
 
 -- Cmd なしの (Model, Cmd Msg) を生成
 withoutCmd : Model -> ( Model, Cmd Msg )
-withoutCmd m =
-    ( m, Cmd.none )
+withoutCmd model =
+    ( model, Cmd.none )
 
 setMode : Mode -> Model -> Model
 setMode newMode model =
@@ -697,16 +697,16 @@ toZipEntries shelves =
         )
 
 -- AppStateの更新（データの追加と選択）
-appendBook : String -> AppState -> AppState
-appendBook newId state =
-    state
-        |> addBookToCurrentShelf newId
-        |> (\s -> { s | currentBookId = Just newId })
+-- appendBook : String -> AppState -> AppState
+-- appendBook newId state =
+--     state
+--         |> addBookToCurrentShelf newId
+--         |> (\s -> { s | currentBookId = Just newId })
 
 -- 次のメッセージを発行するコマンド
-nextMsg : msg -> Cmd msg
-nextMsg msg =
-    Task.perform identity (Task.succeed msg)
+-- nextMsg : msg -> Cmd msg
+-- nextMsg msg =
+--     Task.perform identity (Task.succeed msg)
 
 -- ファイル名として安全な文字列に変換する
 sanitizePath : String -> String
@@ -805,9 +805,9 @@ applyPageChange index present =
         , currentHeading = List.map .text newHeadings
     }
 
-focusInput : String -> Cmd Msg
-focusInput id =
-    Task.attempt (\_ -> NoOp) (Browser.Dom.focus id)
+-- focusInput : String -> Cmd Msg
+-- focusInput id =
+--     Task.attempt (\_ -> NoOp) (Browser.Dom.focus id)
 
 focusEditor : Cmd Msg
 focusEditor =
@@ -1065,13 +1065,11 @@ applyExportPage extension state =
                         "text/plain"
             in
             Download.string fileName mimeType page.content
-            -- 新しく作成するポートを呼び出す
-            --exportFile { fileName = fileName, content = page.content }
 
         Nothing ->
             Cmd.none
 
--- 追加: バックアップ用のファイル名生成 (Pumice-backup_YYYYMMDD-HH-mm-ss.json)
+-- バックアップ用のファイル名生成
 formatBackupFileName : Time.Zone -> Time.Posix -> String
 formatBackupFileName zone time =
     let
@@ -1256,16 +1254,16 @@ decodeIncomingMsg value =
             case Decode.decodeValue (Decode.field "payload" Decode.float) value of
                 Ok _ -> NoOp
                 Err _ -> NoOp
-        Ok "ImportBook" ->
-            case ( Decode.decodeValue (Decode.field "id" Decode.string) value
-                , Decode.decodeValue (Decode.field "payload" decodeBook) value ) of
-                ( Ok id, Ok book ) -> ImportBook id book
-                _ -> NoOp
-        Ok "ImportShelf" ->
-            case ( Decode.decodeValue (Decode.field "id" Decode.string) value
-                , Decode.decodeValue (Decode.field "payload" decodeShelf) value ) of
-                ( Ok id, Ok shelf ) -> ImportShelf id shelf
-                _ -> NoOp
+        -- Ok "ImportBook" ->
+        --     case ( Decode.decodeValue (Decode.field "id" Decode.string) value
+        --         , Decode.decodeValue (Decode.field "payload" decodeBook) value ) of
+        --         ( Ok id, Ok book ) -> ImportBook id book
+        --         _ -> NoOp
+        -- Ok "ImportShelf" ->
+        --     case ( Decode.decodeValue (Decode.field "id" Decode.string) value
+        --         , Decode.decodeValue (Decode.field "payload" decodeShelf) value ) of
+        --         ( Ok id, Ok shelf ) -> ImportShelf id shelf
+        --         _ -> NoOp
         _ ->
             NoOp
 

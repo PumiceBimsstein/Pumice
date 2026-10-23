@@ -273,7 +273,7 @@ shelfCardStyle theme isActive isOpen =
             , "flex", "flex-col", "border"
             , stackOrder
             , "cursor-pointer"
-            , "hover:shadow-xl"    --  hover:-translate-y-1 hover:brightness-105
+            , "hover:shadow-xl"
             , (basecolors theme).text
             , (basecolors theme).surface
             , (basecolors theme).rounded
