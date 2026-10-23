@@ -50,7 +50,7 @@ basecolors theme =
             , borderStrong = "border-[#C86D51]"
             , rounded      = "rounded-lg"
             , scrollThumb  = "#C86D51"
-            , scrollTrack  = "#FAFAF8"
+            , scrollTrack  = "transparent"
             , fontDeco     = "'DM Sans', sans-serif"
             , fontMono     = "'DM Mono', monospace"
             }
@@ -70,8 +70,8 @@ basecolors theme =
             , borderUnder  = "border-[#333]"
             , borderStrong = "border-[#C9A84C]"
             , rounded      = "rounded"
-            , scrollThumb  = "#969696"
-            , scrollTrack  = "#0F0F0E"
+            , scrollThumb  = "#C8A74B"
+            , scrollTrack  = "transparent"
             , fontDeco     = "'DM Sans', sans-serif"
             , fontMono     = "'DM Mono', monospace"
             }
@@ -92,19 +92,16 @@ basecolors theme =
             , borderStrong = "border-[#D9A74A]"
             , rounded      = ""
             , scrollThumb  = "#A07D42"
-            , scrollTrack  = "#0F0F1A"
+            , scrollTrack  = "transparent"
             , fontDeco     = "'Cormorant Garamond', serif"
             , fontMono     = "'JetBrains Mono', monospace"
             }
 
 
--- Tailwindのクラスリストを結合する
+-- Tailwindのクラスを結合
 tw : List String -> String
 tw classes =
     String.join " " classes
-
-
-
 
 scrollbarStyle : ColorTheme -> List (Attribute msg)
 scrollbarStyle theme =

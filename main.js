@@ -9735,11 +9735,11 @@ var $author$project$Main$update = F2(
 var $author$project$View$Style$basecolors = function (theme) {
 	switch (theme) {
 		case 0:
-			return {a8: 'text-[#C86D51]', ca: 'bg-[#FBF8F5]', cb: 'border-[#F5F4F0]', az: 'border-[#c6c3be]', bc: 'border-[#C86D51]', aA: 'border-[#C86D51]', cc: 'bg-[#DCD4C9]', ck: 'text-white', aE: '\'DM Sans\', sans-serif', cr: '\'DM Mono\', monospace', cM: 'bg-[#C86D51]', bS: 'rounded-lg', cS: '#C86D51', aa: '#FAFAF8', bT: 'bg-[#C86D51]', cW: 'bg-[#E9E3DB]', cZ: 'text-[#2D2A26]', c_: 'text-[#7A7870]'};
+			return {a8: 'text-[#C86D51]', ca: 'bg-[#FBF8F5]', cb: 'border-[#F5F4F0]', az: 'border-[#c6c3be]', bc: 'border-[#C86D51]', aA: 'border-[#C86D51]', cc: 'bg-[#DCD4C9]', ck: 'text-white', aE: '\'DM Sans\', sans-serif', cr: '\'DM Mono\', monospace', cM: 'bg-[#C86D51]', bS: 'rounded-lg', cS: '#C86D51', aa: 'transparent', bT: 'bg-[#C86D51]', cW: 'bg-[#E9E3DB]', cZ: 'text-[#2D2A26]', c_: 'text-[#7A7870]'};
 		case 1:
-			return {a8: 'text-[#BBB9B0]', ca: 'bg-zinc-900', cb: 'border-[#171716]', az: 'border-[#505050]', bc: 'border-[#C9A84C]', aA: 'border-[#333]', cc: 'bg-[#303030]', ck: 'text-[#333]', aE: '\'DM Sans\', sans-serif', cr: '\'DM Mono\', monospace', cM: 'bg-[#C8A74B]', bS: 'rounded', cS: '#969696', aa: '#0F0F0E', bT: 'bg-yellow-200', cW: 'bg-[#151515]', cZ: 'text-zinc-300', c_: 'text-[#8B8980]'};
+			return {a8: 'text-[#BBB9B0]', ca: 'bg-zinc-900', cb: 'border-[#171716]', az: 'border-[#505050]', bc: 'border-[#C9A84C]', aA: 'border-[#333]', cc: 'bg-[#303030]', ck: 'text-[#333]', aE: '\'DM Sans\', sans-serif', cr: '\'DM Mono\', monospace', cM: 'bg-[#C8A74B]', bS: 'rounded', cS: '#C8A74B', aa: 'transparent', bT: 'bg-yellow-200', cW: 'bg-[#151515]', cZ: 'text-zinc-300', c_: 'text-[#8B8980]'};
 		default:
-			return {a8: 'text-[#D9A74A]', ca: 'bg-[#0F0F1A]', cb: 'border-[#8B7355]', az: 'border-[#8B7355]', bc: 'border-[#D9A74A]', aA: 'border-[#8B7355]', cc: 'bg-[#1A1A2E]', ck: 'text-amber-100', aE: '\'Cormorant Garamond\', serif', cr: '\'JetBrains Mono\', monospace', cM: 'bg-[#8B7355]', bS: '', cS: '#A07D42', aa: '#0F0F1A', bT: 'bg-[#c8a74b]/70', cW: 'bg-[#1A1A2E]', cZ: 'text-[#E0D5C0]', c_: 'text-[#A07D42]'};
+			return {a8: 'text-[#D9A74A]', ca: 'bg-[#0F0F1A]', cb: 'border-[#8B7355]', az: 'border-[#8B7355]', bc: 'border-[#D9A74A]', aA: 'border-[#8B7355]', cc: 'bg-[#1A1A2E]', ck: 'text-amber-100', aE: '\'Cormorant Garamond\', serif', cr: '\'JetBrains Mono\', monospace', cM: 'bg-[#8B7355]', bS: '', cS: '#A07D42', aa: 'transparent', bT: 'bg-[#c8a74b]/70', cW: 'bg-[#1A1A2E]', cZ: 'text-[#E0D5C0]', c_: 'text-[#A07D42]'};
 	}
 };
 var $elm$html$Html$Attributes$stringProperty = F2(
