@@ -4,6 +4,7 @@ import Json.Decode as Decode
 import Random
 import Browser.Dom
 import Time
+import File exposing (File)
 
 type alias Flags =
     { storageData : Decode.Value
@@ -28,6 +29,7 @@ type alias Shelf =
     , books : List Book
     }
 
+-- MARK:AppState
 type alias AppState =
     { shelves : List Shelf
     , currentShelfId : String
@@ -62,10 +64,10 @@ type MenuDirection
     = Above
     | Below
 
--- 表示するドロップダウンメニューの型
+-- MARK:ドロップダウンメニューの型
 type MenuId
-    = ShelfExportMenu String   -- 本棚のIDを持つ
-    | BookExportMenu String    -- 本のIDを持つ
+    = ShelfExportMenu String
+    | BookExportMenu String
     | PageExportMenu String
     | FileMenu
     | AppMenu
@@ -162,8 +164,7 @@ type ExportFormat
     = FormatTxt
     | FormatMd
 
--- アプリケーション全体のモデル
-
+-- MARK:Model
 type alias Model =
     { past : List AppState
     , present : AppState
@@ -186,27 +187,24 @@ type alias Model =
     , visibleHeadingLevel : HeadingLevel
     , contentWidth : ContentWidth
     , isSidebarOverlaid : Bool
-    , isRightSideWindowVisible : Bool -- 追加
+    , isRightSideWindowVisible : Bool
     , exportFormat : ExportFormat
     , openMenuId : Maybe MenuId
-    --, openExportMenuId : Maybe String
+    , modalAlert : Maybe String
     }
 
--- メッセージ定義
+-- MARK:Msg
 
 type Msg
     = Undo
     | Redo
-      -- 本棚・メインビュー操作
     | ChangeMainView MainViewMode
     | CreateShelf
     | DeleteShelf String
     | SelectShelf String
-      -- ブック操作
     | CreateBook
     | DeleteBook String
     | SelectBook String
-      -- ページ操作
     | CreatePage Int
     | CreateNextPage Int
     | DeletePage String
@@ -214,10 +212,8 @@ type Msg
     | DuplicatePage Int
     | NextPage
     | PrevPage
-      -- 表示設定・その他
     | ChangeMode Mode
     | ChangeSidebarTab SidebarTab
-    -- | UpdateShelfName String String
     | EditorInput String
     | UpdateSearchText String
     | ChangeColorTheme String
@@ -227,7 +223,6 @@ type Msg
     | ReorderPages Int Int
     | RequestImport ImportTarget
     | RequestPageImport
-    | PageFileSelected Decode.Value
     | ImportBook String Book
     | ImportShelf String Shelf
     | ImportData String
@@ -235,7 +230,7 @@ type Msg
     | ExportDataWithTime ( Time.Zone, Time.Posix )
     | ChangeExportFormat String
     | ExportPage String
-    | FileDropped Decode.Value
+    | DismissAlert
     | ChangeFontSize String
     | OnScroll String Browser.Dom.Viewport
     | DragStart DragTarget Int
@@ -250,20 +245,26 @@ type Msg
     | EditUpdate String
     | EditSubmit
     | EditCancel
+    | JsonFilesSelected ImportTarget (List File)
+    | JsonFileRead (Maybe ImportTarget) String String
+    | PageFileSelected File
+    | PageContentLoaded String String
+    | FilesDropped (List File)
     | SetVisibleHeadingLevel HeadingLevel
     | SetContentWidth ContentWidth
     | ToggleSidebarOverlay
-    --| ToggleExportMenu String
-    --| ToggleAppMenu String
     | ToggleMenu MenuId
-    --| CloseExportMenu
     | CloseMenu
     | ToggleNormalSidebar
     | ToggleLeftSidebar
-    | OpenRightSideWindow   -- 追加
-    | CloseRightSideWindow  -- 追加
+    | OpenRightSideWindow
+    | CloseRightSideWindow
     | AddGuideShelf
     | SelectMenuItem Msg
     | ResetApp
     | ResetAppWithTime ( Time.Zone, Time.Posix )
     | NoOp
+
+
+
+    

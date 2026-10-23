@@ -24,10 +24,7 @@ function getSavedData() {
 async function initializeApp() {
 
     const rawData = await getSavedData();
-    //const savedData = JSON.parse(localStorage.getItem('bookReaderData'));
     const savedData = typeof rawData === "string" ? JSON.parse(rawData) : rawData;
-
-    // 乱数の種（Seed）として32ビット整数4つの配列を生成
     const seedArray = Array.from(crypto.getRandomValues(new Uint32Array(4)));
 
     const app = Elm.Main.init({

@@ -44,54 +44,11 @@ initModelWithAppState seed appState =
     , isRightSideWindowVisible = True
     , exportFormat = FormatTxt
     , openMenuId = Nothing
+    , modalAlert = Nothing
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -- MARK:リセット
-{-| 現状のバックアップデータを出力し、UNDO履歴を残した上で初期状態に戻す -}
--- resetWithBackup : Model -> ( Model, Cmd Msg )
--- resetWithBackup model =
---     let
---         backupJson =
---             JsonConverter.encodeModel model
-
---         newModel =
---             model
---                 |> applyResetWithHistory
---     in
---     ( newModel
---     , Cmd.batch
---         [ triggerDownload backupJson                         -- PCへバックアップを出力
---         , saveToStorage (JsonConverter.encodeModel newModel) -- ローカルストレージを初期化
---         , scrollToTop ()
---         ]
---     )
-
 
 -- バックアップを出力し、UNDO履歴を残した上で初期状態に戻す
 resetWithBackup : Time.Zone -> Time.Posix -> Model -> ( Model, Cmd Msg )

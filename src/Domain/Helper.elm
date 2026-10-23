@@ -2,7 +2,7 @@ module Domain.Helper exposing (..)
 
 import Type exposing (..)
 import Browser.Dom
-import Random
+--import Random
 import Task
 import Time
 import File.Download as Download
@@ -566,7 +566,7 @@ headingLevelToInt level =
 
 
 checkSectionHit : String -> String -> String -> List String -> Bool
-checkSectionHit searchText headingText content allHeadingTexts =
+checkSectionHit searchText headingText content _ =
     if String.isEmpty searchText then
         False
 

@@ -2,10 +2,11 @@ module Main exposing (main)
 
 import Browser
 import Browser.Events
-import Browser.Dom
 import Task
 import Time
 import File.Download as Download
+import File exposing (File)
+import File.Select as Select
 import Random
 import Html.Attributes exposing (..)
 import Html exposing (..)
@@ -21,12 +22,8 @@ import Init exposing (..)
 import Ports exposing
     ( scrollToIndex
     , scrollToTop
-    --, triggerDownload
-    , fileDropped
     , incomingMsg
-    , fileContentReceiver
     , exportZip
-    , requestFileImport, requestPageImport, pageFileSelected
     )
 
 
@@ -203,31 +200,34 @@ update msg model =
                 |> notifyAndSave
 
         RequestImport target ->
-            ( model, requestFileImport (importTargetToString target) )
+            ( model
+            , Select.files 
+                [ "application/json", ".json" ] 
+                (\first rest -> JsonFilesSelected target (first :: rest))
+            )
         
         RequestPageImport ->
-            ( model, requestPageImport () )
+            ( model
+            , Select.file [ "text/plain", "text/markdown", ".txt", ".md" ] PageFileSelected
+            )
 
-        PageFileSelected value ->
-            processFileDrop value model
+        PageContentLoaded fileName content ->
+            processPageContent fileName content model
+
+        PageFileSelected file ->
+            ( model
+            , Task.perform (PageContentLoaded (File.name file)) (File.toString file)
+            )
 
         ImportBook newId importedBook ->
-            case model.mainViewMode of
-                ShelfDetailView _ ->
-                    model
-                        |> addImportedBook newId importedBook
-                        |> notifyAndSave
-                _ ->
-                    ( model, Cmd.none )
+            model
+                |> addImportedBook newId importedBook
+                |> notifyAndSave
 
         ImportShelf newId importedShelf ->
-            case model.mainViewMode of
-                ShelfListView ->
-                    model
-                        |> addImportedShelf newId importedShelf
-                        |> notifyAndSave
-                _ ->
-                    ( model, Cmd.none )
+            model
+                |> addImportedShelf newId importedShelf
+                |> notifyAndSave
 
         ImportData jsonString ->
             model
@@ -235,11 +235,30 @@ update msg model =
                 |> Result.map notifyAndSave
                 |> Result.withDefault ( model, Cmd.none )
 
+        JsonFilesSelected target files ->
+            let
+                readCmds =
+                    List.map
+                        (\file ->
+                            Task.perform
+                                (JsonFileRead (Just target) (File.name file))
+                                (File.toString file)
+                        )
+                        files
+            in
+            ( model, Cmd.batch readCmds )
+
+        JsonFileRead maybeTarget fileName content ->
+            handleJsonContent maybeTarget fileName content model
+
+        -- ドラッグ＆ドロップ
+        FilesDropped files ->
+            handleFilesDropped files model
+
         ExportData ->
             ( model
             , Task.perform ExportDataWithTime (Task.map2 Tuple.pair Time.here Time.now)
             )
-            --( model, triggerDownload (JsonConverter.encodeModel model) )
         
         ExportDataWithTime ( zone, time ) ->
             let
@@ -255,12 +274,12 @@ update msg model =
         ChangeExportFormat formatStr ->
             ( { model | exportFormat = stringToExportFormat formatStr }, Cmd.none )
         
+        DismissAlert ->
+            ( { model | modalAlert = Nothing }, Cmd.none )
+
         ExportPage extension ->
             ( model, applyExportPage extension model.present )
         
-        FileDropped value ->
-            handleFileDropped value model
-
         ChangeFontSize sizeStr ->
             model
                 |> applyFontSize sizeStr
@@ -301,11 +320,6 @@ update msg model =
             in
             ( model, Download.string fileName "application/json" jsonString )
 
-            -- let
-            --     jsonString = JsonConverter.encodeExportBook book
-            -- in
-            -- ( model, triggerDownload jsonString )
-
         ExportShelfZip shelfId ->
             ( model, exportShelfById shelfId model.present.shelves )
 
@@ -318,11 +332,6 @@ update msg model =
                     "Pumice-category-" ++ (if String.isEmpty shelf.name then "export" else shelf.name) ++ ".json"
             in
             ( model, Download.string fileName "application/json" jsonString )
-
-            -- let
-            --     jsonString = JsonConverter.encodeExportShelf shelf
-            -- in
-            -- ( model, triggerDownload jsonString )
 
         ExportAllZip ->
             ( model, exportZip (fullLibraryPayload model.present.shelves) )
@@ -412,14 +421,185 @@ update msg model =
             ( model, Cmd.none )
 
 
+-- ドロップされたファイル群の拡張子と、現在の画面モードを照合して振り分ける
+handleFilesDropped : List File -> Model -> ( Model, Cmd Msg )
+handleFilesDropped files model =
+    case files of
+        [] ->
+            ( model, Cmd.none )
+
+        file :: rest ->
+            let
+                fileName =
+                    File.name file
+
+                ext =
+                    fileName
+                        |> String.split "."
+                        |> List.reverse
+                        |> List.head
+                        |> Maybe.withDefault ""
+                        |> String.toLower
+            in
+            if ext == "txt" || ext == "md" then
+                -- テキスト / Markdown の場合：PageView 以外は弾く
+                case model.mainViewMode of
+                    PageView ->
+                        ( model
+                        , Task.perform (PageContentLoaded fileName) (File.toString file)
+                        )
+
+                    ShelfListView ->
+                        ( { model | modalAlert = Just ("「" ++ fileName ++ "」はテキストファイルです。\n本を開いたページ画面でのみドロップできます。") }
+                        , Cmd.none
+                        )
+
+                    ShelfDetailView _ ->
+                        ( { model | modalAlert = Just ("「" ++ fileName ++ "」はテキストファイルです。\n本を開いたページ画面でのみドロップできます。") }
+                        , Cmd.none
+                        )
+
+            else if ext == "json" then
+                -- JSON の場合：現在の画面に応じて期待するターゲットを指定して読み込む
+                case model.mainViewMode of
+                    ShelfListView ->
+                        -- 本棚一覧なら ShelfImport（本棚または全体バックアップ）を期待
+                        ( model
+                        , Task.perform (JsonFileRead (Just ShelfImport) fileName) (File.toString file)
+                        )
+
+                    ShelfDetailView _ ->
+                        -- 本一覧なら BookImport（本データ）を期待
+                        ( model
+                        , Task.perform (JsonFileRead (Just BookImport) fileName) (File.toString file)
+                        )
+
+                    PageView ->
+                        -- ページ画面への JSON ドロップは弾く
+                        ( { model | modalAlert = Just ("「" ++ fileName ++ "」は JSON データです。\n本棚一覧（Category）または本一覧（Books）画面でドロップしてください。") }
+                        , Cmd.none
+                        )
+
+            else
+                -- 未対応の拡張子（画像やPDFなど）を弾く
+                ( { model | modalAlert = Just ("「" ++ fileName ++ "」は対応していないファイル形式です。\n（.txt, .md, .json に対応しています）") }
+                , Cmd.none
+                )
+
+
+-- JSONの内容を解析して適切なインポート処理を実行するヘルパー関数
+-- JSON の中身（Book / Shelf / All）と画面側の期待（ImportTarget）を照合して弾く
+handleJsonContent : Maybe ImportTarget -> String -> String -> Model -> ( Model, Cmd Msg )
+handleJsonContent maybeTarget fileName content model =
+    case Decode.decodeString JsonConverter.decodeImportPayload content of
+        Ok parsed ->
+            case ( maybeTarget, parsed ) of
+                -- 1. 本棚一覧画面（ShelfImport）: 本棚データのみ許可、全体バックアップや本データは弾く
+                ( Just ShelfImport, JsonConverter.ParsedShelf shelf ) ->
+                    let ( newId, m1 ) = stepUuid model in
+                    m1 |> addImportedShelf newId shelf |> notifyAndSave
+
+                ( Just ShelfImport, JsonConverter.ParsedAll _ ) ->
+                    ( { model | modalAlert = Just ("「" ++ fileName ++ "」は全体バックアップデータです。\n本棚データ（Category）のインポート場所からは読み込めません。\nサイドバーの「File ▾」メニューからインポートしてください。") }
+                    , Cmd.none
+                    )
+
+                ( Just ShelfImport, JsonConverter.ParsedBook _ ) ->
+                    ( { model | modalAlert = Just ("「" ++ fileName ++ "」は本データです。\n本棚を開いた画面（Books）で読み込んでください。") }
+                    , Cmd.none
+                    )
+
+                -- 2. 本一覧画面（BookImport）: 本データのみ許可
+                ( Just BookImport, JsonConverter.ParsedBook book ) ->
+                    let ( newId, m1 ) = stepUuid model in
+                    m1 |> addImportedBook newId book |> notifyAndSave
+
+                ( Just BookImport, JsonConverter.ParsedShelf _ ) ->
+                    ( { model | modalAlert = Just ("「" ++ fileName ++ "」は本棚データです。\n本棚一覧（Category）画面で読み込んでください。") }
+                    , Cmd.none
+                    )
+
+                ( Just BookImport, JsonConverter.ParsedAll _ ) ->
+                    ( { model | modalAlert = Just ("「" ++ fileName ++ "」は全体バックアップデータです。\n本一覧画面からは読み込めません。\nサイドバーの「File ▾」メニューからインポートしてください。") }
+                    , Cmd.none
+                    )
+
+                -- 3. 全体バックアップ（AllImport）: 全体バックアップのみ許可
+                ( Just AllImport, JsonConverter.ParsedAll importedModel ) ->
+                    applyImportedModel model importedModel |> notifyAndSave
+
+                ( Just AllImport, JsonConverter.ParsedBook _ ) ->
+                    ( { model | modalAlert = Just ("「" ++ fileName ++ "」は本データです。\n全体バックアップの場所からは読み込めません。") }
+                    , Cmd.none
+                    )
+
+                ( Just AllImport, JsonConverter.ParsedShelf _ ) ->
+                    ( { model | modalAlert = Just ("「" ++ fileName ++ "」は本棚データです。\n全体バックアップの場所からは読み込めません。") }
+                    , Cmd.none
+                    )
+
+                -- その他（ターゲット未指定の場合）
+                ( Nothing, _ ) ->
+                    ( { model | modalAlert = Just ("「" ++ fileName ++ "」は直接ドロップできません。\n対応するメニューや画面からインポートしてください。") }
+                    , Cmd.none
+                    )
+
+        Err _ ->
+            -- 旧形式の全体バックアップ（生のModel JSON）も、AllImport 以外では弾く
+            case Decode.decodeString JsonConverter.decodeAnyAllBackup content of
+                Ok importedModel ->
+                    case maybeTarget of
+                        Just AllImport ->
+                            applyImportedModel model importedModel |> notifyAndSave
+
+                        Just ShelfImport ->
+                            ( { model | modalAlert = Just ("「" ++ fileName ++ "」は全体バックアップデータです。\n本棚データ（Category）のインポート場所からは読み込めません。\nサイドバーの「File ▾」メニューからインポートしてください。") }
+                            , Cmd.none
+                            )
+
+                        Just BookImport ->
+                            ( { model | modalAlert = Just ("「" ++ fileName ++ "」は全体バックアップデータです。\n本一覧画面からは読み込めません。\nサイドバーの「File ▾」メニューからインポートしてください。") }
+                            , Cmd.none
+                            )
+
+                        Nothing ->
+                            ( { model | modalAlert = Just ("「" ++ fileName ++ "」は全体バックアップデータです。\nサイドバーの「File ▾」メニューからインポートしてください。") }
+                            , Cmd.none
+                            )
+
+                Err _ ->
+                    ( { model | modalAlert = Just ("「" ++ fileName ++ "」は正しくないJSONファイル、または形式が不正です。") }
+                    , Cmd.none
+                    )
+
+-- importTargetName : ImportTarget -> String
+-- importTargetName target =
+--     case target of
+--         ShelfImport -> "本棚データ"
+--         BookImport  -> "本データ"
+--         AllImport   -> "全体バックアップデータ"
+
+-- parsedTypeName : ParsedImport -> String
+-- parsedTypeName parsed =
+--     case parsed of
+--         ParsedBook _  -> "本のデータ"
+--         ParsedShelf _ -> "本棚のデータ"
+--         ParsedAll _   -> "全体バックアップデータ"
+
+-- mismatchMessage : String -> ImportTarget -> ParsedImport -> String
+-- mismatchMessage fileName target parsed =
+--     let
+--         expected = importTargetName target
+--         actual = parsedTypeName parsed
+--     in
+--     "「" ++ fileName ++ "は" ++ actual ++ "です。この場所からは読み込めません。"
+
+
 -- MARK:subscriptions
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ Browser.Events.onKeyDown keyDecoder 
-        , fileDropped FileDropped
         , incomingMsg decodeIncomingMsg
-        , fileContentReceiver ImportData
-        , pageFileSelected PageFileSelected
         ]

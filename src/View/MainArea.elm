@@ -14,6 +14,7 @@ import Icon exposing (..)
 import View.MainFooter exposing (viewFooter)
 import View.Reorder exposing (viewReorder)
 import View.TitleEditModal exposing (viewTitleEditModal)
+import View.AlertModal exposing (viewAlertModal)
 import View.ViewHelper exposing
     ( viewSortableItem
     , viewButton
@@ -38,6 +39,7 @@ mainContentArea model present =
             PageView ->
                 pageContentView model present
         , viewTitleEditModal model
+        , viewAlertModal model
         ]
 
 mainAreaWrapper : String
@@ -718,8 +720,8 @@ pageContentView model present =
         Just book ->
             main_
                 [ class (mainWrapperStyle model.colorTheme)
-                , preventDefaultOn "dragover" (Decode.succeed ( NoOp, True ))
-                , preventDefaultOn "drop" (Decode.succeed ( NoOp, True ))
+                --, preventDefaultOn "dragover" (Decode.succeed ( NoOp, True ))
+                --, preventDefaultOn "drop" (Decode.succeed ( NoOp, True ))
                 ]
                 [ div
                     [ class "flex-1 overflow-y-auto" ]

@@ -1,15 +1,22 @@
 module JsonConverter 
-    exposing
-        ( encodeModel, decodeModel, encodeAppState, decodeAppState
-        , encodeExportBook, encodeExportShelf, encodeExportAll
-        , decodeBook, decodeShelf
-        , stringToExportFormat
-        )
+    exposing (..)
+        -- ( encodeModel, decodeModel, encodeAppState, decodeAppState
+        -- , encodeExportBook, encodeExportShelf, encodeExportAll
+        -- , decodeBook, decodeShelf
+        -- , stringToExportFormat
+        -- , decodeAnyAllBackup, decodeImportPayload
+        -- , ParsedImport
+        -- )
 
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Random
 import Type exposing (..)
+
+type ParsedImport
+    = ParsedBook Book
+    | ParsedShelf Shelf
+    | ParsedAll Model
 
 -- MARK:エンコーダー
 
@@ -128,6 +135,7 @@ decodeModel =
         |> andMap (Decode.succeed False)
         |> andMap (Decode.succeed False)
         |> andMap (Decode.oneOf [ Decode.field "exportFormat" decodeExportFormat, Decode.succeed FormatTxt ])
+        |> andMap (Decode.succeed Nothing)
         |> andMap (Decode.succeed Nothing)
 
 decodeAppState : Decode.Decoder AppState
@@ -359,3 +367,36 @@ stringToExportFormat str =
 
         _ ->
             FormatTxt
+
+
+decodeImportPayload : Decode.Decoder ParsedImport
+decodeImportPayload =
+    Decode.field "type" Decode.string
+        |> Decode.andThen
+            (\t ->
+                case t of
+                    "book" ->
+                        Decode.field "payload" decodeBook
+                            |> Decode.map ParsedBook
+
+                    "shelf" ->
+                        Decode.field "payload" decodeShelf
+                            |> Decode.map ParsedShelf
+
+                    "all" ->
+                        Decode.field "payload" decodeModel
+                            |> Decode.map ParsedAll
+
+                    _ ->
+                        Decode.fail ("不明なデータ種別です: " ++ t)
+            )
+
+{-| 全体バックアップ（旧形式の生Modelまたは新形式のラップJSON）をデコード -}
+decodeAnyAllBackup : Decode.Decoder Model
+decodeAnyAllBackup =
+    Decode.oneOf
+        [ Decode.field "payload" decodeModel
+        , decodeModel
+        ]
+
+

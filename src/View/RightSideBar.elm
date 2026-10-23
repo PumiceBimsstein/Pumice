@@ -15,8 +15,7 @@ rightSidebarArea : Model -> AppState -> Html Msg
 rightSidebarArea model present =
     aside
         [ class (rightSideStyle model.colorTheme) ]
-        [ --viewModeButtonGroup model model.mode
-          topHeader model
+        [ topHeader
         , viewModeSegment model
         , controlSection model
         , scrollableArea
@@ -32,16 +31,15 @@ rightSideStyle theme =
         , (basecolors theme).textMuted
         ]
 
-topHeader : Model -> Html Msg
-topHeader model =
+topHeader : Html Msg
+topHeader =
     div [ class "flex justify-end px-3 pt-2 pb-1" ]
         [ button
-            [ class "text-[11px] font-mono opacity-80 hover:opacity-100 transition-opacity cursor-pointer flex items-center gap-1"
+            [ class "text-[12px] font-mono opacity-90 hover:opacity-100 transition-opacity cursor-pointer flex items-center gap-1"
             , onClick ToggleNormalSidebar
             , title "Hide Sidebar"
             ]
             [ text "Hide Sidebar"
-            --, span [ class "text-[9px]" ] [ text "✕" ]
             ]
         ]
 
@@ -90,13 +88,6 @@ modeItemStyle theme activeClass =
         , activeClass
         , (basecolors theme).rounded
         ]
--- viewModeButtonGroup : Model -> Mode -> Html Msg
--- viewModeButtonGroup model currentMode =
---     div [ class "p-3 space-y-1" ]
---         [ viewModeButton model ViewMode "VIEW" (currentMode == ViewMode)
---         , viewModeButton model EditMode "EDIT" (currentMode == EditMode)
---         , viewModeButton model ReorderMode "PAGES" (currentMode == ReorderMode)
---         ]
 
 controlSection : Model -> Html Msg
 controlSection model =
@@ -108,10 +99,7 @@ controlSection model =
         , viewRenderStyleSelector theme model.renderStyle
         , viewFontSizeSelector model
         , viewAddPageButton model
-        --, importPageButton model
-        --, viewExportControl theme model.exportFormat
         , viewFileMenu model
-        --, sidebarToggle model
         ]
 
 
@@ -166,29 +154,52 @@ scrollableArea =
 
 bottomStatusArea : Model -> AppState -> Html Msg
 bottomStatusArea model present =
+    let
+        breadNav = 
+            if model.isRightSideWindowVisible then
+                miniBreadcrumbNav model
+            else
+                viewBreadcrumbNav model
+    in
     div
         [ class "flex flex-col gap-2 mt-auto pb-3" ]
-        [ viewBreadcrumbNav model
+        [ breadNav
         , bookPageCounter model.colorTheme present
         ]
 
 
+viewShelvesButton : Model -> Html Msg
+viewShelvesButton model =
+    button
+        [ class "hover:opacity-100 hover:underline cursor-pointer"
+        , onClick (getCategoryButtonMsg model.mainViewMode)
+        , title "本棚一覧へ"
+        ]
+        [ text "Category" ]
+
+viewBooksButton : Model -> Html Msg
+viewBooksButton model =
+    button
+        [ class "hover:opacity-100 hover:underline cursor-pointer"
+        , onClick (getBooksButtonMsg model)
+        , title "本一覧へ"
+        ]
+        [ text "Books" ]
+
+
+miniBreadcrumbNav : Model -> Html Msg
+miniBreadcrumbNav model =
+    div [ class "flex flex-col items-center justify-center gap-1.5 py-1 px-3 text-sm font-mono opacity-100" ]
+        [ viewShelvesButton model
+        , viewBooksButton model
+        ]
+
 viewBreadcrumbNav : Model -> Html Msg
 viewBreadcrumbNav model =
     div [ class "flex items-center justify-center gap-2 py-1 px-3 text-sm font-mono opacity-100" ]
-        [ button
-            [ class "hover:opacity-100 hover:underline cursor-pointer"
-            , onClick (getCategoryButtonMsg model.mainViewMode)
-            , title "本棚一覧へ"
-            ]
-            [ text "Category" ]
+        [ viewShelvesButton model
         , span [ class "opacity-100 select-none" ] [ text "›" ]
-        , button
-            [ class "hover:opacity-100 hover:underline cursor-pointer"
-            , onClick (getBooksButtonMsg model)
-            , title "本一覧へ"
-            ]
-            [ text "Books" ]
+        , viewBooksButton model
         ]
 
 
@@ -203,42 +214,42 @@ bookPageCounter theme present =
             pageCount theme present book
 
 
-viewModeButton : Model -> Mode -> String -> Bool -> Html Msg
-viewModeButton model mode label isActive =
-    button 
-        [ class (modeButtonStyle model isActive)
-        , style "font-family" (basecolors model.colorTheme).fontDeco
-        , onClick (ChangeMode mode) 
-        ] 
-        [ text label ]
+-- viewModeButton : Model -> Mode -> String -> Bool -> Html Msg
+-- viewModeButton model mode label isActive =
+--     button 
+--         [ class (modeButtonStyle model isActive)
+--         , style "font-family" (basecolors model.colorTheme).fontDeco
+--         , onClick (ChangeMode mode) 
+--         ] 
+--         [ text label ]
 
 
-modeButtonStyle : Model -> Bool -> String
-modeButtonStyle model isActive =
-    let
-        theme = model.colorTheme
-        base =
-            if model.sidebarMode == OverlaySidebar || model.sidebarMode == LeftSidebar then
-                ["w-full", "py-1.5", "text-sm", "font-semibold", "border", "opacity-90"
-                , (basecolors theme).rounded]
-            else
-                [ "w-full", "py-2.5", "text-sm", "font-semibold", "border", "opacity-90"
-                , (basecolors theme).rounded
-                ]
-        state =
-            if isActive then
-                [ "border-transparent"
-                , (basecolors theme).primary
-                , (basecolors theme).deco
-                ]
-            else
-                [ (basecolors theme).borderBtn
-                , (basecolors theme).text
-                , "hover:opacity-70"
-                , "bg-transparent"
-                ]
-    in
-    tw (base ++ state)
+-- modeButtonStyle : Model -> Bool -> String
+-- modeButtonStyle model isActive =
+--     let
+--         theme = model.colorTheme
+--         base =
+--             if model.sidebarMode == OverlaySidebar || model.sidebarMode == LeftSidebar then
+--                 ["w-full", "py-1.5", "text-sm", "font-semibold", "border", "opacity-90"
+--                 , (basecolors theme).rounded]
+--             else
+--                 [ "w-full", "py-2.5", "text-sm", "font-semibold", "border", "opacity-90"
+--                 , (basecolors theme).rounded
+--                 ]
+--         state =
+--             if isActive then
+--                 [ "border-transparent"
+--                 , (basecolors theme).primary
+--                 , (basecolors theme).deco
+--                 ]
+--             else
+--                 [ (basecolors theme).borderBtn
+--                 , (basecolors theme).text
+--                 , "hover:opacity-70"
+--                 , "bg-transparent"
+--                 ]
+--     in
+--     tw (base ++ state)
 
 
 --MARK:ミニサイドバー
@@ -248,7 +259,6 @@ rightSideWindow model present =
         [ class (rightSideWindowStyle model.colorTheme) ]
         [ windowCloseHeader model.colorTheme
         , modeSelectSegment model
-        --, viewModeButtonGroup model model.mode
         , sidebarModeSection model
         , controlSectionMini model
         , bottomStatusArea model present
@@ -257,9 +267,8 @@ rightSideWindow model present =
 modeSelectSegment : Model -> Html Msg
 modeSelectSegment model =
     div
-        [ class "p-1.5 mx-2 my-3 border-t border-b" --border
+        [ class "p-1.5 mx-2 my-3 border-t border-b"
         , class (basecolors model.colorTheme).borderBtn
-        --, class (basecolors model.colorTheme).rounded
         ]
         [ modeText model ViewMode "VIEW"
         , modeText model EditMode "EDIT"
@@ -278,8 +287,7 @@ modeText model mode label =
         activeClass =
             if isActive then
                 tw
-                    [ --(basecolors theme).primary
-                     (basecolors theme).accent
+                    [ (basecolors theme).accent
                     , "font-bold"
                     ]
 
@@ -287,18 +295,15 @@ modeText model mode label =
                 "opacity-100 hover:opacity-70 bg-transparent"
     in
     p
-        [ class (modeTextStyle theme activeClass)
+        [ class (modeTextStyle activeClass)
         , style "font-family" (basecolors theme).fontDeco
         , onClick (ChangeMode mode)
         ]
         [ text label ]
 
-modeTextStyle : ColorTheme -> String -> String
-modeTextStyle theme activeClass =
-    tw  [ "flex-col py-2 text-sm transition-all text-center leading-none cursor-pointer"
-        , activeClass
-        --, (basecolors theme).rounded
-        ]
+modeTextStyle : String -> String
+modeTextStyle activeClass =
+    tw  [ "flex-col py-2 text-sm transition-all text-center leading-none cursor-pointer", activeClass ]
 
 windowCloseHeader : ColorTheme -> Html Msg
 windowCloseHeader theme =
@@ -374,11 +379,33 @@ rightSideWindowStyle theme =
         , (basecolors theme).textMuted
         ]
 
+
 controlSectionMini : Model -> Html Msg
 controlSectionMini model =
     div [ class "p-3 border-b text-xs border-gray-500/10" ]
         [ viewFontSizeSelector model
-        , viewAddPageButton model
+        , viewAddPageTextButton model
+        ]
+
+
+viewAddPageTextButton : Model -> Html Msg
+viewAddPageTextButton model =
+    button
+        [ class (addPageTextStyle model.colorTheme)
+        , style "font-family" (basecolors model.colorTheme).fontDeco
+        , onClick (CreateNextPage (model.present.currentPageIndex + 1))
+        ]
+        [ text "+ Next Page" ]
+
+
+addPageTextStyle : ColorTheme -> String
+addPageTextStyle theme =
+    tw
+        [ "w-full", "py-2", "mt-1", "text-sm", "text-center", "leading-none"
+        , "cursor-pointer", "transition-opacity"
+        , "bg-transparent", "border-0"
+        , "opacity-75", "hover:opacity-100", "hover:underline"
+        , (basecolors theme).accent
         ]
 
 
@@ -462,14 +489,14 @@ viewAddPageButton model =
         [ text "+ Next Page" ]
 
 
-importPageButton : Model -> Html Msg
-importPageButton model =
-    button
-        [ class (importPageStyle model.colorTheme)
-        , style "font-family" (basecolors model.colorTheme).fontDeco
-        , onClick RequestPageImport
-        ]
-        [ text "+ Import txt/md" ]
+-- importPageButton : Model -> Html Msg
+-- importPageButton model =
+--     button
+--         [ class (importPageStyle model.colorTheme)
+--         , style "font-family" (basecolors model.colorTheme).fontDeco
+--         , onClick RequestPageImport
+--         ]
+--         [ text "+ Import txt/md" ]
 
 
 addPageBtnStyle : ColorTheme -> String
@@ -482,85 +509,85 @@ addPageBtnStyle theme =
         , (basecolors theme).text
         , "hover:bg-white/5" ]
 
-importPageStyle : ColorTheme -> String
-importPageStyle theme =
-    tw  [ "w-full", "py-1.5", "text-sm"
-        , "pr-2", "mt-1", "mb-6", "border"
-        --, (basecolors theme).borderBtn
-        , (basecolors theme).borderStrong
-        , (basecolors theme).rounded
-        --, (basecolors theme).bg
-        , (basecolors theme).text
-        -- , "hover:brightness-115"
-        , "hover:bg-white/20"
-        ]
+-- importPageStyle : ColorTheme -> String
+-- importPageStyle theme =
+--     tw  [ "w-full", "py-1.5", "text-sm"
+--         , "pr-2", "mt-1", "mb-6", "border"
+--         --, (basecolors theme).borderBtn
+--         , (basecolors theme).borderStrong
+--         , (basecolors theme).rounded
+--         --, (basecolors theme).bg
+--         , (basecolors theme).text
+--         -- , "hover:brightness-115"
+--         , "hover:bg-white/20"
+--         ]
 
 -- MARK:エクスポート
-viewExportControl : ColorTheme -> ExportFormat -> Html Msg
-viewExportControl theme exportFormat =
-    div [ class "flex gap-2 pt-1 items-center" ]
-        [ viewExportFormatSelector theme exportFormat
-        , viewExportButton theme exportFormat ]
+-- viewExportControl : ColorTheme -> ExportFormat -> Html Msg
+-- viewExportControl theme exportFormat =
+--     div [ class "flex gap-2 pt-1 items-center" ]
+--         [ viewExportFormatSelector theme exportFormat
+--         , viewExportButton theme exportFormat ]
 
 
-viewExportFormatSelector : ColorTheme -> ExportFormat -> Html Msg
-viewExportFormatSelector theme currentFormat =
-    viewBaseSelector
-        ChangeExportFormat
-        exportFormatToString
-        getSiblingExportFormat
-        [ class (exportSelectorStyle theme)
-        , style "font-family" (basecolors theme).fontDeco
-        ]
-        currentFormat
-        [ FormatTxt, FormatMd ]
+-- viewExportFormatSelector : ColorTheme -> ExportFormat -> Html Msg
+-- viewExportFormatSelector theme currentFormat =
+--     viewBaseSelector
+--         ChangeExportFormat
+--         exportFormatToString
+--         getSiblingExportFormat
+--         [ class (exportSelectorStyle theme)
+--         , style "font-family" (basecolors theme).fontDeco
+--         ]
+--         currentFormat
+--         [ FormatTxt, FormatMd ]
 
-exportSelectorStyle : ColorTheme -> String
-exportSelectorStyle theme =
-    tw
-        [ "flex-1"
-        , "border"
-        , "px-3"
-        , "py-1"
-        , "text-sm"
-        , "uppercase"
-        , "outline-none"
-        , "h-10"
-        , (basecolors theme).brightAccent
-        , (basecolors theme).borderBtn
-        , (basecolors theme).rounded
-        , (basecolors theme).text
-        ]
+-- exportSelectorStyle : ColorTheme -> String
+-- exportSelectorStyle theme =
+--     tw
+--         [ "flex-1"
+--         , "border"
+--         , "px-3"
+--         , "py-1"
+--         , "text-sm"
+--         , "uppercase"
+--         , "outline-none"
+--         , "h-10"
+--         , (basecolors theme).brightAccent
+--         , (basecolors theme).borderBtn
+--         , (basecolors theme).rounded
+--         , (basecolors theme).text
+--         ]
 
-viewExportButton : ColorTheme -> ExportFormat -> Html Msg
-viewExportButton theme format =
-    button
-        [ class (exportBtnStyle theme)
-        , onClick (ExportPage (exportFormatToString format))
-        ]
-        [ text "EXPORT" ]
+-- viewExportButton : ColorTheme -> ExportFormat -> Html Msg
+-- viewExportButton theme format =
+--     button
+--         [ class (exportBtnStyle theme)
+--         , onClick (ExportPage (exportFormatToString format))
+--         ]
+--         [ text "EXPORT" ]
 
-exportBtnStyle : ColorTheme -> String
-exportBtnStyle theme =
-    tw
-        [ "flex-1"
-        , "border"
-        , "px-3"
-        , "py-1"
-        , "my-2"
-        , "text-sm"
-        , "font-mono"
-        , "outline-none"
-        , "h-10"
-        , "flex"
-        , "items-center"
-        , "justify-center"
-        --, "transition-colors"
-        , "hover:bg-white/5"
-        , (basecolors theme).borderBtn
-        , (basecolors theme).rounded
-        , (basecolors theme).brightAccent
-        ]
+-- exportBtnStyle : ColorTheme -> String
+-- exportBtnStyle theme =
+--     tw
+--         [ "flex-1"
+--         , "border"
+--         , "px-3"
+--         , "py-1"
+--         , "my-2"
+--         , "text-sm"
+--         , "font-mono"
+--         , "outline-none"
+--         , "h-10"
+--         , "flex"
+--         , "items-center"
+--         , "justify-center"
+--         --, "transition-colors"
+--         , "hover:bg-white/5"
+--         , (basecolors theme).borderBtn
+--         , (basecolors theme).rounded
+--         , (basecolors theme).brightAccent
+--         ]
 
 -- MARK: Shelf/Book
 -- viewShelfBookIcon : Model -> Html Msg
@@ -591,14 +618,14 @@ exportBtnStyle theme =
 --         [ text "Books" ]
 
 
-categoryBtn : ColorTheme -> String
-categoryBtn theme =
-    tw  [ "w-full", "h-8", "border", "px-2.5", "text-sm", "font-mono"
-        , "items-center", "justify-center", "hover:bg-white/25"
-        , (basecolors theme).borderBtn
-        , (basecolors theme).rounded
-        , (basecolors theme).textMuted
-        ]
+-- categoryBtn : ColorTheme -> String
+-- categoryBtn theme =
+--     tw  [ "w-full", "h-8", "border", "px-2.5", "text-sm", "font-mono"
+--         , "items-center", "justify-center", "hover:bg-white/25"
+--         , (basecolors theme).borderBtn
+--         , (basecolors theme).rounded
+--         , (basecolors theme).textMuted
+--         ]
 
 
 getCategoryButtonMsg : MainViewMode -> Msg

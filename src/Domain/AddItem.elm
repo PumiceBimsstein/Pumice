@@ -60,68 +60,90 @@ importTargetToString target =
 
 
 -- .txt/.mdがドロップされたときにページを追加するかどうかの条件分岐
-handleFileDropped : Decode.Value -> Model -> ( Model, Cmd Msg )
-handleFileDropped value model =
-    if model.mode == EditMode && isEditorArea value then
-        ( pushToHistory model, Cmd.none )
+-- handleFileDropped : Decode.Value -> Model -> ( Model, Cmd Msg )
+-- handleFileDropped value model =
+--     if model.mode == EditMode && isEditorArea value then
+--         ( pushToHistory model, Cmd.none )
 
-    else
-        processFileDrop value model
+--     else
+--         processFileDrop value model
 
 
 -- ドロップされた場所の id が "editor-area" かどうかを判定するヘルパー
-isEditorArea : Decode.Value -> Bool
-isEditorArea value =
-    let
-        idDecoder =
-            Decode.oneOf
-                [ -- 通常のブラウザイベントの場合: event.target.id
-                  Decode.at [ "target", "id" ] Decode.string
+-- isEditorArea : Decode.Value -> Bool
+-- isEditorArea value =
+--     let
+--         idDecoder =
+--             Decode.oneOf
+--                 [ -- 通常のブラウザイベントの場合: event.target.id
+--                   Decode.at [ "target", "id" ] Decode.string
 
-                -- JS/Port側で独自のオブジェクトとして送っている場合のフォールバック
-                , Decode.field "targetId" Decode.string
-                , Decode.field "id" Decode.string
-                ]
-    in
-    Decode.decodeValue idDecoder value == Ok "editor-area"
+--                 -- JS/Port側で独自のオブジェクトとして送っている場合のフォールバック
+--                 , Decode.field "targetId" Decode.string
+--                 , Decode.field "id" Decode.string
+--                 ]
+--     in
+--     Decode.decodeValue idDecoder value == Ok "editor-area"
 
 
 -- .txt/.mdが読み込まれたかドロップされたとき
-processFileDrop : Decode.Value -> Model -> ( Model, Cmd Msg )
-processFileDrop value model =
-    case decodeDropPayload value of
-        Ok ( fileName, fullContent ) ->
-            let
-                insertIndex =
-                    getCurrentBook model.present
-                        |> Maybe.map (.pages >> List.length)
-                        |> Maybe.withDefault 0
+-- processFileDrop : Decode.Value -> Model -> ( Model, Cmd Msg )
+-- processFileDrop value model =
+--     case decodeDropPayload value of
+--         Ok ( fileName, fullContent ) ->
+--             let
+--                 insertIndex =
+--                     getCurrentBook model.present
+--                         |> Maybe.map (.pages >> List.length)
+--                         |> Maybe.withDefault 0
 
-                newModel =
-                    { model
-                        | pageCreationBuffer = [ fullContent ]
-                        , pageCreationTitle = fileName
-                    }
-                        |> pushToHistory
-                        |> buildPage insertIndex
-                        |> applyPageSelection insertIndex
-            in
-            notifyAndSave newModel
+--                 newModel =
+--                     { model
+--                         | pageCreationBuffer = [ fullContent ]
+--                         , pageCreationTitle = fileName
+--                     }
+--                         |> pushToHistory
+--                         |> buildPage insertIndex
+--                         |> applyPageSelection insertIndex
+--             in
+--             notifyAndSave newModel
 
-        Err _ ->
-            ( model, Cmd.none )
+--         Err _ ->
+--             ( model, Cmd.none )
+
+
+
+{-| ファイル名と内容から新しいページを挿入する -}
+processPageContent : String -> String -> Model -> ( Model, Cmd Msg )
+processPageContent fileName fullContent model =
+    let
+        insertIndex =
+            getCurrentBook model.present
+                |> Maybe.map (.pages >> List.length)
+                |> Maybe.withDefault 0
+
+        newModel =
+            { model
+                | pageCreationBuffer = [ fullContent ]
+                , pageCreationTitle = fileName
+            }
+                |> pushToHistory
+                |> buildPage insertIndex
+                |> applyPageSelection insertIndex
+    in
+    notifyAndSave newModel
 
 
 -- JavaScriptからの[ファイル名, 内容]をデコードする
-decodeDropPayload : Decode.Value -> Result Decode.Error ( String, String )
-decodeDropPayload value =
-    let
-        decoder =
-            Decode.map2 Tuple.pair
-                (Decode.index 0 Decode.string)
-                (Decode.index 1 Decode.string)
-    in
-    Decode.decodeValue decoder value
+-- decodeDropPayload : Decode.Value -> Result Decode.Error ( String, String )
+-- decodeDropPayload value =
+--     let
+--         decoder =
+--             Decode.map2 Tuple.pair
+--                 (Decode.index 0 Decode.string)
+--                 (Decode.index 1 Decode.string)
+--     in
+--     Decode.decodeValue decoder value
 
 
 
@@ -314,5 +336,4 @@ addPageToCurrentBook newId insertIndex content state =
                 shelves
     in
     { state | shelves = updateShelves state.shelves }
-
 

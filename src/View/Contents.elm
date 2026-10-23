@@ -2,7 +2,9 @@ module View.Contents exposing (viewLayout)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+-- import Html.Events exposing (..)
+import File exposing (File)
+import Html.Events exposing (preventDefaultOn)
 import Type exposing (..)
 import View.Style exposing (..)
 import Domain.Helper exposing (..)
@@ -19,6 +21,8 @@ viewLayout : Model -> AppState -> Html Msg
 viewLayout model present =
     div [ class (layoutContainer model.colorTheme)
         , style "font-family" (basecolors model.colorTheme).fontMono
+        , preventDefaultOn "dragover" (Decode.succeed ( NoOp, True ))
+        , preventDefaultOn "drop" dropDecoder
         ]
         [ case model.sidebarMode of
             NormalSidebar ->
@@ -47,6 +51,11 @@ viewLayout model present =
         ]
 
 
+dropDecoder : Decode.Decoder ( Msg, Bool )
+dropDecoder =
+    Decode.at [ "dataTransfer", "files" ] (Decode.list File.decoder)
+        |> Decode.map (\files -> ( FilesDropped files, True ))
+
 
 layoutContainer : ColorTheme -> String
 layoutContainer theme =
@@ -72,13 +81,6 @@ overlaySidebarArea model present =
         (overlaySidebarAttrs model.isRightSideWindowVisible)
         [ rightSideWindow model present ]
 
--- overlaySidebarArea : Model -> AppState -> Html Msg
--- overlaySidebarArea model present =
---     div
---         [ class (tw [ "fixed", "bottom-12", "right-4", "z-40", "scale-[0.85]", "origin-bottom-right", "shadow-xl" ]) 
---         , preventDefaultOn "wheel" (Decode.succeed ( NoOp, True ))
---         ]
---         [ rightSideWindow model present ]
 
 {-| インラインスタイルを用いて、Tailwindのビルド環境に依存せず確実にアニメーションさせる属性リスト -}
 overlaySidebarAttrs : Bool -> List (Html.Attribute Msg)
