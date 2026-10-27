@@ -35,7 +35,9 @@ encodeModelValue model =
         , ( "renderStyle", encodeRenderStyle model.renderStyle )
         , ( "visibleHeadingLevel", encodeHeadingLevel model.visibleHeadingLevel )
         , ( "contentWidth", encodeContentWidth model.contentWidth )
-        --, ( "exportFormat", encodeExportFormat model.exportFormat )
+        , ( "sidebarMode", encodeSidebarMode model.sidebarMode )
+        , ( "sidebarTab", encodeSidebarTab model.sidebarTab )
+        , ( "isRightSideWindowVisible", Encode.bool model.isRightSideWindowVisible )
         ]
 
 -- 全体バックアップ用エクスポート
@@ -109,34 +111,65 @@ andMap =
 
 
 -- Model全体のデコーダー
+-- decodeModel : Decode.Decoder Model
+-- decodeModel =
+--     Decode.succeed Model
+--         |> andMap (Decode.succeed [])       -- past: 保存せず空リストで初期化
+--         |> andMap (Decode.field "present" decodeAppState) -- present: 保存データから復元
+--         |> andMap (Decode.succeed [])       -- future: 保存せず空リストで初期化
+--         |> andMap (Decode.succeed (Random.initialSeed 0))
+--         |> andMap (Decode.succeed PageView) -- mainViewMode: 初期画面を指定
+--         |> andMap (Decode.succeed ViewMode) -- mode: 初期モードを指定
+--         |> andMap (Decode.succeed TocTab)   -- sidebarTab: 初期タブを指定
+--         |> andMap (Decode.succeed NormalSidebar)
+--         |> andMap (Decode.succeed "")       -- searchText: 空文字で初期化
+--         |> andMap (Decode.succeed Nothing)  -- editing
+--         |> andMap (Decode.field "fontSize" decodeFontSize)
+--         |> andMap (Decode.field "colorTheme" decodeColorTheme)
+--         |> andMap (Decode.field "renderStyle" decodeRenderStyle)
+--         |> andMap (Decode.succeed 0)
+--         |> andMap (Decode.succeed [])
+--         |> andMap (Decode.succeed Nothing)
+--         |> andMap (Decode.succeed [])
+--         |> andMap (Decode.succeed "")
+--         |> andMap (Decode.oneOf [ Decode.field "visibleHeadingLevel" decodeHeadingLevel, Decode.succeed H3 ])
+--         |> andMap (Decode.oneOf [ Decode.field "contentWidth" decodeContentWidth, Decode.succeed Normal ])
+--         --|> andMap (Decode.succeed False)
+--         |> andMap (Decode.succeed False)
+--         --|> andMap (Decode.oneOf [ Decode.field "exportFormat" decodeExportFormat, Decode.succeed FormatTxt ])
+--         |> andMap (Decode.succeed Nothing)
+--         |> andMap (Decode.succeed Nothing)
+
 decodeModel : Decode.Decoder Model
 decodeModel =
     Decode.succeed Model
-        |> andMap (Decode.succeed [])       -- past: 保存せず空リストで初期化
-        |> andMap (Decode.field "present" decodeAppState) -- present: 保存データから復元
-        |> andMap (Decode.succeed [])       -- future: 保存せず空リストで初期化
-        |> andMap (Decode.succeed (Random.initialSeed 0))
-        |> andMap (Decode.succeed PageView) -- mainViewMode: 初期画面を指定
-        |> andMap (Decode.succeed ViewMode) -- mode: 初期モードを指定
-        |> andMap (Decode.succeed TocTab)   -- sidebarTab: 初期タブを指定
-        |> andMap (Decode.succeed NormalSidebar)
-        |> andMap (Decode.succeed "")       -- searchText: 空文字で初期化
+        |> andMap (Decode.succeed [])       -- past
+        |> andMap (Decode.field "present" decodeAppState) -- present
+        |> andMap (Decode.succeed [])       -- future
+        |> andMap (Decode.succeed (Random.initialSeed 0)) -- seed
+        |> andMap (Decode.succeed PageView) -- mainViewMode
+        |> andMap (Decode.succeed ViewMode) -- mode
+        -- [変更] sidebarTab の復元（なければ TocTab）
+        |> andMap (Decode.oneOf [ Decode.field "sidebarTab" decodeSidebarTab, Decode.succeed TocTab ])
+        -- [変更] sidebarMode の復元（なければ NormalSidebar）
+        |> andMap (Decode.oneOf [ Decode.field "sidebarMode" decodeSidebarMode, Decode.succeed NormalSidebar ])
+        |> andMap (Decode.succeed "")       -- searchText
         |> andMap (Decode.succeed Nothing)  -- editing
         |> andMap (Decode.field "fontSize" decodeFontSize)
         |> andMap (Decode.field "colorTheme" decodeColorTheme)
         |> andMap (Decode.field "renderStyle" decodeRenderStyle)
-        |> andMap (Decode.succeed 0)
-        |> andMap (Decode.succeed [])
-        |> andMap (Decode.succeed Nothing)
-        |> andMap (Decode.succeed [])
-        |> andMap (Decode.succeed "")
+        |> andMap (Decode.succeed 0)        -- scrollRatio
+        |> andMap (Decode.succeed [])       -- headingPositions
+        |> andMap (Decode.succeed Nothing)  -- draggingState
+        |> andMap (Decode.succeed [])       -- pageCreationBuffer
+        |> andMap (Decode.succeed "")       -- pageCreationTitle
         |> andMap (Decode.oneOf [ Decode.field "visibleHeadingLevel" decodeHeadingLevel, Decode.succeed H3 ])
         |> andMap (Decode.oneOf [ Decode.field "contentWidth" decodeContentWidth, Decode.succeed Normal ])
-        --|> andMap (Decode.succeed False)
-        |> andMap (Decode.succeed False)
-        --|> andMap (Decode.oneOf [ Decode.field "exportFormat" decodeExportFormat, Decode.succeed FormatTxt ])
-        |> andMap (Decode.succeed Nothing)
-        |> andMap (Decode.succeed Nothing)
+        -- [変更] isRightSideWindowVisible の復元（なければ True）
+        |> andMap (Decode.oneOf [ Decode.field "isRightSideWindowVisible" Decode.bool, Decode.succeed True ])
+        |> andMap (Decode.succeed Nothing)  -- openMenuId
+        |> andMap (Decode.succeed Nothing)  -- modalAlert
+
 
 decodeAppState : Decode.Decoder AppState
 decodeAppState =
@@ -196,6 +229,20 @@ decodePage =
 
 
 -- MARK:補助用エンコーダー・デコーダー
+encodeSidebarMode : SidebarMode -> Encode.Value
+encodeSidebarMode mode =
+    case mode of
+        NormalSidebar  -> Encode.string "NormalSidebar"
+        OverlaySidebar -> Encode.string "OverlaySidebar"
+        LeftSidebar    -> Encode.string "LeftSidebar"
+
+encodeSidebarTab : SidebarTab -> Encode.Value
+encodeSidebarTab tab =
+    case tab of
+        ShelfListTab -> Encode.string "ShelfListTab"
+        BookListTab  -> Encode.string "BookListTab"
+        TocTab       -> Encode.string "TocTab"
+
 encodeFontSize : FontSize -> Encode.Value
 encodeFontSize size =
     case size of
@@ -266,6 +313,28 @@ encodeExportFormat format =
 
         FormatMd ->
             Encode.string "md"
+
+decodeSidebarMode : Decode.Decoder SidebarMode
+decodeSidebarMode =
+    Decode.string
+        |> Decode.andThen
+            (\str ->
+                case str of
+                    "OverlaySidebar" -> Decode.succeed OverlaySidebar
+                    "LeftSidebar"    -> Decode.succeed LeftSidebar
+                    _                -> Decode.succeed NormalSidebar
+            )
+
+decodeSidebarTab : Decode.Decoder SidebarTab
+decodeSidebarTab =
+    Decode.string
+        |> Decode.andThen
+            (\str ->
+                case str of
+                    "ShelfListTab" -> Decode.succeed ShelfListTab
+                    "BookListTab"  -> Decode.succeed BookListTab
+                    _              -> Decode.succeed TocTab
+            )
 
 decodeRenderStyle : Decode.Decoder RenderStyle
 decodeRenderStyle =

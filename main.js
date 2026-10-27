@@ -5726,6 +5726,7 @@ var $author$project$Type$PageView = {$: 0};
 var $author$project$Type$TocTab = 2;
 var $author$project$Type$ViewMode = 0;
 var $author$project$JsonConverter$andMap = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
+var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $author$project$Type$Book = F3(
 	function (id, title, pages) {
 		return {z: id, Q: pages, b2: title};
@@ -5914,6 +5915,36 @@ var $author$project$JsonConverter$decodeRenderStyle = A2(
 		}
 	},
 	$elm$json$Json$Decode$string);
+var $author$project$Type$LeftSidebar = 2;
+var $author$project$Type$OverlaySidebar = 1;
+var $author$project$JsonConverter$decodeSidebarMode = A2(
+	$elm$json$Json$Decode$andThen,
+	function (str) {
+		switch (str) {
+			case 'OverlaySidebar':
+				return $elm$json$Json$Decode$succeed(1);
+			case 'LeftSidebar':
+				return $elm$json$Json$Decode$succeed(2);
+			default:
+				return $elm$json$Json$Decode$succeed(0);
+		}
+	},
+	$elm$json$Json$Decode$string);
+var $author$project$Type$BookListTab = 1;
+var $author$project$Type$ShelfListTab = 0;
+var $author$project$JsonConverter$decodeSidebarTab = A2(
+	$elm$json$Json$Decode$andThen,
+	function (str) {
+		switch (str) {
+			case 'ShelfListTab':
+				return $elm$json$Json$Decode$succeed(0);
+			case 'BookListTab':
+				return $elm$json$Json$Decode$succeed(1);
+			default:
+				return $elm$json$Json$Decode$succeed(2);
+		}
+	},
+	$elm$json$Json$Decode$string);
 var $elm$random$Random$Seed = F2(
 	function (a, b) {
 		return {$: 0, a: a, b: b};
@@ -5941,7 +5972,12 @@ var $author$project$JsonConverter$decodeModel = A2(
 		$elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing),
 		A2(
 			$author$project$JsonConverter$andMap,
-			$elm$json$Json$Decode$succeed(false),
+			$elm$json$Json$Decode$oneOf(
+				_List_fromArray(
+					[
+						A2($elm$json$Json$Decode$field, 'isRightSideWindowVisible', $elm$json$Json$Decode$bool),
+						$elm$json$Json$Decode$succeed(true)
+					])),
 			A2(
 				$author$project$JsonConverter$andMap,
 				$elm$json$Json$Decode$oneOf(
@@ -5990,10 +6026,20 @@ var $author$project$JsonConverter$decodeModel = A2(
 															$elm$json$Json$Decode$succeed(''),
 															A2(
 																$author$project$JsonConverter$andMap,
-																$elm$json$Json$Decode$succeed(0),
+																$elm$json$Json$Decode$oneOf(
+																	_List_fromArray(
+																		[
+																			A2($elm$json$Json$Decode$field, 'sidebarMode', $author$project$JsonConverter$decodeSidebarMode),
+																			$elm$json$Json$Decode$succeed(0)
+																		])),
 																A2(
 																	$author$project$JsonConverter$andMap,
-																	$elm$json$Json$Decode$succeed(2),
+																	$elm$json$Json$Decode$oneOf(
+																		_List_fromArray(
+																			[
+																				A2($elm$json$Json$Decode$field, 'sidebarTab', $author$project$JsonConverter$decodeSidebarTab),
+																				$elm$json$Json$Decode$succeed(2)
+																			])),
 																	A2(
 																		$author$project$JsonConverter$andMap,
 																		$elm$json$Json$Decode$succeed(0),
@@ -6288,7 +6334,6 @@ var $author$project$Type$NextPage = {$: 14};
 var $author$project$Type$PrevPage = {$: 15};
 var $author$project$Type$Redo = {$: 1};
 var $author$project$Type$Undo = {$: 0};
-var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $author$project$Domain$Helper$keyDecoder = A3(
 	$elm$json$Json$Decode$map2,
 	F2(
@@ -7382,6 +7427,7 @@ var $author$project$Domain$Helper$clearEditing = function (model) {
 		model,
 		{co: $elm$core$Maybe$Nothing});
 };
+var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$json$Json$Encode$null = _Json_encodeNull;
 var $author$project$JsonConverter$encodeMaybe = F2(
 	function (encoder, maybe) {
@@ -7534,6 +7580,26 @@ var $author$project$JsonConverter$encodeRenderStyle = function (style) {
 			return $elm$json$Json$Encode$string('Mystical');
 	}
 };
+var $author$project$JsonConverter$encodeSidebarMode = function (mode) {
+	switch (mode) {
+		case 0:
+			return $elm$json$Json$Encode$string('NormalSidebar');
+		case 1:
+			return $elm$json$Json$Encode$string('OverlaySidebar');
+		default:
+			return $elm$json$Json$Encode$string('LeftSidebar');
+	}
+};
+var $author$project$JsonConverter$encodeSidebarTab = function (tab) {
+	switch (tab) {
+		case 0:
+			return $elm$json$Json$Encode$string('ShelfListTab');
+		case 1:
+			return $elm$json$Json$Encode$string('BookListTab');
+		default:
+			return $elm$json$Json$Encode$string('TocTab');
+	}
+};
 var $author$project$JsonConverter$encodeModelValue = function (model) {
 	return $elm$json$Json$Encode$object(
 		_List_fromArray(
@@ -7555,7 +7621,16 @@ var $author$project$JsonConverter$encodeModelValue = function (model) {
 				$author$project$JsonConverter$encodeHeadingLevel(model.c1)),
 				_Utils_Tuple2(
 				'contentWidth',
-				$author$project$JsonConverter$encodeContentWidth(model.ch))
+				$author$project$JsonConverter$encodeContentWidth(model.ch)),
+				_Utils_Tuple2(
+				'sidebarMode',
+				$author$project$JsonConverter$encodeSidebarMode(model.aX)),
+				_Utils_Tuple2(
+				'sidebarTab',
+				$author$project$JsonConverter$encodeSidebarTab(model.cU)),
+				_Utils_Tuple2(
+				'isRightSideWindowVisible',
+				$elm$json$Json$Encode$bool(model.aK))
 			]));
 };
 var $author$project$JsonConverter$encodeModel = function (model) {
@@ -7830,7 +7905,6 @@ var $author$project$Domain$Helper$applyReorder = F4(
 			model,
 			{cn: $elm$core$Maybe$Nothing, x: newState});
 	});
-var $author$project$Type$BookListTab = 1;
 var $author$project$Type$ShelfDetailView = function (a) {
 	return {$: 2, a: a};
 };
@@ -8142,7 +8216,6 @@ var $author$project$JsonConverter$encodeExportShelf = function (shelf) {
 					$author$project$JsonConverter$encodeShelf(shelf))
 				])));
 };
-var $author$project$Type$ShelfListTab = 0;
 var $author$project$Domain$Helper$ensureSidebarTabOnEmpty = function (model) {
 	return $elm$core$List$isEmpty(model.x.R) ? _Utils_update(
 		model,
@@ -9256,8 +9329,6 @@ var $author$project$Domain$Helper$setRightSideWindowVisible = F2(
 			model,
 			{aK: isVisible});
 	});
-var $author$project$Type$LeftSidebar = 2;
-var $author$project$Type$OverlaySidebar = 1;
 var $author$project$Domain$Helper$updateSidebarMode = F2(
 	function (nextMode, model) {
 		var nextWindowVisible = (!(!nextMode)) ? true : model.aK;
@@ -9302,9 +9373,6 @@ var $author$project$Domain$Helper$updateCurrentPageContent = F2(
 			return state;
 		}
 	});
-var $author$project$Domain$Helper$withoutCmd = function (model) {
-	return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-};
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -9396,11 +9464,10 @@ var $author$project$Main$update = F2(
 					A2($author$project$Domain$Helper$modeTransitionCmd, newMode, model.aV));
 			case 17:
 				var tab = msg.a;
-				return _Utils_Tuple2(
+				return $author$project$Domain$Helper$notifyAndSave(
 					_Utils_update(
 						model,
-						{cU: tab}),
-					$elm$core$Platform$Cmd$none);
+						{cU: tab}));
 			case 18:
 				var content = msg.a;
 				return $author$project$Domain$Helper$notifyAndSave(
@@ -9691,19 +9758,17 @@ var $author$project$Main$update = F2(
 						{cI: $elm$core$Maybe$Nothing}),
 					$elm$core$Platform$Cmd$none);
 			case 54:
-				return $author$project$Domain$Helper$withoutCmd(
+				return $author$project$Domain$Helper$notifyAndSave(
 					$author$project$Domain$Helper$toggleNormalSidebar(model));
 			case 55:
-				return $author$project$Domain$Helper$withoutCmd(
+				return $author$project$Domain$Helper$notifyAndSave(
 					$author$project$Domain$Helper$toggleLeftSidebar(model));
 			case 56:
-				return _Utils_Tuple2(
-					A2($author$project$Domain$Helper$setRightSideWindowVisible, true, model),
-					$elm$core$Platform$Cmd$none);
+				return $author$project$Domain$Helper$notifyAndSave(
+					A2($author$project$Domain$Helper$setRightSideWindowVisible, true, model));
 			case 57:
-				return _Utils_Tuple2(
-					A2($author$project$Domain$Helper$setRightSideWindowVisible, false, model),
-					$elm$core$Platform$Cmd$none);
+				return $author$project$Domain$Helper$notifyAndSave(
+					A2($author$project$Domain$Helper$setRightSideWindowVisible, false, model));
 			case 58:
 				return $author$project$Domain$Helper$notifyAndSave(
 					$author$project$Domain$AddItem$addGuideShelf(model));
@@ -9786,6 +9851,24 @@ var $author$project$View$Contents$layoutContainer = function (theme) {
 				'h-screen',
 				'overflow-hidden',
 				$author$project$View$Style$basecolors(theme).ca
+			]));
+};
+var $author$project$View$Contents$leftSidebarInnerClass = function (isVisible) {
+	return $author$project$View$Style$tw(
+		_List_fromArray(
+			[
+				'w-[250px] lg:w-[20vw] h-full',
+				'transition-transform duration-300 ease-in-out',
+				isVisible ? 'translate-x-0' : '-translate-x-full'
+			]));
+};
+var $author$project$View$Contents$leftSidebarWrapperClass = function (isVisible) {
+	return $author$project$View$Style$tw(
+		_List_fromArray(
+			[
+				'h-full flex-shrink-0 overflow-hidden',
+				'transition-all duration-300 ease-in-out',
+				isVisible ? 'w-[20%] min-w-[250px] opacity-100' : 'w-0 min-w-0 opacity-0 pointer-events-none'
 			]));
 };
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
@@ -10005,7 +10088,6 @@ var $elm$html$Html$Attributes$align = $elm$html$Html$Attributes$stringProperty('
 var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
 var $elm$html$Html$blockquote = _VirtualDom_node('blockquote');
 var $elm$html$Html$br = _VirtualDom_node('br');
-var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
 		return A2(
@@ -21199,6 +21281,30 @@ var $author$project$View$MainArea$bookTitleRow = F2(
 					A2($author$project$View$MainArea$bookTitleText, model, book)
 				]));
 	});
+var $author$project$Domain$Helper$stripEmphasis = function (input) {
+	return A3($elm$core$String$replace, '**', '', input);
+};
+var $author$project$View$MainArea$bookTooltipText = function (book) {
+	var headings = A2(
+		$elm$core$List$map,
+		function (h) {
+			return '・ ' + $author$project$Domain$Helper$stripEmphasis(h.cZ);
+		},
+		A2(
+			$elm$core$List$filter,
+			function (h) {
+				return h.V === 1;
+			},
+			$elm$core$List$concat(
+				A2(
+					$elm$core$List$indexedMap,
+					F2(
+						function (i, p) {
+							return A2($author$project$Domain$Helper$extractHeadings, i, p.bh);
+						}),
+					book.Q))));
+	return $elm$core$List$isEmpty(headings) ? '（見出しがありません）' : A2($elm$core$String$join, '\n', headings);
+};
 var $author$project$Icon$cansel = _List_fromArray(
 	['M512,52.535L459.467,0.002L256.002,203.462L52.538,0.002L0,52.535L203.47,256.005L0,459.475L52.533,511.998L256.002,308.527L459.467,511.998L512,459.475L308.536,256.005z']);
 var $elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
@@ -21272,7 +21378,11 @@ var $author$project$View$MainArea$viewBookCard = F3(
 				$elm$core$List$cons,
 				$elm$html$Html$Attributes$class(
 					A3($author$project$View$MainArea$bookCardStyle, theme, isActive, isOpen)),
-				cardEventHandlers),
+				A2(
+					$elm$core$List$cons,
+					$elm$html$Html$Attributes$title(
+						$author$project$View$MainArea$bookTooltipText(book)),
+					cardEventHandlers)),
 			_List_fromArray(
 				[
 					A4(
@@ -21496,6 +21606,17 @@ var $author$project$View$MainArea$shelfCardfooter = F3(
 					A3($author$project$View$MainArea$renderShelfExportControls, model, theme, shelf)
 				]));
 	});
+var $author$project$View$MainArea$shelfTooltipText = function (shelf) {
+	return $elm$core$List$isEmpty(shelf.ag) ? '（本がありません）' : A2(
+		$elm$core$String$join,
+		'\n',
+		A2(
+			$elm$core$List$map,
+			function (b) {
+				return '・ ' + b.b2;
+			},
+			shelf.ag));
+};
 var $author$project$View$MainArea$renderPreviewTitle = function (title) {
 	return A2(
 		$elm$html$Html$div,
@@ -21592,7 +21713,9 @@ var $author$project$View$MainArea$viewShelfCard = F2(
 					$elm$html$Html$Attributes$class(
 					A3($author$project$View$MainArea$shelfCardStyle, theme, isActive, isOpen)),
 					$elm$html$Html$Events$onClick(
-					$author$project$Type$SelectShelf(shelf.z))
+					$author$project$Type$SelectShelf(shelf.z)),
+					$elm$html$Html$Attributes$title(
+					$author$project$View$MainArea$shelfTooltipText(shelf))
 				]),
 			_List_fromArray(
 				[
@@ -23107,9 +23230,24 @@ var $author$project$View$RightSideBar$rightSidebarArea = F2(
 					A2($author$project$View$RightSideBar$bottomStatusArea, model, present)
 				]));
 	});
-var $author$project$View$Contents$rightsidebarWrapper = $author$project$View$Style$tw(
-	_List_fromArray(
-		['flex-shrink-0', 'h-full']));
+var $author$project$View$Contents$rightSidebarInnerClass = function (isVisible) {
+	return $author$project$View$Style$tw(
+		_List_fromArray(
+			[
+				'w-48 h-full',
+				'transition-transform duration-300 ease-in-out',
+				isVisible ? 'translate-x-0' : 'translate-x-full'
+			]));
+};
+var $author$project$View$Contents$rightSidebarWrapperClass = function (isVisible) {
+	return $author$project$View$Style$tw(
+		_List_fromArray(
+			[
+				'h-full flex-shrink-0 overflow-hidden',
+				'transition-all duration-300 ease-in-out',
+				isVisible ? 'w-48 opacity-100' : 'w-0 opacity-0 pointer-events-none'
+			]));
+};
 var $author$project$View$SideBar$asideStyle = function (theme) {
 	return $author$project$View$Style$tw(
 		_List_fromArray(
@@ -23895,9 +24033,6 @@ var $author$project$View$SideTocList$headingItemStyle = F2(
 			['cursor-pointer', 'py-1', 'px-2', 'mr-3', 'text-sm']);
 		return _Utils_ap(base, levelClass);
 	});
-var $author$project$Domain$Helper$stripEmphasis = function (input) {
-	return A3($elm$core$String$replace, '**', '', input);
-};
 var $author$project$Domain$Helper$isCurrentHeading = F3(
 	function (h, currentPageIndex, currentHeading) {
 		return _Utils_eq(h._, currentPageIndex) && A2(
@@ -24579,11 +24714,10 @@ var $author$project$View$SideBar$sidebarArea = F2(
 					$author$project$View$SideBar$sidebarFooter(model)
 				]));
 	});
-var $author$project$View$Contents$sidebarWrapper = $author$project$View$Style$tw(
-	_List_fromArray(
-		['w-[20%]', 'min-w-[250px]', 'flex-shrink-0', 'h-full']));
 var $author$project$View$Contents$viewLayout = F2(
 	function (model, present) {
+		var isRightVisible = !model.aX;
+		var isLeftVisible = (!model.aX) || (model.aX === 2);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -24603,56 +24737,49 @@ var $author$project$View$Contents$viewLayout = F2(
 				]),
 			_List_fromArray(
 				[
-					function () {
-					var _v0 = model.aX;
-					switch (_v0) {
-						case 0:
-							return A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class($author$project$View$Contents$sidebarWrapper)
-									]),
-								_List_fromArray(
-									[
-										A2($author$project$View$SideBar$sidebarArea, model, present)
-									]));
-						case 1:
-							return $elm$html$Html$text('');
-						default:
-							return A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class($author$project$View$Contents$sidebarWrapper)
-									]),
-								_List_fromArray(
-									[
-										A2($author$project$View$SideBar$sidebarArea, model, present)
-									]));
-					}
-				}(),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Contents$leftSidebarWrapperClass(isLeftVisible))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class(
+									$author$project$View$Contents$leftSidebarInnerClass(isLeftVisible))
+								]),
+							_List_fromArray(
+								[
+									A2($author$project$View$SideBar$sidebarArea, model, present)
+								]))
+						])),
 					A2($author$project$View$MainArea$mainContentArea, model, present),
-					function () {
-					var _v1 = model.aX;
-					switch (_v1) {
-						case 0:
-							return A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class($author$project$View$Contents$rightsidebarWrapper)
-									]),
-								_List_fromArray(
-									[
-										A2($author$project$View$RightSideBar$rightSidebarArea, model, present)
-									]));
-						case 1:
-							return $elm$html$Html$text('');
-						default:
-							return $elm$html$Html$text('');
-					}
-				}(),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Contents$rightSidebarWrapperClass(isRightVisible))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class(
+									$author$project$View$Contents$rightSidebarInnerClass(isRightVisible))
+								]),
+							_List_fromArray(
+								[
+									A2($author$project$View$RightSideBar$rightSidebarArea, model, present)
+								]))
+						])),
 					$author$project$View$Contents$isMiniWindowMode(model.aX) ? A2($author$project$View$Contents$overlaySidebarArea, model, present) : $elm$html$Html$text('')
 				]));
 	});

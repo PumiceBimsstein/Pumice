@@ -138,18 +138,6 @@ makeNewShelf theme isGuiding =
         ]
         [ text "+ Shelf" ]
 
--- shelfListMenuStyle : String
--- shelfListMenuStyle =
---     tw  [ "absolute"
---         , "top-4"
---         , "right-4"
---         , "z-10"
---         , "flex"
---         , "flex-col"
---         , "gap-1.5"
---         , "p-1.5"
---         ]
-
 shelfListMenuStyle : String
 shelfListMenuStyle =
     tw  [ "absolute"
@@ -176,18 +164,6 @@ menuButtonStyle theme =
         , "transition-opacity"
         , (basecolors theme).accent
         ]
-    -- tw  [ "px-2.5"
-    --     , "py-1"
-    --     , "text-xs"
-    --     , "font-medium", "shadow-sm"
-    --     , "border"
-    --     , "transition-all duration-100"
-    --     , "hover:scale-105 hover:brightness-110 hover:shadow-md"
-    --     , (basecolors theme).borderBtn
-    --     , (basecolors theme).text
-    --     , (basecolors theme).rounded
-    --     , (basecolors theme).bg
-    --     ]
 
 
 shelfGrid : Model -> List Shelf -> Html Msg
@@ -245,12 +221,24 @@ viewShelfCard model shelf =
     div
         [ class (shelfCardStyle theme isActive isOpen)
         , onClick (SelectShelf shelf.id)
+        , title (shelfTooltipText shelf)
         ]
         [ viewButton theme (DeleteButton (1, 1)) (DeleteShelf shelf.id) (Style.icon Icon.cansel "w-2 h-2")
         , viewShelfCardTitleRow model shelf 
         , viewShelfCardPreview shelf
         , shelfCardfooter model theme shelf
         ]
+
+
+{-| 本棚カードのホバー時に表示する全タイトル一覧 -}
+shelfTooltipText : Shelf -> String
+shelfTooltipText shelf =
+    if List.isEmpty shelf.books then
+        "（本がありません）"
+    else
+        shelf.books
+            |> List.map (\b -> "・ " ++ b.title)
+            |> String.join "\n"
 
 
 shelfCardStyle : ColorTheme -> Bool -> Bool -> String
@@ -525,12 +513,32 @@ viewBookCard model book isEditing =
                 [ onClick (SelectBook book.id) ]
     in
     div
-        ( class (bookCardStyle theme isActive isOpen) :: cardEventHandlers )
+        ( class (bookCardStyle theme isActive isOpen)
+            :: title (bookTooltipText book)
+            :: cardEventHandlers
+        )
         [ viewButton theme (DeleteButton (1, 1)) (DeleteBook book.id) (Style.icon Icon.cansel "w-2 h-2")
         , bookTitleRow model book
         , bookHeadingList theme book
         , bookCardFooter model theme book
         ]
+
+
+{-| 本カードのホバー時に表示する全H1見出し一覧 -}
+bookTooltipText : Book -> String
+bookTooltipText book =
+    let
+        headings =
+            book.pages
+                |> List.indexedMap (\i p -> extractHeadings i p.content)
+                |> List.concat
+                |> List.filter (\h -> h.level == 1)
+                |> List.map (\h -> "・ " ++ stripEmphasis h.text)
+    in
+    if List.isEmpty headings then
+        "（見出しがありません）"
+    else
+        String.join "\n" headings
 
 
 bookCardStyle : ColorTheme -> Bool -> Bool -> String
@@ -720,8 +728,6 @@ pageContentView model present =
         Just book ->
             main_
                 [ class (mainWrapperStyle model.colorTheme)
-                --, preventDefaultOn "dragover" (Decode.succeed ( NoOp, True ))
-                --, preventDefaultOn "drop" (Decode.succeed ( NoOp, True ))
                 ]
                 [ div
                     [ class "flex-1 overflow-y-auto" ]
@@ -836,4 +842,3 @@ viewEditor model currentPage =
         , stopPropagationOn "keydown" (Decode.succeed ( NoOp, True ))
         ]
         []
-

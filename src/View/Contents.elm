@@ -2,7 +2,6 @@ module View.Contents exposing (viewLayout)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
--- import Html.Events exposing (..)
 import File
 import Html.Events exposing (preventDefaultOn)
 import Type exposing (..)
@@ -19,33 +18,40 @@ import View.RightSideBar exposing (rightSidebarArea, rightSideWindow)
 
 viewLayout : Model -> AppState -> Html Msg
 viewLayout model present =
-    div [ class (layoutContainer model.colorTheme)
+    let
+        -- 左サイドバーが表示されるモード
+        isLeftVisible =
+            model.sidebarMode == NormalSidebar || model.sidebarMode == LeftSidebar
+
+        -- 右サイドバーが表示されるモード（NormalSidebar のみ）
+        isRightVisible =
+            model.sidebarMode == NormalSidebar
+    in
+    div
+        [ class (layoutContainer model.colorTheme)
         , style "font-family" (basecolors model.colorTheme).fontMono
         , preventDefaultOn "dragover" (Decode.succeed ( NoOp, True ))
         , preventDefaultOn "drop" dropDecoder
         ]
-        [ case model.sidebarMode of
-            NormalSidebar ->
-                div [ class sidebarWrapper ] [ sidebarArea model present ]
+        [ -- 1. 左サイドバー（左方向へのスライドアニメーション）
+          div [ class (leftSidebarWrapperClass isLeftVisible) ]
+            [ div [ class (leftSidebarInnerClass isLeftVisible) ]
+                [ sidebarArea model present ]
+            ]
 
-            OverlaySidebar ->
-                text ""
-            
-            LeftSidebar ->
-                div [ class sidebarWrapper ] [ sidebarArea model present ]
-
+        -- 2. メインコンテンツ領域（左右の伸縮に合わせて追従）
         , mainContentArea model present
-        , case model.sidebarMode of
-            NormalSidebar ->
-                div [ class rightsidebarWrapper ] [ rightSidebarArea model present ]
 
-            OverlaySidebar ->
-                text ""
-            
-            LeftSidebar ->
-                text ""
+        -- 3. 右サイドバー（右方向へのスライドアニメーション）
+        , div [ class (rightSidebarWrapperClass isRightVisible) ]
+            [ div [ class (rightSidebarInnerClass isRightVisible) ]
+                [ rightSidebarArea model present ]
+            ]
+
+        -- 4. 右下ミニコントロールウィンドウ
         , if isMiniWindowMode model.sidebarMode then
             overlaySidebarArea model present
+
           else
             text ""
         ]
@@ -62,18 +68,70 @@ layoutContainer theme =
     tw [ "flex", "w-screen", "h-screen", "overflow-hidden", (basecolors theme).bg ]
 
 
-sidebarWrapper : String
-sidebarWrapper =
-    tw [ "w-[20%]", "min-w-[250px]", "flex-shrink-0", "h-full" ]
+-- MARK: 左サイドバーのアニメーションスタイル
+
+{-| 外枠ラッパー: 幅と透明度を伸縮させ、スクロールバーや中身のはみ出しをクリップする -}
+leftSidebarWrapperClass : Bool -> String
+leftSidebarWrapperClass isVisible =
+    tw
+        [ "h-full flex-shrink-0 overflow-hidden"
+        , "transition-all duration-300 ease-in-out"
+        , if isVisible then
+            "w-[20%] min-w-[250px] opacity-100"
+
+          else
+            "w-0 min-w-0 opacity-0 pointer-events-none"
+        ]
 
 
-rightsidebarWrapper : String
-rightsidebarWrapper =
-    tw [ "flex-shrink-0", "h-full" ]
+{-| 内側コンテナ: 縮小中に文字が折り返して崩れるのを防ぎつつ、左外へスライドさせる -}
+leftSidebarInnerClass : Bool -> String
+leftSidebarInnerClass isVisible =
+    tw
+        [ "w-[250px] lg:w-[20vw] h-full"
+        , "transition-transform duration-300 ease-in-out"
+        , if isVisible then
+            "translate-x-0"
+
+          else
+            "-translate-x-full"
+        ]
+
+
+-- MARK: 右サイドバーのアニメーションスタイル
+
+{-| 外枠ラッパー: 幅を 48 (12rem) から 0 へアニメーション -}
+rightSidebarWrapperClass : Bool -> String
+rightSidebarWrapperClass isVisible =
+    tw
+        [ "h-full flex-shrink-0 overflow-hidden"
+        , "transition-all duration-300 ease-in-out"
+        , if isVisible then
+            "w-48 opacity-100"
+
+          else
+            "w-0 opacity-0 pointer-events-none"
+        ]
+
+
+{-| 内側コンテナ: 右画面外へスライドアウト -}
+rightSidebarInnerClass : Bool -> String
+rightSidebarInnerClass isVisible =
+    tw
+        [ "w-48 h-full"
+        , "transition-transform duration-300 ease-in-out"
+        , if isVisible then
+            "translate-x-0"
+
+          else
+            "translate-x-full"
+        ]
+
 
 isMiniWindowMode : SidebarMode -> Bool
 isMiniWindowMode sidebarMode =
     sidebarMode == OverlaySidebar || sidebarMode == LeftSidebar
+
 
 overlaySidebarArea : Model -> AppState -> Html Msg
 overlaySidebarArea model present =

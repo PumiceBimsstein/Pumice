@@ -164,7 +164,8 @@ update msg model =
             )
 
         ChangeSidebarTab tab ->
-            ( { model | sidebarTab = tab }, Cmd.none )
+            { model | sidebarTab = tab }
+                |> notifyAndSave
 
         EditorInput content ->
             model
@@ -219,22 +220,6 @@ update msg model =
             , Task.perform (PageContentLoaded (File.name file)) (File.toString file)
             )
 
-        -- ImportBook newId importedBook ->
-        --     model
-        --         |> addImportedBook newId importedBook
-        --         |> notifyAndSave
-
-        -- ImportShelf newId importedShelf ->
-        --     model
-        --         |> addImportedShelf newId importedShelf
-        --         |> notifyAndSave
-
-        -- ImportData jsonString ->
-        --     model
-        --         |> processImportedString jsonString
-        --         |> Result.map notifyAndSave
-        --         |> Result.withDefault ( model, Cmd.none )
-
         JsonFilesSelected target files ->
             let
                 readCmds =
@@ -270,10 +255,6 @@ update msg model =
             in
             ( model, Download.string fileName "application/json" jsonString )
 
-
-        -- ChangeExportFormat formatStr ->
-        --     ( { model | exportFormat = stringToExportFormat formatStr }, Cmd.none )
-        
         DismissAlert ->
             ( { model | modalAlert = Nothing }, Cmd.none )
 
@@ -360,9 +341,6 @@ update msg model =
         SetContentWidth newWidth ->
             ( { model | contentWidth = newWidth }, Cmd.none )
 
-        -- ToggleSidebarOverlay ->
-        --     ( { model | isSidebarOverlaid = not model.isSidebarOverlaid }, Cmd.none )
-        
         ToggleMenu menuId ->
             let
                 next =
@@ -379,18 +357,22 @@ update msg model =
         ToggleNormalSidebar ->
             model
                 |> toggleNormalSidebar
-                |> withoutCmd
+                |> notifyAndSave
 
         ToggleLeftSidebar ->
             model
                 |> toggleLeftSidebar
-                |> withoutCmd
+                |> notifyAndSave
 
         OpenRightSideWindow ->
-            ( setRightSideWindowVisible True model, Cmd.none )
+            model
+                |> setRightSideWindowVisible True
+                |> notifyAndSave
 
         CloseRightSideWindow ->
-            ( setRightSideWindowVisible False model, Cmd.none )
+            model
+                |> setRightSideWindowVisible False
+                |> notifyAndSave
         
         AddGuideShelf ->
             model
