@@ -149,9 +149,7 @@ decodeModel =
         |> andMap (Decode.succeed (Random.initialSeed 0)) -- seed
         |> andMap (Decode.succeed PageView) -- mainViewMode
         |> andMap (Decode.succeed ViewMode) -- mode
-        -- [変更] sidebarTab の復元（なければ TocTab）
         |> andMap (Decode.oneOf [ Decode.field "sidebarTab" decodeSidebarTab, Decode.succeed TocTab ])
-        -- [変更] sidebarMode の復元（なければ NormalSidebar）
         |> andMap (Decode.oneOf [ Decode.field "sidebarMode" decodeSidebarMode, Decode.succeed NormalSidebar ])
         |> andMap (Decode.succeed "")       -- searchText
         |> andMap (Decode.succeed Nothing)  -- editing
@@ -165,10 +163,11 @@ decodeModel =
         |> andMap (Decode.succeed "")       -- pageCreationTitle
         |> andMap (Decode.oneOf [ Decode.field "visibleHeadingLevel" decodeHeadingLevel, Decode.succeed H3 ])
         |> andMap (Decode.oneOf [ Decode.field "contentWidth" decodeContentWidth, Decode.succeed Normal ])
-        -- [変更] isRightSideWindowVisible の復元（なければ True）
         |> andMap (Decode.oneOf [ Decode.field "isRightSideWindowVisible" Decode.bool, Decode.succeed True ])
         |> andMap (Decode.succeed Nothing)  -- openMenuId
         |> andMap (Decode.succeed Nothing)  -- modalAlert
+        |> andMap (Decode.succeed Nothing)  -- typingSessionBaseline
+        |> andMap (Decode.succeed 0)        -- editorDebounceCounter
 
 
 decodeAppState : Decode.Decoder AppState

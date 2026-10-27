@@ -5,12 +5,12 @@ import Browser.Dom
 import Task
 import Time
 import File.Download as Download
+import Process
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, preventDefaultOn)
 import Html exposing (Attribute)
 import Json.Decode as Decode
 import JsonConverter
-    --exposing (decodeBook, decodeShelf)
 import Ports exposing (syncScroll, saveToStorage, scrollToTop, exportZip)
 
 -- MARK: 基本的な処理
@@ -254,6 +254,83 @@ applyRedo model =
 
         [] ->
             model
+
+
+-- 未確定のタイピングセッションがあれば、入力前のベースラインを past 履歴にコミット
+commitTypingSession : Model -> Model
+commitTypingSession model =
+    case model.typingSessionBaseline of
+        Just baseline ->
+            if baseline == model.present then
+                -- 内容に変更がなければ履歴を増やさずリセット
+                { model | typingSessionBaseline = Nothing }
+
+            else
+                -- 入力開始前の状態を past に1件として積み、履歴を確定
+                { model
+                    | past = List.take 100 (baseline :: model.past)
+                    , future = []
+                    , typingSessionBaseline = Nothing
+                }
+
+        Nothing ->
+            model
+
+
+-- 文字入力を受け付け、ベースラインの保持・本文更新・タイマーカウンタのインクリメントを行う
+registerEditorInput : String -> Model -> Model
+registerEditorInput content model =
+    let
+        newCounter =
+            model.editorDebounceCounter + 1
+
+        baseline =
+            case model.typingSessionBaseline of
+                Just base ->
+                    Just base
+
+                Nothing ->
+                    Just model.present
+
+        newPresent =
+            updateCurrentPageContent content model.present
+    in
+    { model
+        | present = newPresent
+        , typingSessionBaseline = baseline
+        , editorDebounceCounter = newCounter
+    }
+
+
+notifyAndScheduleDebounce : Model -> ( Model, Cmd Msg )
+notifyAndScheduleDebounce newModel =
+    ( newModel
+    , Cmd.batch
+        [ Ports.saveToStorage (JsonConverter.encodeModel newModel)
+        , Process.sleep 800
+            |> Task.perform (\_ -> CommitTypingSession newModel.editorDebounceCounter)
+        ]
+    )
+
+
+applySessionCommitIfValid : Int -> Model -> Model
+applySessionCommitIfValid counter model =
+    if counter == model.editorDebounceCounter then
+        commitTypingSession model
+
+    else
+        model
+
+
+applyChangeMode : Mode -> Model -> ( Model, Cmd Msg )
+applyChangeMode newMode model =
+    let
+        committed =
+            commitTypingSession model
+    in
+    ( committed |> setMode newMode
+    , modeTransitionCmd newMode committed.scrollRatio
+    )
 
 
 -- MARK:検索

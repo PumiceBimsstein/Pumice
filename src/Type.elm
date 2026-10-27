@@ -186,11 +186,12 @@ type alias Model =
     , pageCreationTitle : String
     , visibleHeadingLevel : HeadingLevel
     , contentWidth : ContentWidth
-    -- , isSidebarOverlaid : Bool
     , isRightSideWindowVisible : Bool
-    -- , exportFormat : ExportFormat
     , openMenuId : Maybe MenuId
     , modalAlert : Maybe String
+    , typingSessionBaseline : Maybe AppState   -- 入力開始直前の状態スナップショット
+    , editorDebounceCounter : Int             -- 入力タイマー判定用のカウンタ
+    
     }
 
 -- MARK:Msg
@@ -223,12 +224,8 @@ type Msg
     | ReorderPages Int Int
     | RequestImport ImportTarget
     | RequestPageImport
-    -- | ImportBook String Book
-    -- | ImportShelf String Shelf
-    -- | ImportData String
     | ExportData
     | ExportDataWithTime ( Time.Zone, Time.Posix )
-    -- | ChangeExportFormat String
     | ExportPage String
     | DismissAlert
     | ChangeFontSize String
@@ -252,7 +249,6 @@ type Msg
     | FilesDropped (List File)
     | SetVisibleHeadingLevel HeadingLevel
     | SetContentWidth ContentWidth
-    -- | ToggleSidebarOverlay
     | ToggleMenu MenuId
     | CloseMenu
     | ToggleNormalSidebar
@@ -263,6 +259,7 @@ type Msg
     | SelectMenuItem Msg
     | ResetApp
     | ResetAppWithTime ( Time.Zone, Time.Posix )
+    | CommitTypingSession Int
     | NoOp
 
 

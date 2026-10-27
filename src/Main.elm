@@ -36,27 +36,32 @@ main =
         , view = \model -> View.Contents.viewLayout model model.present
         }
 
-
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    let
-        initialSeed =
-            flags.seed
-                |> List.head
-                |> Maybe.withDefault 0
-                |> Random.initialSeed
+    flags
+        |> buildInitialModelFromFlags
+        |> withoutCmd
 
-        initialModel =
-            case Decode.decodeValue JsonConverter.decodeModel flags.storageData of
-                Ok model ->
-                    { model | seed = initialSeed }
+-- init : Flags -> ( Model, Cmd Msg )
+-- init flags =
+--     let
+--         initialSeed =
+--             flags.seed
+--                 |> List.head
+--                 |> Maybe.withDefault 0
+--                 |> Random.initialSeed
 
-                Err _ ->
-                    flags.storageData
-                        |> restoreFallbackAppState
-                        |> initModelWithAppState initialSeed
-    in
-    ( initialModel, Cmd.none )
+--         initialModel =
+--             case Decode.decodeValue JsonConverter.decodeModel flags.storageData of
+--                 Ok model ->
+--                     { model | seed = initialSeed }
+
+--                 Err _ ->
+--                     flags.storageData
+--                         |> restoreFallbackAppState
+--                         |> initModelWithAppState initialSeed
+--     in
+--     ( initialModel, Cmd.none )
 
 
 -- Model全体のデコード失敗時に、AppState単体での復元を試みる
@@ -76,7 +81,10 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Undo ->
-            model |> applyUndo |> notifyAndSave
+            model
+                |> commitTypingSession  -- 入力中のセッションがあれば先に確定
+                |> applyUndo
+                |> notifyAndSave
 
         Redo ->
             model |> applyRedo |> notifyAndSave
@@ -132,6 +140,7 @@ update msg model =
 
         SelectPage index ->
             model
+                |> commitTypingSession
                 |> applyPageSelection index
                 |> notifyAndSaveWithCmd (scrollToTop ())
 
@@ -159,9 +168,7 @@ update msg model =
                 ( model, Cmd.none )
 
         ChangeMode newMode ->
-            ( model |> setMode newMode
-            , modeTransitionCmd newMode model.scrollRatio
-            )
+            applyChangeMode newMode model
 
         ChangeSidebarTab tab ->
             { model | sidebarTab = tab }
@@ -169,8 +176,8 @@ update msg model =
 
         EditorInput content ->
             model
-                |> updatePresent (updateCurrentPageContent content)
-                |> notifyAndSave
+                |> registerEditorInput content
+                |> notifyAndScheduleDebounce
 
         UpdateSearchText text ->
             ( { model | searchText = text }, Cmd.none )
@@ -398,6 +405,11 @@ update msg model =
 
         ResetAppWithTime ( zone, time ) ->
             resetWithBackup zone time model
+        
+        CommitTypingSession counter ->
+            model
+                |> applySessionCommitIfValid counter
+                |> withoutCmd
 
         NoOp ->
             ( model, Cmd.none )

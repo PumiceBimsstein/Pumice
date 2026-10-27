@@ -113,12 +113,49 @@ window.elmAppPromise.then(app => {
 });
 
 
-function saveToDB(data) {
-    const request = indexedDB.open("bookReaderDB", 1);
-    request.onsuccess = (e) => {
-        const db = e.target.result;
-        const tx = db.transaction("kv", "readwrite");
-        const store = tx.objectStore("kv");
-        store.put(data, "bookReaderData");
-    };
+// function saveToDB(data) {
+//     const request = indexedDB.open("bookReaderDB", 1);
+//     request.onsuccess = (e) => {
+//         const db = e.target.result;
+//         const tx = db.transaction("kv", "readwrite");
+//         const store = tx.objectStore("kv");
+//         store.put(data, "bookReaderData");
+//     };
+// }
+
+// script.js の saveToDB を更新
+let isWriting = false;
+let pendingData = null;
+
+async function saveToDB(data) {
+    pendingData = data;
+    if (isWriting) return;
+    isWriting = true;
+
+    try {
+        const db = await (typeof getDbConnection === 'function' 
+            ? getDbConnection() 
+            : new Promise((res, rej) => {
+                const req = indexedDB.open("bookReaderDB", 1);
+                req.onsuccess = (e) => res(e.target.result);
+                req.onerror = (e) => rej(e);
+            }));
+
+        while (pendingData !== null) {
+            const dataToWrite = pendingData;
+            pendingData = null;
+
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction("kv", "readwrite");
+                const store = tx.objectStore("kv");
+                const req = store.put(dataToWrite, "bookReaderData");
+                req.onsuccess = () => resolve();
+                req.onerror = (e) => reject(e);
+            });
+        }
+    } catch (err) {
+        console.error("[IndexedDB] Save error:", err);
+    } finally {
+        isWriting = false;
+    }
 }
