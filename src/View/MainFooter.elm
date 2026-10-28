@@ -20,21 +20,14 @@ viewFooter model state book theme =
     div
         [ class (mainFooter.footerContainer theme) ]
         [ div
-            [ class "flex-none w-[20%] min-w-0" ]
+            [ class "flex-none w-[20%] min-w-0 shrink-0" ]
             [ viewBookTitle model book ]
         , div
-            [ class "flex-1 flex justify-center" ]
+            [ class "flex-1 min-w-0 flex justify-center px-2" ]
             [ viewSeekBar model state total ]
         , div
-            [ class "flex-none w-[20%] flex justify-end" ]
+            [ class "flex-none shrink-0 flex items-center justify-end" ]
             [ viewFooterRightControls model currentPageId theme ]
-        -- , div
-        --     [ class "flex-none w-[20%]" ]
-        --     [ if model.mode == EditMode then
-        --         deletePageButton currentPageId
-        --       else
-        --         viewWidthSlider theme model.contentWidth
-        --     ]
         ]
 
 {-| 右側コントロールの出し分け -}
@@ -80,6 +73,12 @@ viewCollapsedControls model theme =
         [ button
             [ class (footerMiniBtnStyle theme)
             , style "font-family" (basecolors theme).fontDeco
+            , onClick (CreateNextPage (model.present.currentPageIndex + 1))
+            ]
+            [ text "+Page" ]
+        , button
+            [ class (footerMiniBtnStyle theme)
+            , style "font-family" (basecolors theme).fontDeco
             , onClick (ChangeMode nextMode)
             ]
             [ text modeLabel ]
@@ -99,12 +98,14 @@ footerMiniBtnStyle theme =
         [ "px-2.5"
         , "py-1"
         , "text-xs", "opacity-70"
-        , "font-semibold"
+        , "font-semibold", "whitespace-nowrap"  -- 改行を防止
+        , "shrink-0"
         , "border"
         , (basecolors theme).rounded
         , (basecolors theme).borderBtn
         , (basecolors theme).text
         , "hover:opacity-90"
+        , "cursor-pointer"
         ]
 
 viewBookTitle : Model -> Book -> Html Msg
@@ -146,7 +147,7 @@ viewSeekBar model present total =
 deletePageButton : String -> Html Msg
 deletePageButton pageId =
     button
-        [ class (mainFooter.deletebutton "text-red-400")
+        [ class (mainFooter.deletebutton)
         , onClick (DeletePage pageId)]
         [ text "Delete This Page" ]
 
@@ -209,12 +210,12 @@ mainFooter :
     , seekBarTrack : String
     , seekBarInputBaseAttrs : Int -> List (Attribute msg)
     , seekBarProgressAttr : ColorTheme -> Float -> List (Html.Attribute msg)
-    , deletebutton : String -> String  
+    , deletebutton : String  
     }
 mainFooter =
     { footerContainer = \theme ->
-        tw  [ "flex", "border-t", "px-6", "py-1"
-            , "items-center", "gap-10"
+        tw  [ "flex", "border-t", "px-4 md:px-6", "py-1"
+            , "items-center", "gap-3 sm:gap-6 md:gap-10"
             , (basecolors theme).surface
             , (basecolors theme).border ]
             
@@ -241,10 +242,13 @@ mainFooter =
         , style "background-color" (basecolors theme).scrollThumb
         , Html.Attributes.class "h-full" -- duration-200
         ]
-    , deletebutton = \colorClass ->
-        tw  [ "border", "rounded", "truncate"
-            , "flex-1", "px-2", "py-1", "text-xs", colorClass
-            , "hover:bg-white/5", "border-gray-500/20"
+    , deletebutton =
+        tw  [ "border", "rounded", "whitespace-nowrap"
+            , "px-3", "py-1", "text-xs"
+            , "hover:bg-red-500/10", "hover:border-red-400/50"
+            , "border-red-400/30"
             , "text-red-400"
+            , "cursor-pointer"
+            , "transition-colors"
             ]
     }

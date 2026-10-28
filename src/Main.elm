@@ -198,6 +198,14 @@ update msg model =
                 |> setMainViewMode PageView
                 |> setMode ViewMode
                 |> notifyAndSaveWithCmd (scrollToIndex anchor)
+        
+        JumpToBookHeading bookId pageIndex anchor ->
+            model
+                |> applyBookSelection bookId      -- 1. 指定された本を選択
+                |> applyPageSelection pageIndex   -- 2. 指定されたページ番号を選択
+                |> setMainViewMode PageView       -- 3. 閲覧画面へ切り替え
+                |> setMode ViewMode
+                |> notifyAndSaveWithCmd (scrollToIndex anchor)
 
         Reorder target from to ->
             ( applyReorder target from to model, Cmd.none )

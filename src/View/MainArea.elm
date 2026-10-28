@@ -48,26 +48,6 @@ mainAreaWrapper =
     tw [ "flex-1", "min-w-0", "h-full", "relative" ]
 
 
--- viewSortableShelfCard : Model -> Int -> Shelf -> Html Msg
--- viewSortableShelfCard model index shelf =
---     let
---         isEditingThisShelf =
---             case model.editing of
---                 Just buffer ->
---                     buffer.target == ShelfTitle && buffer.id == shelf.id
-
---                 Nothing ->
---                     False
---     in
---     viewSortableItem 
---         model.colorTheme 
---         model.draggingState 
---         DragShelf 
---         index 
---         isEditingThisShelf 
---         (viewShelfCard model shelf)
-
-
 -- MARK:本棚一覧ビュー
 shelfListView : Model -> Html Msg
 shelfListView model =
@@ -167,16 +147,10 @@ menuButtonStyle theme =
         ]
 
 
--- shelfGrid : Model -> List Shelf -> Html Msg
--- shelfGrid model shelves =
---     div [ class shelfGridStyle ]
---         (List.indexedMap (viewSortableShelfCard model) shelves)
-
-
 shelfListContainerStyle : Model -> String
 shelfListContainerStyle model =
     tw  [ shelfViewPadding model.sidebarMode
-        , "py-8"
+        , "py-8", "px-16"
         , "h-full"
         , "overflow-y-auto"
         , (basecolors model.colorTheme).bg
@@ -200,186 +174,6 @@ shelfListTitleStyle theme =
         , "opacity-70"
         , (basecolors theme).text
         ]
-
-
--- shelfGridStyle : String
--- shelfGridStyle =
---     tw  [ "grid", "grid-cols-1", "gap-8", "auto-rows-[250px]"
---         , "sm:grid-cols-2", "lg:grid-cols-2", "xl:grid-cols-3"
---         ]
-
--- MARK:ShelfCard
--- viewShelfCard : Model -> Shelf -> Html Msg
--- viewShelfCard model shelf =
---     let
---         theme = model.colorTheme
---         isActive =
---             model.present.currentShelfId == shelf.id
---         menuId = ShelfExportMenu shelf.id
---         isOpen =
---             model.openMenuId == Just menuId
---     in
---     div
---         [ class (shelfCardStyle theme isActive isOpen)
---         , onClick (SelectShelf shelf.id)
---         , title (shelfTooltipText shelf)
---         ]
---         [ viewButton theme (DeleteButton (1, 1)) (DeleteShelf shelf.id) (Style.icon Icon.cansel "w-2 h-2")
---         , viewShelfCardTitleRow model shelf 
---         , viewShelfCardPreview shelf
---         , shelfCardfooter model theme shelf
---         ]
-
-
-{-| 本棚カードのホバー時に表示する全タイトル一覧 -}
--- shelfTooltipText : Shelf -> String
--- shelfTooltipText shelf =
---     if List.isEmpty shelf.books then
---         "（本がありません）"
---     else
---         shelf.books
---             |> List.map (\b -> "・ " ++ b.title)
---             |> String.join "\n"
-
-
--- shelfCardStyle : ColorTheme -> Bool -> Bool -> String
--- shelfCardStyle theme isActive isOpen =
---     let
---         activeBorder =
---             if isActive then
---                 tw  [(basecolors theme).borderStrong
---                     , "border-2"
---                     ]
---             else
---                 (basecolors theme).borderBtn
---         stackOrder =
---             if isOpen then
---                 "z-30"
---             else
---                 "z-0"
---     in
---         tw  [ "pt-6", "px-6", "w-full", "h-full", "relative", "transition-all duration-200"
---             , "flex", "flex-col", "border"
---             , stackOrder
---             , "cursor-pointer"
---             , "hover:shadow-xl"
---             , (basecolors theme).text
---             , (basecolors theme).surface
---             , (basecolors theme).rounded
---             , activeBorder
---             ]
-
-
--- viewShelfCardTitleRow : Model -> Shelf -> Html Msg
--- viewShelfCardTitleRow model shelf =
---     let
---         theme = model.colorTheme
---     in
---     div [ class (titleRowStyle theme) ]
---         [ viewShelfTitle model shelf ]
-
-
--- titleRowStyle : ColorTheme -> String
--- titleRowStyle theme =
---     tw  [ "flex", "items-center", "gap-2", "mb-2" , "border-b-1"
---         , (basecolors theme).accent
---         , (basecolors theme).borderUnder
---         ]
-
-
--- viewShelfCardPreview : Shelf -> Html Msg
--- viewShelfCardPreview shelf =
---     shelf.books
---         |> List.map .title
---         |> List.take 7
---         |> List.map renderPreviewTitle
---         |> div [ class "flex-1 flex-col gap-1 overflow-hidden" ]
-
-
--- renderPreviewTitle : String -> Html Msg
--- renderPreviewTitle title =
---     div [ class "flex text-sm truncate opacity-80 gap-2" ]
---         [ text ("・" ++ title) ]
-
-
--- shelfCardfooter : Model -> ColorTheme -> Shelf -> Html Msg
--- shelfCardfooter model theme shelf =
---     div [ class (footerRowStyle theme) ]
---         [ renderShelfCountLabel theme shelf
---         , renderShelfExportControls model theme shelf
---         ]
-
-
--- renderShelfExportControls : Model -> ColorTheme -> Shelf -> Html Msg
--- renderShelfExportControls model theme shelf =
---     let
---         menuId =
---             ShelfExportMenu shelf.id
-
---         isOpen =
---             model.openMenuId == Just menuId
---     in
---     div [ class (exportContainerStyle isOpen) ]
---         [ renderShelfTriggerButton theme menuId
---         , openDropdown isOpen Below theme (shelfExportMenuItems shelf)
---         ]
-
-
--- renderShelfTriggerButton : ColorTheme -> MenuId -> Html Msg
--- renderShelfTriggerButton theme menuId =
---     button
---         [ class (miniButtonStyle theme)
---         , stopClickPropagation (ToggleMenu menuId)
---         ]
---         [ text "Export ▾" ]
-
-
--- shelfExportMenuItems : Shelf -> List ( String, Msg )
--- shelfExportMenuItems shelf =
---     [ ( "JSON", ExportShelfJson shelf )
---     , ( "ZIP", ExportShelfZip shelf.id )
---     ]
-
-
--- renderShelfCountLabel : ColorTheme -> Shelf -> Html Msg
--- renderShelfCountLabel theme shelf =
---     span
---         [ class (countLabelStyle theme) ]
---         [ text (formatShelfCountText shelf) ]
-
-
--- formatShelfCountText : Shelf -> String
--- formatShelfCountText shelf =
---     String.fromInt (List.length shelf.books) ++ " Books"
-
-
--- footerRowStyle : ColorTheme -> String
--- footerRowStyle = \theme ->
---     tw  [ "flex", "items-center", "justify-between"
---         , "w-full", "py-2", "mt-auto", "border-t"
---         , (basecolors theme).borderUnder
---         ]
-
-
--- countLabelStyle : ColorTheme -> String
--- countLabelStyle theme =
---     tw
---         [ "text-xs", "font-medium"
---         , (basecolors theme).text
---         , "mb-1", "opacity-70", "whitespace-nowrap" ]
-
--- 本棚カードのタイトル
-
--- viewShelfTitle : Model -> Shelf -> Html Msg
--- viewShelfTitle model shelf =
---     h3
---         [ class "text-lg font-bold truncate cursor-pointer"
---         , style "font-family" (basecolors model.colorTheme).fontDeco
---         , onDoubleClick (EditBegin ShelfTitle shelf.id shelf.name)
---         , stopClickPropagation NoOp
---         , title "Double click to edit"
---         ]
---         [ text shelf.name ]
 
 
 -- MARK:Bookの一覧
@@ -409,7 +203,7 @@ shelfDetailView model shelfId =
 shelfDetailViewStyle : Model -> String
 shelfDetailViewStyle model =
     tw  [ shelfViewPadding model.sidebarMode
-        , "py-8"
+        , "py-8", "px-16"
         , "overflow-y-auto"
         , "h-full"
         , (basecolors model.colorTheme).text

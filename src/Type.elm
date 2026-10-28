@@ -220,6 +220,7 @@ type Msg
     | ChangeColorTheme String
     | ChangeRenderStyle String
     | JumpToHeading Int String
+    | JumpToBookHeading String Int String
     | Reorder DragTarget Int Int
     | ReorderPages Int Int
     | RequestImport ImportTarget

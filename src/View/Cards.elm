@@ -180,7 +180,7 @@ viewShelfTooltip theme index shelf =
     else
         viewShelfTooltipContainer index "w-[88%]"
             [ div [ class (tooltipBoxStyle theme) ]
-                [ viewTooltipHeader theme "All Books in Shelf" (String.fromInt (List.length shelf.books) ++ " 冊")
+                [ viewTooltipHeader theme "All Books in Shelf"
                 , div (class "max-h-52 overflow-y-auto space-y-1 pr-1" :: Style.scrollbarStyle theme)
                     (List.indexedMap (viewShelfTooltipItem theme) shelf.books)
                 , viewShelfTooltipArrow theme index
@@ -301,7 +301,11 @@ viewShelfTooltipArrow theme index =
 {-| 本一覧グリッド -}
 viewShelfBookGrid : Model -> List Book -> Html Msg
 viewShelfBookGrid model books =
-    div [ class "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8" ]
+    div [ class (tw
+            [ "grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-6 justify-items-center"
+            , "[&>div]:w-full [&>div]:flex [&>div]:justify-center"  -- ← ドラッグ枠を100%幅＆中央揃えにする
+            ])
+        ]
         (List.indexedMap
             (\i b ->
                 let
@@ -365,7 +369,7 @@ viewBookCard model index book isEditing =
             , viewBookCoverContent theme book allHeadings
             , viewBookCardFooter model theme book
             ]
-        , viewBookTooltip theme side allHeadings
+        , viewBookTooltip theme book.id side allHeadings
         ]
 
 
@@ -453,29 +457,30 @@ viewBookCardFooter model theme book =
 -- ===================================================
 
 {-| 本カードの全章一覧ツールチップ（幅 w-72: 288px） -}
-viewBookTooltip : ColorTheme -> TooltipSide -> List Heading -> Html Msg
-viewBookTooltip theme side allHeadings =
+viewBookTooltip : ColorTheme -> String -> TooltipSide -> List Heading -> Html Msg
+viewBookTooltip theme bookId side allHeadings =
     if List.isEmpty allHeadings then
         text ""
 
     else
         viewTooltipContainer side "w-72"
             [ div [ class (tooltipBoxStyle theme) ]
-                [ viewTooltipHeader theme "Table of Contents" ("全 " ++ String.fromInt (List.length allHeadings) ++ " 章")
+                [ viewTooltipHeader theme "Table of Contents"
                 , div (class "max-h-52 overflow-y-auto space-y-1.5 pr-1" :: Style.scrollbarStyle theme)
-                    (List.map (viewBookTooltipItem theme) allHeadings)
+                    (List.map (viewBookTooltipItem theme bookId) allHeadings)
                 , viewTooltipArrow theme side
                 ]
             ]
 
 
-viewBookTooltipItem : ColorTheme -> Heading -> Html Msg
-viewBookTooltipItem theme heading =
+viewBookTooltipItem : ColorTheme -> String -> Heading -> Html Msg
+viewBookTooltipItem theme bookId heading =
     div
         [ class (tw [ "text-xs truncate py-1 px-1.5 rounded cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center gap-2"
                     , (basecolors theme).text
                     ])
-        , stopClickPropagation (SelectPage heading.pageIndex)
+        -- 本IDを指定して見出しジャンプを発行
+        , stopClickPropagation (JumpToBookHeading bookId heading.pageIndex (String.fromInt heading.order))
         , title ("P." ++ String.fromInt (heading.pageIndex + 1) ++ " へジャンプ")
         ]
         [ span [ class (tw [ "text-xs font-mono opacity-60 shrink-0", (basecolors theme).accent ]) ]
@@ -590,13 +595,11 @@ viewTooltipContainer side widthClass children =
         children
 
 
-viewTooltipHeader : ColorTheme -> String -> String -> Html Msg
-viewTooltipHeader theme titleText badgeText =
+viewTooltipHeader : ColorTheme -> String -> Html Msg
+viewTooltipHeader theme titleText =
     div [ class (tw [ "flex items-center justify-between pb-2 mb-2 border-b", (basecolors theme).borderUnder ]) ]
         [ span [ class (tw [ "text-xs font-bold font-mono uppercase tracking-wider", (basecolors theme).text ]) ]
             [ text titleText ]
-        , span [ class (tw [ "text-xs font-mono px-2 py-0.5 rounded-full font-bold", (basecolors theme).brightAccent, (basecolors theme).accent ]) ]
-            [ text badgeText ]
         ]
 
 
@@ -677,7 +680,7 @@ bookOuterWrapperStyle isOpen =
                 "z-0 hover:z-50"
     in
     tw
-        [ "group relative cursor-pointer w-full min-w-0"
+        [ "group relative cursor-pointer w-full max-w-[250px] min-w-0"
         , stackOrder
         ]
 
