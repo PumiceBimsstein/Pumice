@@ -4,9 +4,9 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "build:cm": "esbuild src/codemirror_editor.js --bundle --outfile=dist/codemirror_editor.bundle.js --format=iife --global-name=CMEditor",
-    "build:hl": "esbuild src/src_highlight.js --bundle --outfile=dist/custom_highlight.bundle.js --format=iife",
-    "build:css": "npx @tailwindcss/cli -i ./src/input.css -o ./dist/output.css --minify",
+    "build:cm": "esbuild js/codemirror_editor.js --bundle --outfile=dist/codemirror_editor.bundle.js --format=iife --global-name=CMEditor",
+    "build:hl": "esbuild js/src_highlight.js --bundle --outfile=dist/custom_highlight.bundle.js --format=iife",
+    "build:css": "npx @tailwindcss/cli -i ./css/input.css -o ./dist/output.css --minify",
     "build": "npm run build:cm && npm run build:hl"
   },
   "keywords": [],

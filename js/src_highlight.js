@@ -2,7 +2,7 @@
 // 1. highlight.js の標準テーマCSSをインポート
 import 'highlight.js/styles/base16/solarized-dark.css';
 // 2. 自作のスタイル（style_highlight.css）をインポート
-import './style_highlight.css';
+import '../css/style_highlight.css';
 import hljs from 'highlight.js/lib/common';
 
 // 標準セットに含まれていない言語だけを個別インポート
