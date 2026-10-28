@@ -12,6 +12,7 @@ import Domain.Helper exposing (..)
 import Domain.Selector exposing (..)
 import Icon exposing (..)
 import View.MainFooter exposing (viewFooter)
+import View.Cards exposing (shelfGrid, viewShelfBookGrid)
 import View.Reorder exposing (viewReorder)
 import View.TitleEditModal exposing (viewTitleEditModal)
 import View.AlertModal exposing (viewAlertModal)
@@ -47,24 +48,24 @@ mainAreaWrapper =
     tw [ "flex-1", "min-w-0", "h-full", "relative" ]
 
 
-viewSortableShelfCard : Model -> Int -> Shelf -> Html Msg
-viewSortableShelfCard model index shelf =
-    let
-        isEditingThisShelf =
-            case model.editing of
-                Just buffer ->
-                    buffer.target == ShelfTitle && buffer.id == shelf.id
+-- viewSortableShelfCard : Model -> Int -> Shelf -> Html Msg
+-- viewSortableShelfCard model index shelf =
+--     let
+--         isEditingThisShelf =
+--             case model.editing of
+--                 Just buffer ->
+--                     buffer.target == ShelfTitle && buffer.id == shelf.id
 
-                Nothing ->
-                    False
-    in
-    viewSortableItem 
-        model.colorTheme 
-        model.draggingState 
-        DragShelf 
-        index 
-        isEditingThisShelf 
-        (viewShelfCard model shelf)
+--                 Nothing ->
+--                     False
+--     in
+--     viewSortableItem 
+--         model.colorTheme 
+--         model.draggingState 
+--         DragShelf 
+--         index 
+--         isEditingThisShelf 
+--         (viewShelfCard model shelf)
 
 
 -- MARK:本棚一覧ビュー
@@ -166,10 +167,10 @@ menuButtonStyle theme =
         ]
 
 
-shelfGrid : Model -> List Shelf -> Html Msg
-shelfGrid model shelves =
-    div [ class shelfGridStyle ]
-        (List.indexedMap (viewSortableShelfCard model) shelves)
+-- shelfGrid : Model -> List Shelf -> Html Msg
+-- shelfGrid model shelves =
+--     div [ class shelfGridStyle ]
+--         (List.indexedMap (viewSortableShelfCard model) shelves)
 
 
 shelfListContainerStyle : Model -> String
@@ -201,184 +202,184 @@ shelfListTitleStyle theme =
         ]
 
 
-shelfGridStyle : String
-shelfGridStyle =
-    tw  [ "grid", "grid-cols-1", "gap-8", "auto-rows-[250px]"
-        , "sm:grid-cols-2", "lg:grid-cols-2", "xl:grid-cols-3"
-        ]
+-- shelfGridStyle : String
+-- shelfGridStyle =
+--     tw  [ "grid", "grid-cols-1", "gap-8", "auto-rows-[250px]"
+--         , "sm:grid-cols-2", "lg:grid-cols-2", "xl:grid-cols-3"
+--         ]
 
 -- MARK:ShelfCard
-viewShelfCard : Model -> Shelf -> Html Msg
-viewShelfCard model shelf =
-    let
-        theme = model.colorTheme
-        isActive =
-            model.present.currentShelfId == shelf.id
-        menuId = ShelfExportMenu shelf.id
-        isOpen =
-            model.openMenuId == Just menuId
-    in
-    div
-        [ class (shelfCardStyle theme isActive isOpen)
-        , onClick (SelectShelf shelf.id)
-        , title (shelfTooltipText shelf)
-        ]
-        [ viewButton theme (DeleteButton (1, 1)) (DeleteShelf shelf.id) (Style.icon Icon.cansel "w-2 h-2")
-        , viewShelfCardTitleRow model shelf 
-        , viewShelfCardPreview shelf
-        , shelfCardfooter model theme shelf
-        ]
+-- viewShelfCard : Model -> Shelf -> Html Msg
+-- viewShelfCard model shelf =
+--     let
+--         theme = model.colorTheme
+--         isActive =
+--             model.present.currentShelfId == shelf.id
+--         menuId = ShelfExportMenu shelf.id
+--         isOpen =
+--             model.openMenuId == Just menuId
+--     in
+--     div
+--         [ class (shelfCardStyle theme isActive isOpen)
+--         , onClick (SelectShelf shelf.id)
+--         , title (shelfTooltipText shelf)
+--         ]
+--         [ viewButton theme (DeleteButton (1, 1)) (DeleteShelf shelf.id) (Style.icon Icon.cansel "w-2 h-2")
+--         , viewShelfCardTitleRow model shelf 
+--         , viewShelfCardPreview shelf
+--         , shelfCardfooter model theme shelf
+--         ]
 
 
 {-| 本棚カードのホバー時に表示する全タイトル一覧 -}
-shelfTooltipText : Shelf -> String
-shelfTooltipText shelf =
-    if List.isEmpty shelf.books then
-        "（本がありません）"
-    else
-        shelf.books
-            |> List.map (\b -> "・ " ++ b.title)
-            |> String.join "\n"
+-- shelfTooltipText : Shelf -> String
+-- shelfTooltipText shelf =
+--     if List.isEmpty shelf.books then
+--         "（本がありません）"
+--     else
+--         shelf.books
+--             |> List.map (\b -> "・ " ++ b.title)
+--             |> String.join "\n"
 
 
-shelfCardStyle : ColorTheme -> Bool -> Bool -> String
-shelfCardStyle theme isActive isOpen =
-    let
-        activeBorder =
-            if isActive then
-                tw  [(basecolors theme).borderStrong
-                    , "border-2"
-                    ]
-            else
-                (basecolors theme).borderBtn
-        stackOrder =
-            if isOpen then
-                "z-30"
-            else
-                "z-0"
-    in
-        tw  [ "pt-6", "px-6", "w-full", "h-full", "relative", "transition-all duration-200"
-            , "flex", "flex-col", "border"
-            , stackOrder
-            , "cursor-pointer"
-            , "hover:shadow-xl"
-            , (basecolors theme).text
-            , (basecolors theme).surface
-            , (basecolors theme).rounded
-            , activeBorder
-            ]
+-- shelfCardStyle : ColorTheme -> Bool -> Bool -> String
+-- shelfCardStyle theme isActive isOpen =
+--     let
+--         activeBorder =
+--             if isActive then
+--                 tw  [(basecolors theme).borderStrong
+--                     , "border-2"
+--                     ]
+--             else
+--                 (basecolors theme).borderBtn
+--         stackOrder =
+--             if isOpen then
+--                 "z-30"
+--             else
+--                 "z-0"
+--     in
+--         tw  [ "pt-6", "px-6", "w-full", "h-full", "relative", "transition-all duration-200"
+--             , "flex", "flex-col", "border"
+--             , stackOrder
+--             , "cursor-pointer"
+--             , "hover:shadow-xl"
+--             , (basecolors theme).text
+--             , (basecolors theme).surface
+--             , (basecolors theme).rounded
+--             , activeBorder
+--             ]
 
 
-viewShelfCardTitleRow : Model -> Shelf -> Html Msg
-viewShelfCardTitleRow model shelf =
-    let
-        theme = model.colorTheme
-    in
-    div [ class (titleRowStyle theme) ]
-        [ viewShelfTitle model shelf ]
+-- viewShelfCardTitleRow : Model -> Shelf -> Html Msg
+-- viewShelfCardTitleRow model shelf =
+--     let
+--         theme = model.colorTheme
+--     in
+--     div [ class (titleRowStyle theme) ]
+--         [ viewShelfTitle model shelf ]
 
 
-titleRowStyle : ColorTheme -> String
-titleRowStyle theme =
-    tw  [ "flex", "items-center", "gap-2", "mb-2" , "border-b-1"
-        , (basecolors theme).accent
-        , (basecolors theme).borderUnder
-        ]
+-- titleRowStyle : ColorTheme -> String
+-- titleRowStyle theme =
+--     tw  [ "flex", "items-center", "gap-2", "mb-2" , "border-b-1"
+--         , (basecolors theme).accent
+--         , (basecolors theme).borderUnder
+--         ]
 
 
-viewShelfCardPreview : Shelf -> Html Msg
-viewShelfCardPreview shelf =
-    shelf.books
-        |> List.map .title
-        |> List.take 7
-        |> List.map renderPreviewTitle
-        |> div [ class "flex-1 flex-col gap-1 overflow-hidden" ]
+-- viewShelfCardPreview : Shelf -> Html Msg
+-- viewShelfCardPreview shelf =
+--     shelf.books
+--         |> List.map .title
+--         |> List.take 7
+--         |> List.map renderPreviewTitle
+--         |> div [ class "flex-1 flex-col gap-1 overflow-hidden" ]
 
 
-renderPreviewTitle : String -> Html Msg
-renderPreviewTitle title =
-    div [ class "flex text-sm truncate opacity-80 gap-2" ]
-        [ text ("・" ++ title) ]
+-- renderPreviewTitle : String -> Html Msg
+-- renderPreviewTitle title =
+--     div [ class "flex text-sm truncate opacity-80 gap-2" ]
+--         [ text ("・" ++ title) ]
 
 
-shelfCardfooter : Model -> ColorTheme -> Shelf -> Html Msg
-shelfCardfooter model theme shelf =
-    div [ class (footerRowStyle theme) ]
-        [ renderShelfCountLabel theme shelf
-        , renderShelfExportControls model theme shelf
-        ]
+-- shelfCardfooter : Model -> ColorTheme -> Shelf -> Html Msg
+-- shelfCardfooter model theme shelf =
+--     div [ class (footerRowStyle theme) ]
+--         [ renderShelfCountLabel theme shelf
+--         , renderShelfExportControls model theme shelf
+--         ]
 
 
-renderShelfExportControls : Model -> ColorTheme -> Shelf -> Html Msg
-renderShelfExportControls model theme shelf =
-    let
-        menuId =
-            ShelfExportMenu shelf.id
+-- renderShelfExportControls : Model -> ColorTheme -> Shelf -> Html Msg
+-- renderShelfExportControls model theme shelf =
+--     let
+--         menuId =
+--             ShelfExportMenu shelf.id
 
-        isOpen =
-            model.openMenuId == Just menuId
-    in
-    div [ class (exportContainerStyle isOpen) ]
-        [ renderShelfTriggerButton theme menuId
-        , openDropdown isOpen Below theme (shelfExportMenuItems shelf)
-        ]
-
-
-renderShelfTriggerButton : ColorTheme -> MenuId -> Html Msg
-renderShelfTriggerButton theme menuId =
-    button
-        [ class (miniButtonStyle theme)
-        , stopClickPropagation (ToggleMenu menuId)
-        ]
-        [ text "Export ▾" ]
+--         isOpen =
+--             model.openMenuId == Just menuId
+--     in
+--     div [ class (exportContainerStyle isOpen) ]
+--         [ renderShelfTriggerButton theme menuId
+--         , openDropdown isOpen Below theme (shelfExportMenuItems shelf)
+--         ]
 
 
-shelfExportMenuItems : Shelf -> List ( String, Msg )
-shelfExportMenuItems shelf =
-    [ ( "JSON", ExportShelfJson shelf )
-    , ( "ZIP", ExportShelfZip shelf.id )
-    ]
+-- renderShelfTriggerButton : ColorTheme -> MenuId -> Html Msg
+-- renderShelfTriggerButton theme menuId =
+--     button
+--         [ class (miniButtonStyle theme)
+--         , stopClickPropagation (ToggleMenu menuId)
+--         ]
+--         [ text "Export ▾" ]
 
 
-renderShelfCountLabel : ColorTheme -> Shelf -> Html Msg
-renderShelfCountLabel theme shelf =
-    span
-        [ class (countLabelStyle theme) ]
-        [ text (formatShelfCountText shelf) ]
+-- shelfExportMenuItems : Shelf -> List ( String, Msg )
+-- shelfExportMenuItems shelf =
+--     [ ( "JSON", ExportShelfJson shelf )
+--     , ( "ZIP", ExportShelfZip shelf.id )
+--     ]
 
 
-formatShelfCountText : Shelf -> String
-formatShelfCountText shelf =
-    String.fromInt (List.length shelf.books) ++ " Books"
+-- renderShelfCountLabel : ColorTheme -> Shelf -> Html Msg
+-- renderShelfCountLabel theme shelf =
+--     span
+--         [ class (countLabelStyle theme) ]
+--         [ text (formatShelfCountText shelf) ]
 
 
-footerRowStyle : ColorTheme -> String
-footerRowStyle = \theme ->
-    tw  [ "flex", "items-center", "justify-between"
-        , "w-full", "py-2", "mt-auto", "border-t"
-        , (basecolors theme).borderUnder
-        ]
+-- formatShelfCountText : Shelf -> String
+-- formatShelfCountText shelf =
+--     String.fromInt (List.length shelf.books) ++ " Books"
 
 
-countLabelStyle : ColorTheme -> String
-countLabelStyle theme =
-    tw
-        [ "text-xs", "font-medium"
-        , (basecolors theme).text
-        , "mb-1", "opacity-70", "whitespace-nowrap" ]
+-- footerRowStyle : ColorTheme -> String
+-- footerRowStyle = \theme ->
+--     tw  [ "flex", "items-center", "justify-between"
+--         , "w-full", "py-2", "mt-auto", "border-t"
+--         , (basecolors theme).borderUnder
+--         ]
+
+
+-- countLabelStyle : ColorTheme -> String
+-- countLabelStyle theme =
+--     tw
+--         [ "text-xs", "font-medium"
+--         , (basecolors theme).text
+--         , "mb-1", "opacity-70", "whitespace-nowrap" ]
 
 -- 本棚カードのタイトル
 
-viewShelfTitle : Model -> Shelf -> Html Msg
-viewShelfTitle model shelf =
-    h3
-        [ class "text-lg font-bold truncate cursor-pointer"
-        , style "font-family" (basecolors model.colorTheme).fontDeco
-        , onDoubleClick (EditBegin ShelfTitle shelf.id shelf.name)
-        , stopClickPropagation NoOp
-        , title "Double click to edit"
-        ]
-        [ text shelf.name ]
+-- viewShelfTitle : Model -> Shelf -> Html Msg
+-- viewShelfTitle model shelf =
+--     h3
+--         [ class "text-lg font-bold truncate cursor-pointer"
+--         , style "font-family" (basecolors model.colorTheme).fontDeco
+--         , onDoubleClick (EditBegin ShelfTitle shelf.id shelf.name)
+--         , stopClickPropagation NoOp
+--         , title "Double click to edit"
+--         ]
+--         [ text shelf.name ]
 
 
 -- MARK:Bookの一覧
@@ -460,262 +461,262 @@ makeNewBook theme =
 
 
 -- 本一覧グリッド
-viewShelfBookGrid : Model -> List Book -> Html Msg
-viewShelfBookGrid model books =
-    div [ class shelfBookGridStyle ]
-        (List.indexedMap 
-            (\i b -> 
-                let
-                    isEditingThisBook =
-                        case model.editing of
-                            Just buffer -> buffer.target == BookTitle && buffer.id == b.id
-                            Nothing -> False
-                in
-                viewSortableItem 
-                    model.colorTheme 
-                    model.draggingState 
-                    DragBook 
-                    i 
-                    isEditingThisBook
-                    (viewBookCard model b isEditingThisBook)
-            )
-            books
-        )
+-- viewShelfBookGrid : Model -> List Book -> Html Msg
+-- viewShelfBookGrid model books =
+--     div [ class shelfBookGridStyle ]
+--         (List.indexedMap 
+--             (\i b -> 
+--                 let
+--                     isEditingThisBook =
+--                         case model.editing of
+--                             Just buffer -> buffer.target == BookTitle && buffer.id == b.id
+--                             Nothing -> False
+--                 in
+--                 viewSortableItem 
+--                     model.colorTheme 
+--                     model.draggingState 
+--                     DragBook 
+--                     i 
+--                     isEditingThisBook
+--                     (viewBookCard model b isEditingThisBook)
+--             )
+--             books
+--         )
 
-shelfBookGridStyle : String
-shelfBookGridStyle =
-    tw  [ "grid", "grid-cols-1"
-        , "sm:grid-cols-2", "lg:grid-cols-2", "xl:grid-cols-3"
-        , "gap-8", "auto-rows-[250px]" ]
+-- shelfBookGridStyle : String
+-- shelfBookGridStyle =
+--     tw  [ "grid", "grid-cols-1"
+--         , "sm:grid-cols-2", "lg:grid-cols-2", "xl:grid-cols-3"
+--         , "gap-8", "auto-rows-[250px]" ]
 
 
 -- MARK:BookCard
 
-viewBookCard : Model -> Book -> Bool -> Html Msg
-viewBookCard model book isEditing =
-    let
-        theme =
-            model.colorTheme
+-- viewBookCard : Model -> Book -> Bool -> Html Msg
+-- viewBookCard model book isEditing =
+--     let
+--         theme =
+--             model.colorTheme
 
-        isActive =
-            model.present.currentBookId == Just book.id
+--         isActive =
+--             model.present.currentBookId == Just book.id
 
-        isOpen =
-            model.openMenuId == Just (BookExportMenu book.id)
+--         isOpen =
+--             model.openMenuId == Just (BookExportMenu book.id)
 
-        cardEventHandlers =
-            if isEditing then
-                [ stopPropagationOn "pointerdown" (Decode.succeed ( EditSubmit, True ))
-                , stopPropagationOn "click" (Decode.succeed ( NoOp, True ))
-                ]
+--         cardEventHandlers =
+--             if isEditing then
+--                 [ stopPropagationOn "pointerdown" (Decode.succeed ( EditSubmit, True ))
+--                 , stopPropagationOn "click" (Decode.succeed ( NoOp, True ))
+--                 ]
 
-            else
-                [ onClick (SelectBook book.id) ]
-    in
-    div
-        ( class (bookCardStyle theme isActive isOpen)
-            :: title (bookTooltipText book)
-            :: cardEventHandlers
-        )
-        [ viewButton theme (DeleteButton (1, 1)) (DeleteBook book.id) (Style.icon Icon.cansel "w-2 h-2")
-        , bookTitleRow model book
-        , bookHeadingList theme book
-        , bookCardFooter model theme book
-        ]
+--             else
+--                 [ onClick (SelectBook book.id) ]
+--     in
+--     div
+--         ( class (bookCardStyle theme isActive isOpen)
+--             :: title (bookTooltipText book)
+--             :: cardEventHandlers
+--         )
+--         [ viewButton theme (DeleteButton (1, 1)) (DeleteBook book.id) (Style.icon Icon.cansel "w-2 h-2")
+--         , bookTitleRow model book
+--         , bookHeadingList theme book
+--         , bookCardFooter model theme book
+--         ]
 
 
 {-| 本カードのホバー時に表示する全H1見出し一覧 -}
-bookTooltipText : Book -> String
-bookTooltipText book =
-    let
-        headings =
-            book.pages
-                |> List.indexedMap (\i p -> extractHeadings i p.content)
-                |> List.concat
-                |> List.filter (\h -> h.level == 1)
-                |> List.map (\h -> "・ " ++ stripEmphasis h.text)
-    in
-    if List.isEmpty headings then
-        "（見出しがありません）"
-    else
-        String.join "\n" headings
+-- bookTooltipText : Book -> String
+-- bookTooltipText book =
+--     let
+--         headings =
+--             book.pages
+--                 |> List.indexedMap (\i p -> extractHeadings i p.content)
+--                 |> List.concat
+--                 |> List.filter (\h -> h.level == 1)
+--                 |> List.map (\h -> "・ " ++ stripEmphasis h.text)
+--     in
+--     if List.isEmpty headings then
+--         "（見出しがありません）"
+--     else
+--         String.join "\n" headings
 
 
-bookCardStyle : ColorTheme -> Bool -> Bool -> String
-bookCardStyle theme isActive isOpen=
-    let
-        activeBorder =
-            if isActive then
-                tw  [(basecolors theme).borderStrong
-                    , "border-2"
-                    ]
-            else
-                (basecolors theme).borderBtn
-        corners =
-            if theme == Magical then
-                (basecolors theme).rounded
-            else
-                "rounded-2xl"
+-- bookCardStyle : ColorTheme -> Bool -> Bool -> String
+-- bookCardStyle theme isActive isOpen=
+--     let
+--         activeBorder =
+--             if isActive then
+--                 tw  [(basecolors theme).borderStrong
+--                     , "border-2"
+--                     ]
+--             else
+--                 (basecolors theme).borderBtn
+--         corners =
+--             if theme == Magical then
+--                 (basecolors theme).rounded
+--             else
+--                 "rounded-2xl"
         
-        stackOrder =
-            if isOpen then
-                "z-30"
+--         stackOrder =
+--             if isOpen then
+--                 "z-30"
 
-            else
-                "z-0"
-    in
-    tw  [ "flex", "flex-col", "relative"
-        , "w-full", "h-full", "pt-5", "px-5", "shadow-lg"
-        , "hover:shadow-xl", "border"
-        , "cursor-pointer"
-        , stackOrder
-        , corners
-        , (basecolors theme).surface
-        , activeBorder
-        ]
-
-
-bookCardFooter : Model -> ColorTheme -> Book -> Html Msg
-bookCardFooter model theme book =
-    div [ class (cardFooterStyle theme) ]
-        [ renderBookCountLabel theme book
-        , renderExportControls model theme book
-        ]
+--             else
+--                 "z-0"
+--     in
+--     tw  [ "flex", "flex-col", "relative"
+--         , "w-full", "h-full", "pt-5", "px-5", "shadow-lg"
+--         , "hover:shadow-xl", "border"
+--         , "cursor-pointer"
+--         , stackOrder
+--         , corners
+--         , (basecolors theme).surface
+--         , activeBorder
+--         ]
 
 
-renderExportControls : Model -> ColorTheme -> Book -> Html Msg
-renderExportControls model theme book =
-    let
-        menuId =
-            BookExportMenu book.id
-
-        isOpen =
-            model.openMenuId == Just menuId
-    in
-    div [ class (exportContainerStyle isOpen) ]
-        [ renderTriggerButton theme menuId
-        , openDropdown isOpen Below theme (exportMenuItems book)
-        ]
+-- bookCardFooter : Model -> ColorTheme -> Book -> Html Msg
+-- bookCardFooter model theme book =
+--     div [ class (cardFooterStyle theme) ]
+--         [ renderBookCountLabel theme book
+--         , renderExportControls model theme book
+--         ]
 
 
-exportContainerStyle : Bool -> String
-exportContainerStyle isOpen =
-    tw
-        [ "relative", "mt-auto", "flex", "justify-end"
-        , if isOpen then
-            "z-30"
+-- renderExportControls : Model -> ColorTheme -> Book -> Html Msg
+-- renderExportControls model theme book =
+--     let
+--         menuId =
+--             BookExportMenu book.id
 
-          else
-            "z-0"
-        ]
-
-
-renderTriggerButton : ColorTheme -> MenuId -> Html Msg
-renderTriggerButton theme menuId =
-    button
-        [ class (miniButtonStyle theme)
-        , stopClickPropagation (ToggleMenu menuId)
-        ]
-        [ text "Export ▾" ]
+--         isOpen =
+--             model.openMenuId == Just menuId
+--     in
+--     div [ class (exportContainerStyle isOpen) ]
+--         [ renderTriggerButton theme menuId
+--         , openDropdown isOpen Below theme (exportMenuItems book)
+--         ]
 
 
-exportMenuItems : Book -> List ( String, Msg )
-exportMenuItems book =
-    [ ( "JSON", ExportBookJson book )
-    , ( "ZIP", ExportBookZip book.id )
-    ]
+-- exportContainerStyle : Bool -> String
+-- exportContainerStyle isOpen =
+--     tw
+--         [ "relative", "mt-auto", "flex", "justify-end"
+--         , if isOpen then
+--             "z-30"
+
+--           else
+--             "z-0"
+--         ]
 
 
-miniButtonStyle : ColorTheme -> String
-miniButtonStyle theme =
-    tw  [ "px-1"
-        , "text-[12px]", "font-bold", "uppercase"
-        , "hover:bg-white/10"
-        , (basecolors theme).textMuted
-        , "border", "rounded-sm", (basecolors theme).borderBtn
-        ]
+-- renderTriggerButton : ColorTheme -> MenuId -> Html Msg
+-- renderTriggerButton theme menuId =
+--     button
+--         [ class (miniButtonStyle theme)
+--         , stopClickPropagation (ToggleMenu menuId)
+--         ]
+--         [ text "Export ▾" ]
 
 
-renderBookCountLabel : ColorTheme -> Book -> Html Msg
-renderBookCountLabel theme book =
-    span
-        [ class (countLabelStyle theme) ]
-        [ text (formatBookCountText book) ]
+-- exportMenuItems : Book -> List ( String, Msg )
+-- exportMenuItems book =
+--     [ ( "JSON", ExportBookJson book )
+--     , ( "ZIP", ExportBookZip book.id )
+--     ]
 
 
-formatBookCountText : Book -> String
-formatBookCountText book =
-    String.fromInt (List.length book.pages)
-        ++ " Pages "
+-- miniButtonStyle : ColorTheme -> String
+-- miniButtonStyle theme =
+--     tw  [ "px-1"
+--         , "text-[12px]", "font-bold", "uppercase"
+--         , "hover:bg-white/10"
+--         , (basecolors theme).textMuted
+--         , "border", "rounded-sm", (basecolors theme).borderBtn
+--         ]
 
 
-cardFooterStyle : ColorTheme -> String
-cardFooterStyle theme =
-    tw  [ "flex", "items-center", "justify-between"
-        , "w-full"
-        , "py-2", "mt-auto"
-        , "border-t"
-        , (basecolors theme).borderUnder
-        ]
+-- renderBookCountLabel : ColorTheme -> Book -> Html Msg
+-- renderBookCountLabel theme book =
+--     span
+--         [ class (countLabelStyle theme) ]
+--         [ text (formatBookCountText book) ]
 
 
-bookTitleRow : Model -> Book -> Html Msg
-bookTitleRow model book =
-    div [ class "flex items-center gap-2 mb-2"
-        , title "Edit Title" ]
-        [ bookTitleText model book ]
+-- formatBookCountText : Book -> String
+-- formatBookCountText book =
+--     String.fromInt (List.length book.pages)
+--         ++ " Pages "
 
 
-bookTitleText : Model -> Book -> Html Msg
-bookTitleText model book =
-    h3
-        [ class (bookTitleTextStyle model.colorTheme)
-        , onDoubleClick (EditBegin BookTitle book.id book.title)
-        , stopClickPropagation NoOp
-        ]
-        [ text book.title ]
+-- cardFooterStyle : ColorTheme -> String
+-- cardFooterStyle theme =
+--     tw  [ "flex", "items-center", "justify-between"
+--         , "w-full"
+--         , "py-2", "mt-auto"
+--         , "border-t"
+--         , (basecolors theme).borderUnder
+--         ]
 
 
-bookTitleTextStyle : ColorTheme -> String
-bookTitleTextStyle = \theme ->
-        tw  [ "text-lg"
-            , "font-bold"
-            , "ml-2", "mb-1"
-            , (basecolors theme).text
-            , (basecolors theme).surface
-            , "truncate"
-            ]
-
-bookHeadingList : ColorTheme -> Book -> Html Msg
-bookHeadingList theme book =
-    let
-        headings =
-            getBookHeadingsForCard book
-                |> List.indexedMap Tuple.pair
-    in
-    div []
-        (List.map (\(i, h) -> bookHeadingItem theme i h.text) headings)
-
-bookHeadingItem : ColorTheme -> Int -> String -> Html Msg
-bookHeadingItem theme index textContent =
-    div
-        [ class (headingItemStyle theme index) ]
-        [ text textContent ]
+-- bookTitleRow : Model -> Book -> Html Msg
+-- bookTitleRow model book =
+--     div [ class "flex items-center gap-2 mb-2"
+--         , title "Edit Title" ]
+--         [ bookTitleText model book ]
 
 
-headingItemStyle : ColorTheme -> Int -> String
-headingItemStyle = \theme _ ->
-    tw  [ "text-sm", "truncate", "mb-1", "mx-3", (basecolors theme).text ++ " opacity-80" ]
+-- bookTitleText : Model -> Book -> Html Msg
+-- bookTitleText model book =
+--     h3
+--         [ class (bookTitleTextStyle model.colorTheme)
+--         , onDoubleClick (EditBegin BookTitle book.id book.title)
+--         , stopClickPropagation NoOp
+--         ]
+--         [ text book.title ]
+
+
+-- bookTitleTextStyle : ColorTheme -> String
+-- bookTitleTextStyle = \theme ->
+--         tw  [ "text-lg"
+--             , "font-bold"
+--             , "ml-2", "mb-1"
+--             , (basecolors theme).text
+--             , (basecolors theme).surface
+--             , "truncate"
+--             ]
+
+-- bookHeadingList : ColorTheme -> Book -> Html Msg
+-- bookHeadingList theme book =
+--     let
+--         headings =
+--             getBookHeadingsForCard book
+--                 |> List.indexedMap Tuple.pair
+--     in
+--     div []
+--         (List.map (\(i, h) -> bookHeadingItem theme i h.text) headings)
+
+-- bookHeadingItem : ColorTheme -> Int -> String -> Html Msg
+-- bookHeadingItem theme index textContent =
+--     div
+--         [ class (headingItemStyle theme index) ]
+--         [ text textContent ]
+
+
+-- headingItemStyle : ColorTheme -> Int -> String
+-- headingItemStyle = \theme _ ->
+--     tw  [ "text-sm", "truncate", "mb-1", "mx-3", (basecolors theme).text ++ " opacity-80" ]
 
 
 
-getBookHeadingsForCard : Book -> List Heading
-getBookHeadingsForCard book =
-    book.pages
-        |> List.indexedMap (\i p -> extractHeadings i p.content)
-        |> List.concat
-        |> List.filter (\h -> h.level == 1)
-        |> List.take 6
+-- getBookHeadingsForCard : Book -> List Heading
+-- getBookHeadingsForCard book =
+--     book.pages
+--         |> List.indexedMap (\i p -> extractHeadings i p.content)
+--         |> List.concat
+--         |> List.filter (\h -> h.level == 1)
+--         |> List.take 6
 
 
 -- MARK:ページ閲覧

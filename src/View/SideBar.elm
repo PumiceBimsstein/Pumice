@@ -262,7 +262,7 @@ functionButton model =
         isOpen = model.openMenuId == Just menuId
     in
     div
-        [ class "relative flex flex-1 h-full" ]
+        [ class "relative flex flex-1 h-full [&_.absolute]:left-auto [&_.absolute]:right-0" ]
         [ button
             [ class (footerButton model.colorTheme)
             , stopClickPropagation (ToggleMenu menuId)

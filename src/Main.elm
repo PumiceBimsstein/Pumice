@@ -5,19 +5,19 @@ import Browser.Events
 import Task
 import Time
 import File.Download as Download
-import File exposing (File)
+import File
 import File.Select as Select
-import Random
+-- import Random
 import Html.Attributes exposing (..)
 import Html exposing (..)
-import Json.Decode as Decode
+-- import Json.Decode as Decode
 import JsonConverter exposing (..)
 import Type exposing (..)
 import View.Contents
 import Domain.Helper exposing (..)
 import Domain.AddItem exposing (..)
 import Domain.Selector exposing (..)
-import Domain.Guide exposing (defaultAppState)
+-- import Domain.Guide exposing (defaultAppState)
 import Init exposing (..)
 import Ports exposing
     ( scrollToIndex
@@ -65,14 +65,14 @@ init flags =
 
 
 -- Model全体のデコード失敗時に、AppState単体での復元を試みる
-restoreFallbackAppState : Decode.Value -> AppState
-restoreFallbackAppState storageData =
-    Decode.decodeValue (Decode.field "present" JsonConverter.decodeAppState) storageData
-        |> Result.toMaybe
-        |> Maybe.withDefault
-            (Decode.decodeValue JsonConverter.decodeAppState storageData
-                |> Result.withDefault defaultAppState
-            )
+-- restoreFallbackAppState : Decode.Value -> AppState
+-- restoreFallbackAppState storageData =
+--     Decode.decodeValue (Decode.field "present" JsonConverter.decodeAppState) storageData
+--         |> Result.toMaybe
+--         |> Maybe.withDefault
+--             (Decode.decodeValue JsonConverter.decodeAppState storageData
+--                 |> Result.withDefault defaultAppState
+--             )
 
 
 -- MARK:UPDATE

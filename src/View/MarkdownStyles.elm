@@ -9,7 +9,7 @@ module View.MarkdownStyles exposing
 import Html exposing (Attribute, Html)
 import Html.Attributes exposing (class)
 import Type exposing (ColorTheme(..), FontSize(..), RenderStyle(..))
-import View.Style as Style exposing (..)
+import View.Style exposing (..)
 
 
 markdownContainer : ColorTheme -> RenderStyle -> FontSize -> List (Attribute msg)
@@ -43,13 +43,12 @@ applyAccessibilityWeight style size =
             ""
 
 
-
 themeColors : ColorTheme -> RenderStyle -> String
 themeColors theme style =
     case theme of
         Light ->
             let
-                base = basecolors theme
+                -- base = basecolors theme
                 common = "bg-[#fbf8f5] text-[#4a453e] border-[rgba(74,69,62,0.12)]"
                 elements =
                     [ "[&_h1]:text-[#c86d51] [&_h1]:border-b-0"

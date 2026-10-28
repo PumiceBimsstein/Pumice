@@ -519,11 +519,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.i.W === region.g.W)
+	if (region.i.Y === region.g.Y)
 	{
-		return 'on line ' + region.i.W;
+		return 'on line ' + region.i.Y;
 	}
-	return 'on lines ' + region.i.W + ' through ' + region.g.W;
+	return 'on lines ' + region.i.Y + ' through ' + region.g.Y;
 }
 
 
@@ -1863,7 +1863,7 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 		args,
 		impl.cz,
 		impl.c1,
-		impl.cX,
+		impl.cY,
 		function() { return function() {} }
 	);
 });
@@ -2727,9 +2727,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		F: func(record.F),
-		a0: record.a0,
-		aX: record.aX
+		G: func(record.G),
+		a2: record.a2,
+		aZ: record.aZ
 	}
 });
 
@@ -2997,11 +2997,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.F;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.a0;
+		var message = !tag ? value : tag < 3 ? value.a : value.G;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.a2;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.aX) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.aZ) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3953,7 +3953,7 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 		args,
 		impl.cz,
 		impl.c1,
-		impl.cX,
+		impl.cY,
 		function(sendToApp, initialModel) {
 			var view = impl.c2;
 			/**/
@@ -3989,9 +3989,9 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 		args,
 		impl.cz,
 		impl.c1,
-		impl.cX,
+		impl.cY,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.aZ && impl.aZ(sendToApp)
+			var divertHrefToApp = impl.a$ && impl.a$(sendToApp)
 			var view = impl.c2;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
@@ -4000,12 +4000,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.aC);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.aG);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.b4) && (_VirtualDom_doc.title = title = doc.b4);
+				(title !== doc.b6) && (_VirtualDom_doc.title = title = doc.b6);
 			});
 		}
 	);
@@ -4066,7 +4066,7 @@ function _Browser_application(impl)
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		aZ: function(sendToApp)
+		a$: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4082,9 +4082,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.bM === next.bM
-							&& curr.bu === next.bu
-							&& curr.bJ.a === next.bJ.a
+							&& curr.bP === next.bP
+							&& curr.bx === next.bx
+							&& curr.bM.a === next.bM.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4098,7 +4098,7 @@ function _Browser_application(impl)
 		},
 		c2: impl.c2,
 		c1: impl.c1,
-		cX: impl.cX
+		cY: impl.cY
 	});
 }
 
@@ -4255,12 +4255,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		aY: _Browser_getScene(),
-		az: {
+		a_: _Browser_getScene(),
+		aC: {
 			c5: _Browser_window.pageXOffset,
-			b8: _Browser_window.pageYOffset,
-			b7: _Browser_doc.documentElement.clientWidth,
-			O: _Browser_doc.documentElement.clientHeight
+			ca: _Browser_window.pageYOffset,
+			b9: _Browser_doc.documentElement.clientWidth,
+			Q: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4270,8 +4270,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		b7: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		O: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		b9: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		Q: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4294,15 +4294,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			aY: {
-				b7: node.scrollWidth,
-				O: node.scrollHeight
+			a_: {
+				b9: node.scrollWidth,
+				Q: node.scrollHeight
 			},
-			az: {
+			aC: {
 				c5: node.scrollLeft,
-				b8: node.scrollTop,
-				b7: node.clientWidth,
-				O: node.clientHeight
+				ca: node.scrollTop,
+				b9: node.clientWidth,
+				Q: node.clientHeight
 			}
 		};
 	});
@@ -4332,18 +4332,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			aY: _Browser_getScene(),
-			az: {
+			a_: _Browser_getScene(),
+			aC: {
 				c5: x,
-				b8: y,
-				b7: _Browser_doc.documentElement.clientWidth,
-				O: _Browser_doc.documentElement.clientHeight
+				ca: y,
+				b9: _Browser_doc.documentElement.clientWidth,
+				Q: _Browser_doc.documentElement.clientHeight
 			},
 			cr: {
 				c5: x + rect.left,
-				b8: y + rect.top,
-				b7: rect.width,
-				O: rect.height
+				ca: y + rect.top,
+				b9: rect.width,
+				Q: rect.height
 			}
 		};
 	});
@@ -5392,7 +5392,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {br: fragment, bu: host, cN: path, bJ: port_, bM: protocol, bN: query};
+		return {bu: fragment, bx: host, cN: path, bM: port_, bP: protocol, bQ: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5674,11 +5674,11 @@ var $elm$browser$Browser$element = _Browser_element;
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $author$project$Type$Book = F3(
 	function (id, title, pages) {
-		return {z: id, Q: pages, b4: title};
+		return {z: id, S: pages, b6: title};
 	});
 var $author$project$Type$Page = F3(
 	function (id, title, content) {
-		return {bj: content, z: id, b4: title};
+		return {bl: content, z: id, b6: title};
 	});
 var $elm$json$Json$Decode$map3 = _Json_map3;
 var $elm$json$Json$Decode$string = _Json_decodeString;
@@ -5700,7 +5700,7 @@ var $author$project$JsonConverter$decodeBook = A4(
 		$elm$json$Json$Decode$list($author$project$JsonConverter$decodePage)));
 var $author$project$Type$Shelf = F3(
 	function (id, name, books) {
-		return {ah: books, z: id, cF: name};
+		return {aj: books, z: id, cF: name};
 	});
 var $author$project$JsonConverter$decodeShelf = A4(
 	$elm$json$Json$Decode$map3,
@@ -5738,13 +5738,13 @@ var $author$project$JsonConverter$decodeAppState = $elm$json$Json$Decode$oneOf(
 			$elm$json$Json$Decode$map,
 			function (books) {
 				return {
-					al: $elm$core$Maybe$Nothing,
+					ao: $elm$core$Maybe$Nothing,
 					cl: _List_Nil,
-					am: 0,
-					aF: 'default-shelf',
-					R: _List_fromArray(
+					ap: 0,
+					aI: 'default-shelf',
+					T: _List_fromArray(
 						[
-							{ah: books, z: 'default-shelf', cF: 'Default Shelf'}
+							{aj: books, z: 'default-shelf', cF: 'Default Shelf'}
 						])
 				};
 			},
@@ -5754,11 +5754,11 @@ var $author$project$JsonConverter$decodeAppState = $elm$json$Json$Decode$oneOf(
 			F5(
 				function (shelves, shelfId, bookId, pageIdx, maybeHeadings) {
 					return {
-						al: bookId,
+						ao: bookId,
 						cl: A2($elm$core$Maybe$withDefault, _List_Nil, maybeHeadings),
-						am: pageIdx,
-						aF: shelfId,
-						R: shelves
+						ap: pageIdx,
+						aI: shelfId,
+						T: shelves
 					};
 				}),
 			A2(
@@ -5803,7 +5803,7 @@ var $author$project$Type$Model = function (past) {
 																						return function (modalAlert) {
 																							return function (typingSessionBaseline) {
 																								return function (editorDebounceCounter) {
-																									return {bi: colorTheme, cj: contentWidth, cp: draggingState, cq: editing, an: editorDebounceCounter, cu: fontSize, J: future, cw: headingPositions, aO: isRightSideWindowVisible, aS: mainViewMode, s: modalAlert, cD: mode, cK: openMenuId, Z: pageCreationBuffer, cM: pageCreationTitle, C: past, x: present, cR: renderStyle, as: scrollRatio, cV: searchText, at: seed, a_: sidebarMode, cW: sidebarTab, ae: typingSessionBaseline, c3: visibleHeadingLevel};
+																									return {bk: colorTheme, cj: contentWidth, cp: draggingState, cq: editing, aq: editorDebounceCounter, cu: fontSize, L: future, cw: headingPositions, aQ: isRightSideWindowVisible, aU: mainViewMode, s: modalAlert, cD: mode, cK: openMenuId, aa: pageCreationBuffer, cM: pageCreationTitle, C: past, x: present, cR: renderStyle, av: scrollRatio, cW: searchText, aw: seed, a0: sidebarMode, cX: sidebarTab, ag: typingSessionBaseline, c3: visibleHeadingLevel};
 																								};
 																							};
 																						};
@@ -6085,7 +6085,7 @@ var $author$project$Init$extractSeed = function (flags) {
 		A2(
 			$elm$core$Maybe$withDefault,
 			0,
-			$elm$core$List$head(flags.at)));
+			$elm$core$List$head(flags.aw)));
 };
 var $elm$core$List$isEmpty = function (xs) {
 	if (!xs.b) {
@@ -6129,24 +6129,24 @@ var $author$project$Domain$Helper$extractHeadings = F2(
 							} else {
 								var maybeHeading = A2($elm$core$String$startsWith, '### ', line) ? $elm$core$Maybe$Just(
 									{
-										V: 3,
-										Y: 0,
-										_: pageIdx,
-										c$: $elm$core$String$trim(
+										X: 3,
+										_: 0,
+										ab: pageIdx,
+										c0: $elm$core$String$trim(
 											A2($elm$core$String$dropLeft, 4, line))
 									}) : (A2($elm$core$String$startsWith, '## ', line) ? $elm$core$Maybe$Just(
 									{
-										V: 2,
-										Y: 0,
-										_: pageIdx,
-										c$: $elm$core$String$trim(
+										X: 2,
+										_: 0,
+										ab: pageIdx,
+										c0: $elm$core$String$trim(
 											A2($elm$core$String$dropLeft, 3, line))
 									}) : (A2($elm$core$String$startsWith, '# ', line) ? $elm$core$Maybe$Just(
 									{
-										V: 1,
-										Y: 0,
-										_: pageIdx,
-										c$: $elm$core$String$trim(
+										X: 1,
+										_: 0,
+										ab: pageIdx,
+										c0: $elm$core$String$trim(
 											A2($elm$core$String$dropLeft, 2, line))
 									}) : $elm$core$Maybe$Nothing));
 								if (!maybeHeading.$) {
@@ -6178,7 +6178,7 @@ var $author$project$Domain$Helper$extractHeadings = F2(
 				function (i, h) {
 					return _Utils_update(
 						h,
-						{Y: i});
+						{_: i});
 				}),
 			A3(
 				parseLines,
@@ -6188,48 +6188,48 @@ var $author$project$Domain$Helper$extractHeadings = F2(
 		return $elm$core$List$isEmpty(raw) ? _List_fromArray(
 			[
 				{
-				V: 1,
-				Y: 0,
-				_: pageIdx,
-				c$: 'Page ' + $elm$core$String$fromInt(pageIdx + 1)
+				X: 1,
+				_: 0,
+				ab: pageIdx,
+				c0: 'Page ' + $elm$core$String$fromInt(pageIdx + 1)
 			}
 			]) : raw;
 	});
-var $author$project$Domain$Guide$guidePage1 = {bj: '# ようこそ\r\n\r\nこのアプリは、本棚・本・ページという3つの層でMarkdown文書を整理・閲覧・編集できるノートアプリです。データはブラウザに保存され、ダウウンロードしてPCに保存することもできます。\r\n\r\n**サーバー通信なし**\r\n\r\n**AI機能なし✨**\r\n\r\n## 主な特徴\r\n\r\n- **階層管理**: 「本棚」の中に「本」を作り、「ページ」単位で閲覧・編集できます。\r\n- **閲覧・編集画面の同期**: 閲覧モード（VIEW）と編集モード（EDIT）を切り替えても、表示される位置が概ね保たれます。\r\n- **目次ジャンプ**: サイドバーの目次から、各見出しへ直接ジャンプできます。\r\n\r\n## 画面の見方\r\n\r\n1. **左サイドバー**: 本棚の一覧、本の一覧、目次を切り替えられます。\r\n2. **フッター（下部）**: シークバーでページを前後にめくることができます。\r\n3. **右サイドバー**: テーマ切り替え、文字サイズ、エクスポートなどが行えます。\r\n', z: 'guide-page-1', b4: 'ようこそ'};
-var $author$project$Domain$Guide$guidePage2 = {bj: '# 操作のヒント\r\n\r\n## ページの切り替え方法\r\n- VIEWモードでのみ、矢印キー（←/→）。\r\n- フッターのシークバーをクリック。\r\n- **フッターのシークバーの上でマウスホイール操作。**\r\n- 右サイドバー下部のアイコンをクリック。またはその付近でのマウスホイール操作。\r\n- 右サイドバーの何もない部分でマウスホイール操作。\r\n\r\n## 目次の表示切り替え\r\n- サイドバーの下部のセレクターで、目次として表示するマークダウンの見出しを「見出し1 (H1)」から「見出し3 (H3)」まで切り替えられます。\r\n\r\n## ページの入れ替え\r\n- 右サイドバーの「PAGES」で、マウス操作によるページの入れ替え、複製、追加、削除ができます。\r\n\r\n## ページの追加と削除\r\n- 右サイドバーの **「+ Next Page」** をクリックすると、次のページが作成されます。\r\n- 不要になったページは、編集モード（EDIT）時のフッターにある削除ボタンから削除できます。\r\n\r\n## インポートとエクスポート\r\n- テキストファイルやMarkdownファイルをドラッグ＆ドロップすると、新規ページとして取り込めます。\r\n- 本棚や本は、ZIP形式やJSON形式で読み込み・書き出しが可能です。\r\n- **左サイドバー下部のアイコンをクリックすると、全データのバックアップファイルがダウンロードされます。**\r\n', z: 'guide-page-2', b4: '操作のヒント'};
+var $author$project$Domain$Guide$guidePage1 = {bl: '# ようこそ\r\n\r\nこのアプリは、本棚・本・ページという3つの層でMarkdown文書を整理・閲覧・編集できるノートアプリです。データはブラウザに保存され、ダウウンロードしてPCに保存することもできます。\r\n\r\n**サーバー通信なし**\r\n\r\n**AI機能なし✨**\r\n\r\n## 主な特徴\r\n\r\n- **階層管理**: 「本棚」の中に「本」を作り、「ページ」単位で閲覧・編集できます。\r\n- **閲覧・編集画面の同期**: 閲覧モード（VIEW）と編集モード（EDIT）を切り替えても、表示される位置が概ね保たれます。\r\n- **目次ジャンプ**: サイドバーの目次から、各見出しへ直接ジャンプできます。\r\n\r\n## 画面の見方\r\n\r\n1. **左サイドバー**: 本棚の一覧、本の一覧、目次を切り替えられます。\r\n2. **フッター（下部）**: シークバーでページを前後にめくることができます。\r\n3. **右サイドバー**: テーマ切り替え、文字サイズ、エクスポートなどが行えます。\r\n', z: 'guide-page-1', b6: 'ようこそ'};
+var $author$project$Domain$Guide$guidePage2 = {bl: '# 操作のヒント\r\n\r\n## ページの切り替え方法\r\n- VIEWモードでのみ、矢印キー（←/→）。\r\n- フッターのシークバーをクリック。\r\n- **フッターのシークバーの上でマウスホイール操作。**\r\n- 右サイドバー下部のアイコンをクリック。またはその付近でのマウスホイール操作。\r\n- 右サイドバーの何もない部分でマウスホイール操作。\r\n\r\n## 目次の表示切り替え\r\n- サイドバーの下部のセレクターで、目次として表示するマークダウンの見出しを「見出し1 (H1)」から「見出し3 (H3)」まで切り替えられます。\r\n\r\n## ページの入れ替え\r\n- 右サイドバーの「PAGES」で、マウス操作によるページの入れ替え、複製、追加、削除ができます。\r\n\r\n## ページの追加と削除\r\n- 右サイドバーの **「+ Next Page」** をクリックすると、次のページが作成されます。\r\n- 不要になったページは、編集モード（EDIT）時のフッターにある削除ボタンから削除できます。\r\n\r\n## インポートとエクスポート\r\n- テキストファイルやMarkdownファイルをドラッグ＆ドロップすると、新規ページとして取り込めます。\r\n- 本棚や本は、ZIP形式やJSON形式で読み込み・書き出しが可能です。\r\n- **左サイドバー下部のアイコンをクリックすると、全データのバックアップファイルがダウンロードされます。**\r\n', z: 'guide-page-2', b6: '操作のヒント'};
 var $author$project$Domain$Guide$content = '### 数式として記述する方法\n\n※ EDITモードで確認してください。\n\n\n$$\nG_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}\n$$\n\n\n```math\nL = \\frac{1}{2}m\\dot{x}^2 - \\frac{1}{2}kx^2\n```\n\nインラインの書き方：$L(q, \\dot{q}, t) = T - V$\n\nガウスの法則：`math \\nabla \\cdot \\mathbf{B} = 0`\n\nシュレーディンガー方程式：\\(\\^{H}\\psi =E\\psi \\)\n\n種類が多いのはAIによって数式ブロックの記述方法が異なるためです。';
-var $author$project$Domain$Guide$guidePage3 = {bj: '# その他の機能\r\n\r\n## コードハイライト\r\n- コードブロック内はいくつかの言語でハイライトが付きます。\r\n\r\n\r\n\r\n\r\n## 数式レンダリング\r\n- LaTeX形式の数式をレンダリングします。\r\n- 不要になったページは、編集モード（EDIT）時のフッターにある削除ボタンから削除できます。\r\n\r\n\r\n\r\n' + $author$project$Domain$Guide$content, z: 'guide-page-3', b4: 'その他の機能'};
+var $author$project$Domain$Guide$guidePage3 = {bl: '# その他の機能\r\n\r\n## コードハイライト\r\n- コードブロック内はいくつかの言語でハイライトが付きます。\r\n\r\n\r\n\r\n\r\n## 数式レンダリング\r\n- LaTeX形式の数式をレンダリングします。\r\n- 不要になったページは、編集モード（EDIT）時のフッターにある削除ボタンから削除できます。\r\n\r\n\r\n\r\n' + $author$project$Domain$Guide$content, z: 'guide-page-3', b6: 'その他の機能'};
 var $author$project$Domain$Guide$guideBook = {
 	z: 'guide-book',
-	Q: _List_fromArray(
+	S: _List_fromArray(
 		[$author$project$Domain$Guide$guidePage1, $author$project$Domain$Guide$guidePage2, $author$project$Domain$Guide$guidePage3]),
-	b4: 'クイックスタートガイド'
+	b6: 'クイックスタートガイド'
 };
 var $author$project$Domain$Guide$guideShelf = {
-	ah: _List_fromArray(
+	aj: _List_fromArray(
 		[$author$project$Domain$Guide$guideBook]),
 	z: 'guide-shelf',
 	cF: 'ガイド'
 };
 var $author$project$Domain$Guide$defaultAppState = function () {
-	var firstPageContent = $author$project$Domain$Guide$guidePage1.bj;
+	var firstPageContent = $author$project$Domain$Guide$guidePage1.bl;
 	return {
-		al: $elm$core$Maybe$Just('guide-book'),
+		ao: $elm$core$Maybe$Just('guide-book'),
 		cl: A2(
 			$elm$core$List$map,
 			function ($) {
-				return $.c$;
+				return $.c0;
 			},
 			A2($author$project$Domain$Helper$extractHeadings, 0, firstPageContent)),
-		am: 0,
-		aF: 'guide-shelf',
-		R: _List_fromArray(
+		ap: 0,
+		aI: 'guide-shelf',
+		T: _List_fromArray(
 			[$author$project$Domain$Guide$guideShelf])
 	};
 }();
 var $author$project$Init$initModelWithAppState = F2(
 	function (seed, appState) {
-		return {bi: 0, cj: 2, cp: $elm$core$Maybe$Nothing, cq: $elm$core$Maybe$Nothing, an: 0, cu: 1, J: _List_Nil, cw: _List_Nil, aO: true, aS: $author$project$Type$PageView, s: $elm$core$Maybe$Nothing, cD: 0, cK: $elm$core$Maybe$Nothing, Z: _List_Nil, cM: '', C: _List_Nil, x: appState, cR: 0, as: 0, cV: '', at: seed, a_: 0, cW: 2, ae: $elm$core$Maybe$Nothing, c3: 2};
+		return {bk: 0, cj: 2, cp: $elm$core$Maybe$Nothing, cq: $elm$core$Maybe$Nothing, aq: 0, cu: 1, L: _List_Nil, cw: _List_Nil, aQ: true, aU: $author$project$Type$PageView, s: $elm$core$Maybe$Nothing, cD: 0, cK: $elm$core$Maybe$Nothing, aa: _List_Nil, cM: '', C: _List_Nil, x: appState, cR: 0, av: 0, cW: '', aw: seed, a0: 0, cX: 2, ag: $elm$core$Maybe$Nothing, c3: 2};
 	});
 var $author$project$Init$initDefaultModel = function (seed) {
 	return A2($author$project$Init$initModelWithAppState, seed, $author$project$Domain$Guide$defaultAppState);
@@ -6248,23 +6248,23 @@ var $author$project$Init$isNotNullValue = function (value) {
 };
 var $author$project$Init$buildInitialModelFromFlags = function (flags) {
 	var seed = $author$project$Init$extractSeed(flags);
-	var isDataPresent = $author$project$Init$isNotNullValue(flags.au);
-	var _v0 = A2($elm$json$Json$Decode$decodeValue, $author$project$JsonConverter$decodeModel, flags.au);
+	var isDataPresent = $author$project$Init$isNotNullValue(flags.ax);
+	var _v0 = A2($elm$json$Json$Decode$decodeValue, $author$project$JsonConverter$decodeModel, flags.ax);
 	if (!_v0.$) {
 		var model = _v0.a;
 		return _Utils_update(
 			model,
-			{at: seed});
+			{aw: seed});
 	} else {
 		var _v1 = A2(
 			$elm$json$Json$Decode$decodeValue,
 			A2($elm$json$Json$Decode$field, 'present', $author$project$JsonConverter$decodeAppState),
-			flags.au);
+			flags.ax);
 		if (!_v1.$) {
 			var appState = _v1.a;
 			return A2($author$project$Init$initModelWithAppState, seed, appState);
 		} else {
-			var _v2 = A2($elm$json$Json$Decode$decodeValue, $author$project$JsonConverter$decodeAppState, flags.au);
+			var _v2 = A2($elm$json$Json$Decode$decodeValue, $author$project$JsonConverter$decodeAppState, flags.ax);
 			if (!_v2.$) {
 				var fallbackAppState = _v2.a;
 				return A2($author$project$Init$initModelWithAppState, seed, fallbackAppState);
@@ -6397,7 +6397,7 @@ var $elm$browser$Browser$Events$MySub = F3(
 	});
 var $elm$browser$Browser$Events$State = F2(
 	function (subs, pids) {
-		return {bI: pids, b1: subs};
+		return {bL: pids, b3: subs};
 	});
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
@@ -6629,7 +6629,7 @@ var $elm$core$Dict$merge = F6(
 	});
 var $elm$browser$Browser$Events$Event = F2(
 	function (key, event) {
-		return {bn: event, bz: key};
+		return {bp: event, bC: key};
 	});
 var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
 var $elm$browser$Browser$Events$spawn = F3(
@@ -6704,7 +6704,7 @@ var $elm$browser$Browser$Events$onEffects = F3(
 			stepLeft,
 			stepBoth,
 			stepRight,
-			state.bI,
+			state.bL,
 			$elm$core$Dict$fromList(newSubs),
 			_Utils_Tuple3(_List_Nil, $elm$core$Dict$empty, _List_Nil));
 		var deadPids = _v0.a;
@@ -6750,8 +6750,8 @@ var $elm$core$List$filterMap = F2(
 	});
 var $elm$browser$Browser$Events$onSelfMsg = F3(
 	function (router, _v0, state) {
-		var key = _v0.bz;
-		var event = _v0.bn;
+		var key = _v0.bC;
+		var event = _v0.bp;
 		var toMessage = function (_v2) {
 			var subKey = _v2.a;
 			var _v3 = _v2.b;
@@ -6760,7 +6760,7 @@ var $elm$browser$Browser$Events$onSelfMsg = F3(
 			var decoder = _v3.c;
 			return _Utils_eq(subKey, key) ? A2(_Browser_decodeEvent, decoder, event) : $elm$core$Maybe$Nothing;
 		};
-		var messages = A2($elm$core$List$filterMap, toMessage, state.b1);
+		var messages = A2($elm$core$List$filterMap, toMessage, state.b3);
 		return A2(
 			$elm$core$Task$andThen,
 			function (_v1) {
@@ -6951,7 +6951,7 @@ var $author$project$Domain$Helper$updateAppState = F2(
 		return _Utils_update(
 			model,
 			{
-				J: _List_Nil,
+				L: _List_Nil,
 				C: A2(
 					$elm$core$List$take,
 					100,
@@ -7245,14 +7245,14 @@ var $danyx23$elm_uuid$Uuid$Barebones$uuidStringGenerator = A2(
 	$danyx23$elm_uuid$Uuid$Barebones$toUuidString,
 	A2($elm$random$Random$list, 31, $danyx23$elm_uuid$Uuid$Barebones$hexGenerator));
 var $author$project$Domain$AddItem$stepUuid = function (model) {
-	var _v0 = A2($elm$random$Random$step, $danyx23$elm_uuid$Uuid$Barebones$uuidStringGenerator, model.at);
+	var _v0 = A2($elm$random$Random$step, $danyx23$elm_uuid$Uuid$Barebones$uuidStringGenerator, model.aw);
 	var uuid = _v0.a;
 	var nextSeed = _v0.b;
 	return _Utils_Tuple2(
 		uuid,
 		_Utils_update(
 			model,
-			{at: nextSeed}));
+			{aw: nextSeed}));
 };
 var $author$project$Domain$AddItem$addGuideShelf = function (model) {
 	var historyModel = $author$project$Domain$Helper$pushToHistory(model);
@@ -7286,28 +7286,28 @@ var $author$project$Domain$AddItem$addGuideShelf = function (model) {
 		]);
 	var newBook = _Utils_update(
 		$author$project$Domain$Guide$guideBook,
-		{z: newBookId, Q: newPages});
+		{z: newBookId, S: newPages});
 	var newShelf = _Utils_update(
 		$author$project$Domain$Guide$guideShelf,
 		{
-			ah: _List_fromArray(
+			aj: _List_fromArray(
 				[newBook]),
 			z: newShelfId
 		});
 	var newPresent = _Utils_update(
 		oldPresent,
 		{
-			al: $elm$core$Maybe$Just(newBookId),
-			am: 0,
-			aF: newShelfId,
-			R: _Utils_ap(
-				oldPresent.R,
+			ao: $elm$core$Maybe$Just(newBookId),
+			ap: 0,
+			aI: newShelfId,
+			T: _Utils_ap(
+				oldPresent.T,
 				_List_fromArray(
 					[newShelf]))
 		});
 	return _Utils_update(
 		m5,
-		{aS: $author$project$Type$PageView, cD: 0, x: newPresent, cW: 2});
+		{aU: $author$project$Type$PageView, cD: 0, x: newPresent, cX: 2});
 };
 var $elm$core$Maybe$andThen = F2(
 	function (callback, maybeValue) {
@@ -7356,7 +7356,7 @@ var $author$project$Domain$Helper$findBookById = F2(
 				A2(
 					$elm$core$List$concatMap,
 					function ($) {
-						return $.ah;
+						return $.aj;
 					},
 					shelves)));
 	});
@@ -7364,9 +7364,9 @@ var $author$project$Domain$Helper$getCurrentBook = function (state) {
 	return A2(
 		$elm$core$Maybe$andThen,
 		function (id) {
-			return A2($author$project$Domain$Helper$findBookById, id, state.R);
+			return A2($author$project$Domain$Helper$findBookById, id, state.T);
 		},
-		state.al);
+		state.ao);
 };
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
@@ -7393,10 +7393,10 @@ var $author$project$Domain$Helper$applyPageChange = F2(
 					A2(
 						$elm$core$Maybe$map,
 						function ($) {
-							return $.bj;
+							return $.bl;
 						},
 						$elm$core$List$head(
-							A2($elm$core$List$drop, index, book.Q))));
+							A2($elm$core$List$drop, index, book.S))));
 			} else {
 				return '';
 			}
@@ -7408,10 +7408,10 @@ var $author$project$Domain$Helper$applyPageChange = F2(
 				cl: A2(
 					$elm$core$List$map,
 					function ($) {
-						return $.c$;
+						return $.c0;
 					},
 					newHeadings),
-				am: index
+				ap: index
 			});
 	});
 var $author$project$Domain$Helper$applyBookSelection = F2(
@@ -7420,29 +7420,29 @@ var $author$project$Domain$Helper$applyBookSelection = F2(
 		var basePresent = _Utils_update(
 			present,
 			{
-				al: $elm$core$Maybe$Just(bookId),
-				am: 0
+				ao: $elm$core$Maybe$Just(bookId),
+				ap: 0
 			});
 		var newPresent = A2($author$project$Domain$Helper$applyPageChange, 0, basePresent);
 		return _Utils_update(
 			model,
-			{aS: $author$project$Type$PageView, cD: 0, x: newPresent, as: 0, cW: 2});
+			{aU: $author$project$Type$PageView, cD: 0, x: newPresent, av: 0, cX: 2});
 	});
 var $author$project$Domain$Helper$commitTypingSession = function (model) {
-	var _v0 = model.ae;
+	var _v0 = model.ag;
 	if (!_v0.$) {
 		var baseline = _v0.a;
 		return _Utils_eq(baseline, model.x) ? _Utils_update(
 			model,
-			{ae: $elm$core$Maybe$Nothing}) : _Utils_update(
+			{ag: $elm$core$Maybe$Nothing}) : _Utils_update(
 			model,
 			{
-				J: _List_Nil,
+				L: _List_Nil,
 				C: A2(
 					$elm$core$List$take,
 					100,
 					A2($elm$core$List$cons, baseline, model.C)),
-				ae: $elm$core$Maybe$Nothing
+				ag: $elm$core$Maybe$Nothing
 			});
 	} else {
 		return model;
@@ -7504,7 +7504,7 @@ var $author$project$Ports$syncScroll = _Platform_outgoingPort(
 					$elm$json$Json$Encode$float($.cQ)),
 					_Utils_Tuple2(
 					'targetId',
-					$elm$json$Json$Encode$string($.c_))
+					$elm$json$Json$Encode$string($.c$))
 				]));
 	});
 var $elm$browser$Browser$Dom$getViewportOf = _Browser_getViewportOf;
@@ -7518,7 +7518,7 @@ var $author$project$Domain$Helper$syncViewerScroll = function (ratio) {
 		A2(
 			$elm$core$Task$andThen,
 			function (vp) {
-				var maxScroll = vp.aY.O - vp.az.O;
+				var maxScroll = vp.a_.Q - vp.aC.Q;
 				return A3($elm$browser$Browser$Dom$setViewportOf, 'page-view-area', 0, ratio * maxScroll);
 			},
 			$elm$browser$Browser$Dom$getViewportOf('page-view-area')));
@@ -7531,7 +7531,7 @@ var $author$project$Domain$Helper$modeTransitionCmd = F2(
 					_List_fromArray(
 						[
 							$author$project$Ports$syncScroll(
-							{cQ: scrollRatio, c_: 'editor-area'}),
+							{cQ: scrollRatio, c$: 'editor-area'}),
 							$author$project$Domain$Helper$focusEditor
 						]));
 			case 0:
@@ -7551,7 +7551,7 @@ var $author$project$Domain$Helper$applyChangeMode = F2(
 		var committed = $author$project$Domain$Helper$commitTypingSession(model);
 		return _Utils_Tuple2(
 			A2($author$project$Domain$Helper$setMode, newMode, committed),
-			A2($author$project$Domain$Helper$modeTransitionCmd, newMode, committed.as));
+			A2($author$project$Domain$Helper$modeTransitionCmd, newMode, committed.av));
 	});
 var $author$project$Domain$Selector$applyColorTheme = F2(
 	function (themeStr, model) {
@@ -7564,12 +7564,12 @@ var $author$project$Domain$Selector$applyColorTheme = F2(
 				case 'Magical':
 					return 2;
 				default:
-					return model.bi;
+					return model.bk;
 			}
 		}();
 		return _Utils_update(
 			model,
-			{bi: newTheme});
+			{bk: newTheme});
 	});
 var $author$project$Domain$Helper$clearEditing = function (model) {
 	return _Utils_update(
@@ -7596,10 +7596,10 @@ var $author$project$JsonConverter$encodePage = function (page) {
 				$elm$json$Json$Encode$string(page.z)),
 				_Utils_Tuple2(
 				'title',
-				$elm$json$Json$Encode$string(page.b4)),
+				$elm$json$Json$Encode$string(page.b6)),
 				_Utils_Tuple2(
 				'content',
-				$elm$json$Json$Encode$string(page.bj))
+				$elm$json$Json$Encode$string(page.bl))
 			]));
 };
 var $elm$json$Json$Encode$list = F2(
@@ -7620,10 +7620,10 @@ var $author$project$JsonConverter$encodeBook = function (book) {
 				$elm$json$Json$Encode$string(book.z)),
 				_Utils_Tuple2(
 				'title',
-				$elm$json$Json$Encode$string(book.b4)),
+				$elm$json$Json$Encode$string(book.b6)),
 				_Utils_Tuple2(
 				'pages',
-				A2($elm$json$Json$Encode$list, $author$project$JsonConverter$encodePage, book.Q))
+				A2($elm$json$Json$Encode$list, $author$project$JsonConverter$encodePage, book.S))
 			]));
 };
 var $author$project$JsonConverter$encodeShelf = function (shelf) {
@@ -7638,7 +7638,7 @@ var $author$project$JsonConverter$encodeShelf = function (shelf) {
 				$elm$json$Json$Encode$string(shelf.cF)),
 				_Utils_Tuple2(
 				'books',
-				A2($elm$json$Json$Encode$list, $author$project$JsonConverter$encodeBook, shelf.ah))
+				A2($elm$json$Json$Encode$list, $author$project$JsonConverter$encodeBook, shelf.aj))
 			]));
 };
 var $elm$json$Json$Encode$int = _Json_wrap;
@@ -7648,16 +7648,16 @@ var $author$project$JsonConverter$encodeAppState = function (state) {
 			[
 				_Utils_Tuple2(
 				'shelves',
-				A2($elm$json$Json$Encode$list, $author$project$JsonConverter$encodeShelf, state.R)),
+				A2($elm$json$Json$Encode$list, $author$project$JsonConverter$encodeShelf, state.T)),
 				_Utils_Tuple2(
 				'currentShelfId',
-				$elm$json$Json$Encode$string(state.aF)),
+				$elm$json$Json$Encode$string(state.aI)),
 				_Utils_Tuple2(
 				'currentBookId',
-				A2($author$project$JsonConverter$encodeMaybe, $elm$json$Json$Encode$string, state.al)),
+				A2($author$project$JsonConverter$encodeMaybe, $elm$json$Json$Encode$string, state.ao)),
 				_Utils_Tuple2(
 				'currentPageIndex',
-				$elm$json$Json$Encode$int(state.am)),
+				$elm$json$Json$Encode$int(state.ap)),
 				_Utils_Tuple2(
 				'currentHeading',
 				A2($elm$json$Json$Encode$list, $elm$json$Json$Encode$string, state.cl))
@@ -7747,7 +7747,7 @@ var $author$project$JsonConverter$encodeModelValue = function (model) {
 				$author$project$JsonConverter$encodeFontSize(model.cu)),
 				_Utils_Tuple2(
 				'colorTheme',
-				$author$project$JsonConverter$encodeColorTheme(model.bi)),
+				$author$project$JsonConverter$encodeColorTheme(model.bk)),
 				_Utils_Tuple2(
 				'renderStyle',
 				$author$project$JsonConverter$encodeRenderStyle(model.cR)),
@@ -7759,13 +7759,13 @@ var $author$project$JsonConverter$encodeModelValue = function (model) {
 				$author$project$JsonConverter$encodeContentWidth(model.cj)),
 				_Utils_Tuple2(
 				'sidebarMode',
-				$author$project$JsonConverter$encodeSidebarMode(model.a_)),
+				$author$project$JsonConverter$encodeSidebarMode(model.a0)),
 				_Utils_Tuple2(
 				'sidebarTab',
-				$author$project$JsonConverter$encodeSidebarTab(model.cW)),
+				$author$project$JsonConverter$encodeSidebarTab(model.cX)),
 				_Utils_Tuple2(
 				'isRightSideWindowVisible',
-				$elm$json$Json$Encode$bool(model.aO))
+				$elm$json$Json$Encode$bool(model.aQ))
 			]));
 };
 var $author$project$JsonConverter$encodeModel = function (model) {
@@ -7793,19 +7793,19 @@ var $author$project$Domain$Helper$updateBookTitle = F3(
 		var updateBookInList = function (book) {
 			return _Utils_eq(book.z, bookId) ? _Utils_update(
 				book,
-				{b4: newTitle}) : book;
+				{b6: newTitle}) : book;
 		};
 		var updateShelf = function (shelf) {
 			return _Utils_update(
 				shelf,
 				{
-					ah: A2($elm$core$List$map, updateBookInList, shelf.ah)
+					aj: A2($elm$core$List$map, updateBookInList, shelf.aj)
 				});
 		};
 		return _Utils_update(
 			state,
 			{
-				R: A2($elm$core$List$map, updateShelf, state.R)
+				T: A2($elm$core$List$map, updateShelf, state.T)
 			});
 	});
 var $author$project$Domain$Helper$updateShelfTitle = F3(
@@ -7818,16 +7818,16 @@ var $author$project$Domain$Helper$updateShelfTitle = F3(
 		return _Utils_update(
 			state,
 			{
-				R: A2($elm$core$List$map, updateFn, state.R)
+				T: A2($elm$core$List$map, updateFn, state.T)
 			});
 	});
 var $author$project$Domain$Helper$updateTitleByBuffer = F2(
 	function (buffer, state) {
-		var _v0 = buffer.b3;
+		var _v0 = buffer.b5;
 		if (!_v0) {
-			return A3($author$project$Domain$Helper$updateShelfTitle, buffer.z, buffer.ay, state);
+			return A3($author$project$Domain$Helper$updateShelfTitle, buffer.z, buffer.aB, state);
 		} else {
-			return A3($author$project$Domain$Helper$updateBookTitle, buffer.z, buffer.ay, state);
+			return A3($author$project$Domain$Helper$updateBookTitle, buffer.z, buffer.aB, state);
 		}
 	});
 var $author$project$Domain$Helper$applyEdit = F2(
@@ -7844,7 +7844,7 @@ var $author$project$Domain$Helper$getCurrentPage = function (state) {
 		$elm$core$Maybe$andThen,
 		function (book) {
 			return $elm$core$List$head(
-				A2($elm$core$List$drop, state.am, book.Q));
+				A2($elm$core$List$drop, state.ap, book.S));
 		},
 		$author$project$Domain$Helper$getCurrentBook(state));
 };
@@ -7863,8 +7863,8 @@ var $author$project$Domain$Helper$applyExportPage = F2(
 		if (!_v0.$) {
 			var page = _v0.a;
 			var mimeType = (extension === 'md') ? 'text/markdown' : 'text/plain';
-			var fileName = page.b4 + ('.' + extension);
-			return A3($elm$file$File$Download$string, fileName, mimeType, page.bj);
+			var fileName = page.b6 + ('.' + extension);
+			return A3($elm$file$File$Download$string, fileName, mimeType, page.bl);
 		} else {
 			return $elm$core$Platform$Cmd$none;
 		}
@@ -7890,17 +7890,17 @@ var $author$project$Domain$Helper$applyPageSelection = F2(
 		var newPresent = A2($author$project$Domain$Helper$applyPageChange, index, model.x);
 		return _Utils_update(
 			model,
-			{x: newPresent, as: 0});
+			{x: newPresent, av: 0});
 	});
 var $author$project$Domain$Helper$applyRedo = function (model) {
-	var _v0 = model.J;
+	var _v0 = model.L;
 	if (_v0.b) {
 		var next = _v0.a;
 		var rest = _v0.b;
 		return _Utils_update(
 			model,
 			{
-				J: rest,
+				L: rest,
 				C: A2(
 					$elm$core$List$take,
 					100,
@@ -7953,12 +7953,12 @@ var $author$project$Domain$Helper$updateCurrentShelf = F2(
 		var newShelves = A2(
 			$elm$core$List$map,
 			function (shelf) {
-				return _Utils_eq(shelf.z, state.aF) ? transform(shelf) : shelf;
+				return _Utils_eq(shelf.z, state.aI) ? transform(shelf) : shelf;
 			},
-			state.R);
+			state.T);
 		return _Utils_update(
 			state,
-			{R: newShelves});
+			{T: newShelves});
 	});
 var $author$project$Domain$Helper$reorderBooksInShelf = F3(
 	function (from, to, state) {
@@ -7968,7 +7968,7 @@ var $author$project$Domain$Helper$reorderBooksInShelf = F3(
 				return _Utils_update(
 					shelf,
 					{
-						ah: A3($author$project$Domain$Helper$reorderList, from, to, shelf.ah)
+						aj: A3($author$project$Domain$Helper$reorderList, from, to, shelf.aj)
 					});
 			},
 			state);
@@ -7981,35 +7981,35 @@ var $author$project$Domain$Helper$updateBookInShelves = F3(
 				return _Utils_update(
 					shelf,
 					{
-						ah: A2(
+						aj: A2(
 							$elm$core$List$map,
 							function (book) {
 								return _Utils_eq(book.z, bookId) ? updater(book) : book;
 							},
-							shelf.ah)
+							shelf.aj)
 					});
 			},
 			shelves);
 	});
 var $author$project$Domain$Helper$reorderPagesInBook = F3(
 	function (from, to, state) {
-		var _v0 = state.al;
+		var _v0 = state.ao;
 		if (!_v0.$) {
 			var bookId = _v0.a;
 			return _Utils_update(
 				state,
 				{
-					R: A3(
+					T: A3(
 						$author$project$Domain$Helper$updateBookInShelves,
 						bookId,
 						function (book) {
 							return _Utils_update(
 								book,
 								{
-									Q: A3($author$project$Domain$Helper$reorderList, from, to, book.Q)
+									S: A3($author$project$Domain$Helper$reorderList, from, to, book.S)
 								});
 						},
-						state.R)
+						state.T)
 				});
 		} else {
 			return state;
@@ -8020,7 +8020,7 @@ var $author$project$Domain$Helper$reorderShelves = F3(
 		return _Utils_update(
 			state,
 			{
-				R: A3($author$project$Domain$Helper$reorderList, from, to, state.R)
+				T: A3($author$project$Domain$Helper$reorderList, from, to, state.T)
 			});
 	});
 var $author$project$Domain$Helper$applyReorder = F4(
@@ -8042,7 +8042,7 @@ var $author$project$Domain$Helper$applyReorder = F4(
 	});
 var $author$project$Domain$Helper$applySessionCommitIfValid = F2(
 	function (counter, model) {
-		return _Utils_eq(counter, model.an) ? $author$project$Domain$Helper$commitTypingSession(model) : model;
+		return _Utils_eq(counter, model.aq) ? $author$project$Domain$Helper$commitTypingSession(model) : model;
 	});
 var $author$project$Type$ShelfDetailView = function (a) {
 	return {$: 2, a: a};
@@ -8053,11 +8053,11 @@ var $author$project$Domain$Helper$applyShelfSelection = F2(
 		return _Utils_update(
 			model,
 			{
-				aS: $author$project$Type$ShelfDetailView(shelfId),
+				aU: $author$project$Type$ShelfDetailView(shelfId),
 				x: _Utils_update(
 					oldPresent,
-					{aF: shelfId}),
-				cW: 1
+					{aI: shelfId}),
+				cX: 1
 			});
 	});
 var $author$project$Domain$Helper$applyUndo = function (model) {
@@ -8068,7 +8068,7 @@ var $author$project$Domain$Helper$applyUndo = function (model) {
 		return _Utils_update(
 			model,
 			{
-				J: A2($elm$core$List$cons, model.x, model.J),
+				L: A2($elm$core$List$cons, model.x, model.L),
 				C: rest,
 				x: prev
 			});
@@ -8078,24 +8078,24 @@ var $author$project$Domain$Helper$applyUndo = function (model) {
 };
 var $author$project$Domain$Helper$calculateScroll = F3(
 	function (_v0, vp, model) {
-		var maxScroll = vp.aY.O - vp.az.O;
-		var newRatio = (maxScroll <= 0) ? 0 : (vp.az.b8 / maxScroll);
+		var maxScroll = vp.a_.Q - vp.aC.Q;
+		var newRatio = (maxScroll <= 0) ? 0 : (vp.aC.ca / maxScroll);
 		return _Utils_update(
 			model,
-			{as: newRatio});
+			{av: newRatio});
 	});
 var $author$project$Type$EditMode = 1;
 var $author$project$Domain$Helper$addBookToCurrentShelf = F2(
 	function (newId, state) {
-		var newBook = {z: newId, Q: _List_Nil, b4: 'New Book'};
+		var newBook = {z: newId, S: _List_Nil, b6: 'New Book'};
 		return A2(
 			$author$project$Domain$Helper$updateCurrentShelf,
 			function (shelf) {
 				return _Utils_update(
 					shelf,
 					{
-						ah: _Utils_ap(
-							shelf.ah,
+						aj: _Utils_ap(
+							shelf.aj,
 							_List_fromArray(
 								[newBook]))
 					});
@@ -8126,9 +8126,9 @@ var $author$project$Domain$AddItem$addPageToCurrentBook = F4(
 				$elm$core$List$length(pages),
 				insertIndex);
 			var targetPage = {
-				bj: contents,
+				bl: contents,
 				z: newId,
-				b4: A2($author$project$Domain$Helper$extractTitleFromContent, index, content)
+				b6: A2($author$project$Domain$Helper$extractTitleFromContent, index, content)
 			};
 			return _Utils_ap(
 				A2($elm$core$List$take, index, pages),
@@ -8143,10 +8143,10 @@ var $author$project$Domain$AddItem$addPageToCurrentBook = F4(
 				function (book) {
 					return _Utils_eq(
 						$elm$core$Maybe$Just(book.z),
-						state.al) ? _Utils_update(
+						state.ao) ? _Utils_update(
 						book,
 						{
-							Q: insertPage(book.Q)
+							S: insertPage(book.S)
 						}) : book;
 				},
 				books);
@@ -8155,10 +8155,10 @@ var $author$project$Domain$AddItem$addPageToCurrentBook = F4(
 			return A2(
 				$elm$core$List$map,
 				function (shelf) {
-					return _Utils_eq(shelf.z, state.aF) ? _Utils_update(
+					return _Utils_eq(shelf.z, state.aI) ? _Utils_update(
 						shelf,
 						{
-							ah: updateBooks(shelf.ah)
+							aj: updateBooks(shelf.aj)
 						}) : shelf;
 				},
 				shelves);
@@ -8166,7 +8166,7 @@ var $author$project$Domain$AddItem$addPageToCurrentBook = F4(
 		return _Utils_update(
 			state,
 			{
-				R: updateShelves(state.R)
+				T: updateShelves(state.T)
 			});
 	});
 var $author$project$Domain$AddItem$buildPage = F2(
@@ -8174,15 +8174,15 @@ var $author$project$Domain$AddItem$buildPage = F2(
 		var content = A2(
 			$elm$core$Maybe$withDefault,
 			'',
-			$elm$core$List$head(model.Z));
-		var _v0 = A2($elm$random$Random$step, $danyx23$elm_uuid$Uuid$Barebones$uuidStringGenerator, model.at);
+			$elm$core$List$head(model.aa));
+		var _v0 = A2($elm$random$Random$step, $danyx23$elm_uuid$Uuid$Barebones$uuidStringGenerator, model.aw);
 		var newId = _v0.a;
 		var nextSeed = _v0.b;
 		var stepped = _Utils_update(
 			model,
 			{
-				Z: A2($elm$core$List$drop, 1, model.Z),
-				at: nextSeed
+				aa: A2($elm$core$List$drop, 1, model.aa),
+				aw: nextSeed
 			});
 		return _Utils_update(
 			stepped,
@@ -8195,8 +8195,8 @@ var $author$project$Domain$AddItem$selectBookInState = F2(
 		return _Utils_update(
 			state,
 			{
-				al: $elm$core$Maybe$Just(bookId),
-				am: 0
+				ao: $elm$core$Maybe$Just(bookId),
+				ap: 0
 			});
 	});
 var $author$project$Domain$AddItem$createBook = function (model) {
@@ -8240,9 +8240,9 @@ var $author$project$Domain$AddItem$createPage = F2(
 	});
 var $author$project$Domain$AddItem$initShelfWithBook = F3(
 	function (shelfId, bookId, state) {
-		var newBook = {z: bookId, Q: _List_Nil, b4: 'New Book'};
+		var newBook = {z: bookId, S: _List_Nil, b6: 'New Book'};
 		var newShelf = {
-			ah: _List_fromArray(
+			aj: _List_fromArray(
 				[newBook]),
 			z: shelfId,
 			cF: 'New Shelf'
@@ -8250,11 +8250,11 @@ var $author$project$Domain$AddItem$initShelfWithBook = F3(
 		return _Utils_update(
 			state,
 			{
-				al: $elm$core$Maybe$Just(bookId),
-				am: 0,
-				aF: shelfId,
-				R: _Utils_ap(
-					state.R,
+				ao: $elm$core$Maybe$Just(bookId),
+				ap: 0,
+				aI: shelfId,
+				T: _Utils_ap(
+					state.T,
 					_List_fromArray(
 						[newShelf]))
 			});
@@ -8281,7 +8281,7 @@ var $author$project$Domain$AddItem$duplicatePageAt = F2(
 			$elm$core$Maybe$andThen,
 			function (book) {
 				return $elm$core$List$head(
-					A2($elm$core$List$drop, targetIndex, book.Q));
+					A2($elm$core$List$drop, targetIndex, book.S));
 			},
 			$author$project$Domain$Helper$getCurrentBook(model.x));
 		if (!maybeTargetPage.$) {
@@ -8297,8 +8297,8 @@ var $author$project$Domain$AddItem$duplicatePageAt = F2(
 						_Utils_update(
 							model,
 							{
-								Z: _List_fromArray(
-									[page.bj])
+								aa: _List_fromArray(
+									[page.bl])
 							}))));
 		} else {
 			return model;
@@ -8350,9 +8350,9 @@ var $author$project$JsonConverter$encodeExportShelf = function (shelf) {
 				])));
 };
 var $author$project$Domain$Helper$ensureSidebarTabOnEmpty = function (model) {
-	return $elm$core$List$isEmpty(model.x.R) ? _Utils_update(
+	return $elm$core$List$isEmpty(model.x.T) ? _Utils_update(
 		model,
-		{cW: 0}) : model;
+		{cX: 0}) : model;
 };
 var $author$project$Domain$Helper$combinePath = F2(
 	function (parent, child) {
@@ -8432,13 +8432,13 @@ var $author$project$Domain$Helper$pageToFileEntry = F4(
 			2,
 			'0',
 			$elm$core$String$fromInt(index + 1));
-		var extractedTitle = A2($author$project$Domain$Helper$extractTitleFromContent, index, page.bj);
+		var extractedTitle = A2($author$project$Domain$Helper$extractTitleFromContent, index, page.bl);
 		var fileName = function (name) {
 			return name + ('.' + extension);
 		}(
 			$author$project$Domain$Helper$sanitizePath(prefix + ('_' + extractedTitle)));
 		return {
-			bj: page.bj,
+			bl: page.bl,
 			cN: A2($author$project$Domain$Helper$combinePath, folderPath, fileName)
 		};
 	});
@@ -8447,23 +8447,23 @@ var $author$project$Domain$Helper$bookToAllEntries = F2(
 		var bookFolder = A2(
 			$author$project$Domain$Helper$combinePath,
 			parentPath,
-			$author$project$Domain$Helper$sanitizePath(book.b4));
+			$author$project$Domain$Helper$sanitizePath(book.b6));
 		var mdPath = A2($author$project$Domain$Helper$combinePath, bookFolder, 'markdown_files');
 		var mdEntries = A2(
 			$elm$core$List$indexedMap,
 			A2($author$project$Domain$Helper$pageToFileEntry, 'md', mdPath),
-			book.Q);
+			book.S);
 		var txtPath = A2($author$project$Domain$Helper$combinePath, bookFolder, 'text_files');
 		var txtEntries = A2(
 			$elm$core$List$indexedMap,
 			A2($author$project$Domain$Helper$pageToFileEntry, 'txt', txtPath),
-			book.Q);
+			book.S);
 		return _Utils_ap(txtEntries, mdEntries);
 	});
 var $author$project$Domain$Helper$bookZipPayload = function (book) {
 	return {
-		aH: A2($author$project$Domain$Helper$bookToAllEntries, '', book),
-		a9: book.b4
+		aK: A2($author$project$Domain$Helper$bookToAllEntries, '', book),
+		bc: book.b6
 	};
 };
 var $elm$core$Basics$composeR = F3(
@@ -8486,15 +8486,15 @@ var $author$project$Ports$exportZip = _Platform_outgoingPort(
 									[
 										_Utils_Tuple2(
 										'content',
-										$elm$json$Json$Encode$string($.bj)),
+										$elm$json$Json$Encode$string($.bl)),
 										_Utils_Tuple2(
 										'path',
 										$elm$json$Json$Encode$string($.cN))
 									]));
-						})($.aH)),
+						})($.aK)),
 					_Utils_Tuple2(
 					'zipName',
-					$elm$json$Json$Encode$string($.a9))
+					$elm$json$Json$Encode$string($.bc))
 				]));
 	});
 var $author$project$Domain$Helper$exportBookById = F2(
@@ -8514,9 +8514,9 @@ var $author$project$Domain$Helper$exportBookById = F2(
 						A2(
 							$elm$core$List$concatMap,
 							function ($) {
-								return $.ah;
+								return $.aj;
 							},
-							state.R)))));
+							state.T)))));
 	});
 var $author$project$Domain$Helper$toZipEntries = function (shelves) {
 	return A2(
@@ -8526,16 +8526,16 @@ var $author$project$Domain$Helper$toZipEntries = function (shelves) {
 			return A2(
 				$elm$core$List$concatMap,
 				$author$project$Domain$Helper$bookToAllEntries(pathPrefix),
-				shelf.ah);
+				shelf.aj);
 		},
 		shelves);
 };
 var $author$project$Domain$Helper$shelfZipPayload = function (shelf) {
 	return {
-		aH: $author$project$Domain$Helper$toZipEntries(
+		aK: $author$project$Domain$Helper$toZipEntries(
 			_List_fromArray(
 				[shelf])),
-		a9: shelf.cF
+		bc: shelf.cF
 	};
 };
 var $author$project$Domain$Helper$exportShelfById = F2(
@@ -8654,15 +8654,15 @@ var $elm$time$Time$toCivil = function (minutes) {
 	var month = mp + ((mp < 10) ? 3 : (-9));
 	var year = yearOfEra + (era * 400);
 	return {
-		bl: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
-		bB: month,
-		b9: year + ((month <= 2) ? 1 : 0)
+		bn: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
+		bE: month,
+		cb: year + ((month <= 2) ? 1 : 0)
 	};
 };
 var $elm$time$Time$toDay = F2(
 	function (zone, time) {
 		return $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).bl;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).bn;
 	});
 var $elm$core$Basics$modBy = _Basics_modBy;
 var $elm$time$Time$toHour = F2(
@@ -8697,7 +8697,7 @@ var $elm$time$Time$Sep = 8;
 var $elm$time$Time$toMonth = F2(
 	function (zone, time) {
 		var _v0 = $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).bB;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).bE;
 		switch (_v0) {
 			case 1:
 				return 0;
@@ -8738,7 +8738,7 @@ var $elm$time$Time$toSecond = F2(
 var $elm$time$Time$toYear = F2(
 	function (zone, time) {
 		return $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).b9;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).cb;
 	});
 var $author$project$Domain$Helper$formatBackupFileName = F2(
 	function (zone, time) {
@@ -8779,8 +8779,8 @@ var $author$project$Domain$Helper$formatBackupFileName = F2(
 	});
 var $author$project$Domain$Helper$fullLibraryPayload = function (shelves) {
 	return {
-		aH: $author$project$Domain$Helper$toZipEntries(shelves),
-		a9: 'Full_Library_Backup'
+		aK: $author$project$Domain$Helper$toZipEntries(shelves),
+		bc: 'Full_Library_Backup'
 	};
 };
 var $author$project$Type$BookImport = 1;
@@ -8804,7 +8804,7 @@ var $author$project$Domain$AddItem$handleFilesDropped = F2(
 						$elm$core$List$reverse(
 							A2($elm$core$String$split, '.', fileName)))));
 			if ((ext === 'txt') || (ext === 'md')) {
-				var _v1 = model.aS;
+				var _v1 = model.aU;
 				switch (_v1.$) {
 					case 0:
 						return _Utils_Tuple2(
@@ -8832,7 +8832,7 @@ var $author$project$Domain$AddItem$handleFilesDropped = F2(
 				}
 			} else {
 				if (ext === 'json') {
-					var _v2 = model.aS;
+					var _v2 = model.aU;
 					switch (_v2.$) {
 						case 1:
 							return _Utils_Tuple2(
@@ -8880,22 +8880,22 @@ var $author$project$Domain$Helper$appendBookData = F2(
 		var updateShelves = A2(
 			$elm$core$List$map,
 			function (shelf) {
-				return _Utils_eq(shelf.z, state.aF) ? _Utils_update(
+				return _Utils_eq(shelf.z, state.aI) ? _Utils_update(
 					shelf,
 					{
-						ah: _Utils_ap(
-							shelf.ah,
+						aj: _Utils_ap(
+							shelf.aj,
 							_List_fromArray(
 								[newBook]))
 					}) : shelf;
 			},
-			state.R);
+			state.T);
 		return _Utils_update(
 			state,
 			{
-				al: $elm$core$Maybe$Just(newBook.z),
-				am: 0,
-				R: updateShelves
+				ao: $elm$core$Maybe$Just(newBook.z),
+				ap: 0,
+				T: updateShelves
 			});
 	});
 var $author$project$Domain$Helper$addImportedBook = F2(
@@ -8911,11 +8911,11 @@ var $author$project$Domain$Helper$appendShelfData = F2(
 		return _Utils_update(
 			state,
 			{
-				al: $elm$core$Maybe$Nothing,
-				am: 0,
-				aF: newShelf.z,
-				R: _Utils_ap(
-					state.R,
+				ao: $elm$core$Maybe$Nothing,
+				ap: 0,
+				aI: newShelf.z,
+				T: _Utils_ap(
+					state.T,
 					_List_fromArray(
 						[newShelf]))
 			});
@@ -8933,7 +8933,7 @@ var $author$project$Domain$Helper$applyImportedModel = F2(
 		var historyModel = $author$project$Domain$Helper$pushToHistory(prevModel);
 		return _Utils_update(
 			importedModel,
-			{J: _List_Nil, C: historyModel.C, x: importedModel.x});
+			{L: _List_Nil, C: historyModel.C, x: importedModel.x});
 	});
 var $author$project$JsonConverter$decodeAnyAllBackup = $elm$json$Json$Decode$oneOf(
 	_List_fromArray(
@@ -9133,14 +9133,14 @@ var $author$project$Domain$Helper$hasNextPage = function (state) {
 	if (!_v0.$) {
 		var book = _v0.a;
 		return _Utils_cmp(
-			state.am,
-			$elm$core$List$length(book.Q) - 1) < 0;
+			state.ap,
+			$elm$core$List$length(book.S) - 1) < 0;
 	} else {
 		return false;
 	}
 };
 var $author$project$Domain$Helper$hasPrevPage = function (state) {
-	return state.am > 0;
+	return state.ap > 0;
 };
 var $elm$time$Time$Name = function (a) {
 	return {$: 0, a: a};
@@ -9155,10 +9155,10 @@ var $elm$time$Time$Zone = F2(
 var $elm$time$Time$customZone = $elm$time$Time$Zone;
 var $elm$time$Time$here = _Time_here(0);
 var $author$project$Domain$Helper$normalizeEditBuffer = function (buffer) {
-	var trimmed = $elm$core$String$trim(buffer.ay);
+	var trimmed = $elm$core$String$trim(buffer.aB);
 	var finalValue = function () {
 		if ($elm$core$String$isEmpty(trimmed)) {
-			var _v0 = buffer.b3;
+			var _v0 = buffer.b5;
 			if (_v0 === 1) {
 				return '無題の本';
 			} else {
@@ -9170,7 +9170,7 @@ var $author$project$Domain$Helper$normalizeEditBuffer = function (buffer) {
 	}();
 	return _Utils_update(
 		buffer,
-		{ay: finalValue});
+		{aB: finalValue});
 };
 var $author$project$Domain$Helper$notifyAndSaveWithCmd = F2(
 	function (additionalCmd, newModel) {
@@ -9199,7 +9199,7 @@ var $author$project$Domain$Helper$notifyAndScheduleDebounce = function (newModel
 					A2(
 					$elm$core$Task$perform,
 					function (_v0) {
-						return $author$project$Type$CommitTypingSession(newModel.an);
+						return $author$project$Type$CommitTypingSession(newModel.aq);
 					},
 					$elm$core$Process$sleep(800))
 				])));
@@ -9235,7 +9235,7 @@ var $author$project$Domain$AddItem$processPageContent = F3(
 				A2(
 					$elm$core$Basics$composeR,
 					function ($) {
-						return $.Q;
+						return $.S;
 					},
 					$elm$core$List$length),
 				$author$project$Domain$Helper$getCurrentBook(model.x)));
@@ -9249,7 +9249,7 @@ var $author$project$Domain$AddItem$processPageContent = F3(
 					_Utils_update(
 						model,
 						{
-							Z: _List_fromArray(
+							aa: _List_fromArray(
 								[fullContent]),
 							cM: fileName
 						}))));
@@ -9260,26 +9260,26 @@ var $author$project$Domain$Helper$updateCurrentPageContent = F2(
 		var _v0 = $author$project$Domain$Helper$getCurrentBook(state);
 		if (!_v0.$) {
 			var book = _v0.a;
-			var newTitle = A2($author$project$Domain$Helper$extractTitleFromContent, state.am, newContent);
+			var newTitle = A2($author$project$Domain$Helper$extractTitleFromContent, state.ap, newContent);
 			var updatePage = F2(
 				function (pIdx, page) {
-					return _Utils_eq(pIdx, state.am) ? _Utils_update(
+					return _Utils_eq(pIdx, state.ap) ? _Utils_update(
 						page,
-						{bj: newContent, b4: newTitle}) : page;
+						{bl: newContent, b6: newTitle}) : page;
 				});
-			var newPages = A2($elm$core$List$indexedMap, updatePage, book.Q);
+			var newPages = A2($elm$core$List$indexedMap, updatePage, book.S);
 			var newShelves = A3(
 				$author$project$Domain$Helper$updateBookInShelves,
 				book.z,
 				function (b) {
 					return _Utils_update(
 						b,
-						{Q: newPages});
+						{S: newPages});
 				},
-				state.R);
+				state.T);
 			return _Utils_update(
 				state,
-				{R: newShelves});
+				{T: newShelves});
 		} else {
 			return state;
 		}
@@ -9287,9 +9287,9 @@ var $author$project$Domain$Helper$updateCurrentPageContent = F2(
 var $author$project$Domain$Helper$registerEditorInput = F2(
 	function (content, model) {
 		var newPresent = A2($author$project$Domain$Helper$updateCurrentPageContent, content, model.x);
-		var newCounter = model.an + 1;
+		var newCounter = model.aq + 1;
 		var baseline = function () {
-			var _v0 = model.ae;
+			var _v0 = model.ag;
 			if (!_v0.$) {
 				var base = _v0.a;
 				return $elm$core$Maybe$Just(base);
@@ -9299,7 +9299,7 @@ var $author$project$Domain$Helper$registerEditorInput = F2(
 		}();
 		return _Utils_update(
 			model,
-			{an: newCounter, x: newPresent, ae: baseline});
+			{aq: newCounter, x: newPresent, ag: baseline});
 	});
 var $elm$core$Basics$neq = _Utils_notEqual;
 var $author$project$Domain$Helper$deleteBookFromShelves = F2(
@@ -9310,25 +9310,25 @@ var $author$project$Domain$Helper$deleteBookFromShelves = F2(
 				return _Utils_update(
 					shelf,
 					{
-						ah: A2(
+						aj: A2(
 							$elm$core$List$filter,
 							function (b) {
 								return !_Utils_eq(b.z, bookId);
 							},
-							shelf.ah)
+							shelf.aj)
 					});
 			},
 			shelves);
 	});
 var $author$project$Domain$Helper$removeBookFromState = F2(
 	function (bookId, state) {
-		var newShelves = A2($author$project$Domain$Helper$deleteBookFromShelves, bookId, state.R);
+		var newShelves = A2($author$project$Domain$Helper$deleteBookFromShelves, bookId, state.T);
 		var newCurrentBookId = _Utils_eq(
-			state.al,
-			$elm$core$Maybe$Just(bookId)) ? $elm$core$Maybe$Nothing : state.al;
+			state.ao,
+			$elm$core$Maybe$Just(bookId)) ? $elm$core$Maybe$Nothing : state.ao;
 		return _Utils_update(
 			state,
-			{al: newCurrentBookId, R: newShelves});
+			{ao: newCurrentBookId, T: newShelves});
 	});
 var $elm$core$Basics$min = F2(
 	function (x, y) {
@@ -9344,23 +9344,23 @@ var $author$project$Domain$Helper$removeCurrentPage = F2(
 				function (p) {
 					return !_Utils_eq(p.z, pageId);
 				},
-				book.Q);
+				book.S);
 			var newShelves = A3(
 				$author$project$Domain$Helper$updateBookInShelves,
 				book.z,
 				function (b) {
 					return _Utils_update(
 						b,
-						{Q: newPages});
+						{S: newPages});
 				},
-				state.R);
+				state.T);
 			var newPageIndex = $elm$core$List$isEmpty(newPages) ? 0 : A2(
 				$elm$core$Basics$min,
-				state.am,
+				state.ap,
 				$elm$core$List$length(newPages) - 1);
 			return _Utils_update(
 				state,
-				{am: newPageIndex, R: newShelves});
+				{ap: newPageIndex, T: newShelves});
 		} else {
 			return state;
 		}
@@ -9372,8 +9372,8 @@ var $author$project$Domain$Helper$removeShelf = F2(
 			function (s) {
 				return !_Utils_eq(s.z, shelfId);
 			},
-			state.R);
-		var nextShelfId = _Utils_eq(state.aF, shelfId) ? A2(
+			state.T);
+		var nextShelfId = _Utils_eq(state.aI, shelfId) ? A2(
 			$elm$core$Maybe$withDefault,
 			'',
 			A2(
@@ -9381,29 +9381,29 @@ var $author$project$Domain$Helper$removeShelf = F2(
 				function ($) {
 					return $.z;
 				},
-				$elm$core$List$head(newShelves))) : state.aF;
+				$elm$core$List$head(newShelves))) : state.aI;
 		return _Utils_update(
 			state,
-			{aF: nextShelfId, R: newShelves});
+			{aI: nextShelfId, T: newShelves});
 	});
 var $author$project$Domain$Helper$reorderPagesInCurrentBook = F3(
 	function (oldIdx, newIdx, state) {
 		var _v0 = $author$project$Domain$Helper$getCurrentBook(state);
 		if (!_v0.$) {
 			var book = _v0.a;
-			var newPages = A3($author$project$Domain$Helper$reorderList, oldIdx, newIdx, book.Q);
+			var newPages = A3($author$project$Domain$Helper$reorderList, oldIdx, newIdx, book.S);
 			var newShelves = A3(
 				$author$project$Domain$Helper$updateBookInShelves,
 				book.z,
 				function (b) {
 					return _Utils_update(
 						b,
-						{Q: newPages});
+						{S: newPages});
 				},
-				state.R);
+				state.T);
 			return _Utils_update(
 				state,
-				{am: newIdx, R: newShelves});
+				{ap: newIdx, T: newShelves});
 		} else {
 			return state;
 		}
@@ -9413,7 +9413,7 @@ var $author$project$Init$applyResetWithHistory = function (model) {
 		$elm$core$List$take,
 		100,
 		A2($elm$core$List$cons, model.x, model.C));
-	var defaultModel = $author$project$Init$initDefaultModel(model.at);
+	var defaultModel = $author$project$Init$initDefaultModel(model.aw);
 	return _Utils_update(
 		defaultModel,
 		{C: updatedPast});
@@ -9439,27 +9439,27 @@ var $author$project$Domain$Helper$setMainViewMode = F2(
 	function (viewMode, model) {
 		return _Utils_update(
 			model,
-			{aS: viewMode});
+			{aU: viewMode});
 	});
 var $author$project$Domain$Helper$setRightSideWindowVisible = F2(
 	function (isVisible, model) {
 		return _Utils_update(
 			model,
-			{aO: isVisible});
+			{aQ: isVisible});
 	});
 var $author$project$Domain$Helper$updateSidebarMode = F2(
 	function (nextMode, model) {
-		var nextWindowVisible = (!(!nextMode)) ? true : model.aO;
+		var nextWindowVisible = (!(!nextMode)) ? true : model.aQ;
 		return _Utils_update(
 			model,
-			{aO: nextWindowVisible, a_: nextMode});
+			{aQ: nextWindowVisible, a0: nextMode});
 	});
 var $author$project$Domain$Helper$toggleLeftSidebar = function (model) {
-	var nextMode = (model.a_ === 2) ? 1 : 2;
+	var nextMode = (model.a0 === 2) ? 1 : 2;
 	return A2($author$project$Domain$Helper$updateSidebarMode, nextMode, model);
 };
 var $author$project$Domain$Helper$toggleNormalSidebar = function (model) {
-	var nextMode = (!model.a_) ? 1 : 0;
+	var nextMode = (!model.a0) ? 1 : 0;
 	return A2($author$project$Domain$Helper$updateSidebarMode, nextMode, model);
 };
 var $author$project$Main$update = F2(
@@ -9477,7 +9477,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{aS: viewMode}),
+						{aU: viewMode}),
 					$elm$core$Platform$Cmd$none);
 			case 3:
 				return $author$project$Domain$Helper$notifyAndSave(
@@ -9544,12 +9544,12 @@ var $author$project$Main$update = F2(
 				return $author$project$Domain$Helper$hasNextPage(model.x) ? A2(
 					$author$project$Domain$Helper$notifyAndSaveWithCmd,
 					$author$project$Domain$Helper$pageNavigationCmd,
-					A2($author$project$Domain$Helper$applyPageSelection, model.x.am + 1, model)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					A2($author$project$Domain$Helper$applyPageSelection, model.x.ap + 1, model)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 15:
 				return $author$project$Domain$Helper$hasPrevPage(model.x) ? A2(
 					$author$project$Domain$Helper$notifyAndSaveWithCmd,
 					$author$project$Domain$Helper$pageNavigationCmd,
-					A2($author$project$Domain$Helper$applyPageSelection, model.x.am - 1, model)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					A2($author$project$Domain$Helper$applyPageSelection, model.x.ap - 1, model)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 16:
 				var newMode = msg.a;
 				return A2($author$project$Domain$Helper$applyChangeMode, newMode, model);
@@ -9558,7 +9558,7 @@ var $author$project$Main$update = F2(
 				return $author$project$Domain$Helper$notifyAndSave(
 					_Utils_update(
 						model,
-						{cW: tab}));
+						{cX: tab}));
 			case 18:
 				var content = msg.a;
 				return $author$project$Domain$Helper$notifyAndScheduleDebounce(
@@ -9568,7 +9568,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{cV: text}),
+						{cW: text}),
 					$elm$core$Platform$Cmd$none);
 			case 20:
 				var theme = msg.a;
@@ -9705,7 +9705,7 @@ var $author$project$Main$update = F2(
 				return (id === 'editor-area') ? _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{as: vp.az.b8}),
+						{av: vp.aC.ca}),
 					$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 					A3($author$project$Domain$Helper$calculateScroll, id, vp, model),
 					$elm$core$Platform$Cmd$none);
@@ -9717,7 +9717,7 @@ var $author$project$Main$update = F2(
 						model,
 						{
 							cp: $elm$core$Maybe$Just(
-								{cv: index, bD: index, b3: target})
+								{cv: index, bG: index, b5: target})
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 34:
@@ -9727,7 +9727,7 @@ var $author$project$Main$update = F2(
 					function (s) {
 						return _Utils_update(
 							s,
-							{bD: index});
+							{bG: index});
 					},
 					model.cp);
 				return _Utils_Tuple2(
@@ -9749,7 +9749,7 @@ var $author$project$Main$update = F2(
 			case 37:
 				var book = msg.a;
 				var jsonString = $author$project$JsonConverter$encodeExportBook(book);
-				var fileName = 'Pumice-book-' + (($elm$core$String$isEmpty(book.b4) ? 'export' : book.b4) + '.json');
+				var fileName = 'Pumice-book-' + (($elm$core$String$isEmpty(book.b6) ? 'export' : book.b6) + '.json');
 				return _Utils_Tuple2(
 					model,
 					A3($elm$file$File$Download$string, fileName, 'application/json', jsonString));
@@ -9757,7 +9757,7 @@ var $author$project$Main$update = F2(
 				var shelfId = msg.a;
 				return _Utils_Tuple2(
 					model,
-					A2($author$project$Domain$Helper$exportShelfById, shelfId, model.x.R));
+					A2($author$project$Domain$Helper$exportShelfById, shelfId, model.x.T));
 			case 39:
 				var shelf = msg.a;
 				var jsonString = $author$project$JsonConverter$encodeExportShelf(shelf);
@@ -9769,7 +9769,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					model,
 					$author$project$Ports$exportZip(
-						$author$project$Domain$Helper$fullLibraryPayload(model.x.R)));
+						$author$project$Domain$Helper$fullLibraryPayload(model.x.T)));
 			case 41:
 				var target = msg.a;
 				var id = msg.b;
@@ -9779,7 +9779,7 @@ var $author$project$Main$update = F2(
 						model,
 						{
 							cq: $elm$core$Maybe$Just(
-								{z: id, b3: target, ay: initialValue})
+								{z: id, b5: target, aB: initialValue})
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 42:
@@ -9793,7 +9793,7 @@ var $author$project$Main$update = F2(
 								function (e) {
 									return _Utils_update(
 										e,
-										{ay: newValue});
+										{aB: newValue});
 								},
 								model.cq)
 						}),
@@ -9892,11 +9892,11 @@ var $author$project$Main$update = F2(
 var $author$project$View$Style$basecolors = function (theme) {
 	switch (theme) {
 		case 0:
-			return {ba: 'text-[#C86D51]', cc: 'bg-[#FBF8F5]', cd: 'border-[#F5F4F0]', aD: 'border-[#c6c3be]', be: 'border-[#C86D51]', aE: 'border-[#C86D51]', ce: 'bg-[#DCD4C9]', cm: 'text-white', aI: '\'DM Sans\', sans-serif', ct: '\'DM Mono\', monospace', cO: 'bg-[#C86D51]', bU: 'rounded-lg', cU: '#C86D51', aa: 'transparent', bV: 'bg-[#C86D51]', cY: 'bg-[#E9E3DB]', c$: 'text-[#2D2A26]', c0: 'text-[#7A7870]'};
+			return {E: 'text-[#C86D51]', aE: 'bg-[#FBF8F5]', ce: 'border-[#F5F4F0]', J: 'border-[#c6c3be]', bg: 'border-[#C86D51]', aH: 'border-[#C86D51]', ak: 'bg-[#DCD4C9]', cm: 'text-white', bs: '\'DM Sans\', sans-serif', ct: '\'DM Mono\', monospace', cO: 'bg-[#C86D51]', cT: 'rounded-lg', cV: '#C86D51', ac: 'transparent', bX: 'bg-[#C86D51]', cZ: 'bg-[#E9E3DB]', c0: 'text-[#2D2A26]', a9: 'text-[#7A7870]'};
 		case 1:
-			return {ba: 'text-[#BBB9B0]', cc: 'bg-zinc-900', cd: 'border-[#171716]', aD: 'border-[#505050]', be: 'border-[#C9A84C]', aE: 'border-[#333]', ce: 'bg-[#303030]', cm: 'text-[#333]', aI: '\'DM Sans\', sans-serif', ct: '\'DM Mono\', monospace', cO: 'bg-[#C8A74B]', bU: 'rounded', cU: '#C8A74B', aa: 'transparent', bV: 'bg-yellow-200', cY: 'bg-[#151515]', c$: 'text-zinc-300', c0: 'text-[#8B8980]'};
+			return {E: 'text-[#BBB9B0]', aE: 'bg-zinc-900', ce: 'border-[#171716]', J: 'border-[#505050]', bg: 'border-[#C9A84C]', aH: 'border-[#333]', ak: 'bg-[#303030]', cm: 'text-[#333]', bs: '\'DM Sans\', sans-serif', ct: '\'DM Mono\', monospace', cO: 'bg-[#C8A74B]', cT: 'rounded', cV: '#C8A74B', ac: 'transparent', bX: 'bg-yellow-200', cZ: 'bg-[#151515]', c0: 'text-zinc-300', a9: 'text-[#8B8980]'};
 		default:
-			return {ba: 'text-[#D9A74A]', cc: 'bg-[#0F0F1A]', cd: 'border-[#8B7355]', aD: 'border-[#8B7355]', be: 'border-[#D9A74A]', aE: 'border-[#8B7355]', ce: 'bg-[#1A1A2E]', cm: 'text-amber-100', aI: '\'Cormorant Garamond\', serif', ct: '\'JetBrains Mono\', monospace', cO: 'bg-[#8B7355]', bU: '', cU: '#A07D42', aa: 'transparent', bV: 'bg-[#c8a74b]/70', cY: 'bg-[#1A1A2E]', c$: 'text-[#E0D5C0]', c0: 'text-[#A07D42]'};
+			return {E: 'text-[#D9A74A]', aE: 'bg-[#0F0F1A]', ce: 'border-[#8B7355]', J: 'border-[#8B7355]', bg: 'border-[#D9A74A]', aH: 'border-[#8B7355]', ak: 'bg-[#1A1A2E]', cm: 'text-amber-100', bs: '\'Cormorant Garamond\', serif', ct: '\'JetBrains Mono\', monospace', cO: 'bg-[#8B7355]', cT: '', cV: '#A07D42', ac: 'transparent', bX: 'bg-[#c8a74b]/70', cZ: 'bg-[#1A1A2E]', c0: 'text-[#E0D5C0]', a9: 'text-[#A07D42]'};
 	}
 };
 var $elm$html$Html$Attributes$stringProperty = F2(
@@ -9942,7 +9942,7 @@ var $author$project$View$Contents$layoutContainer = function (theme) {
 				'w-screen',
 				'h-screen',
 				'overflow-hidden',
-				$author$project$View$Style$basecolors(theme).cc
+				$author$project$View$Style$basecolors(theme).aE
 			]));
 };
 var $author$project$View$Contents$leftSidebarInnerClass = function (isVisible) {
@@ -9992,8 +9992,8 @@ var $author$project$Domain$Helper$scrollDecoder = A2(
 		F4(
 			function (y, height, sceneHeight, sceneWidth) {
 				return {
-					aY: {O: sceneHeight, b7: sceneWidth},
-					az: {O: height, b7: 0, c5: 0, b8: y}
+					a_: {Q: sceneHeight, b9: sceneWidth},
+					aC: {Q: height, b9: 0, c5: 0, ca: y}
 				};
 			}),
 		A2($elm$json$Json$Decode$field, 'scrollTop', $elm$json$Json$Decode$float),
@@ -10003,8 +10003,8 @@ var $author$project$Domain$Helper$scrollDecoder = A2(
 var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $author$project$View$Style$scrollbarStyle = function (theme) {
-	var track = $author$project$View$Style$basecolors(theme).aa;
-	var thumb = $author$project$View$Style$basecolors(theme).cU;
+	var track = $author$project$View$Style$basecolors(theme).ac;
+	var thumb = $author$project$View$Style$basecolors(theme).cV;
 	return _List_fromArray(
 		[
 			$elm$html$Html$Attributes$class(' [&::-webkit-scrollbar]:w-2' + (' [&::-webkit-scrollbar-thumb]:bg-[' + (thumb + (']' + (' [&::-webkit-scrollbar-track]:bg-[' + (track + ']')))))),
@@ -10066,8 +10066,8 @@ var $author$project$View$MainArea$viewEditor = F2(
 					$author$project$Type$OnScroll,
 					'editor-area',
 					{
-						aY: {O: 1, b7: 0},
-						az: {O: 1, b7: 0, c5: 0, b8: ratio}
+						a_: {Q: 1, b9: 0},
+						aC: {Q: 1, b9: 0, c5: 0, ca: ratio}
 					});
 			},
 			A2(
@@ -10080,7 +10080,7 @@ var $author$project$View$MainArea$viewEditor = F2(
 			A2(
 				$elm$core$Maybe$map,
 				function ($) {
-					return $.bj;
+					return $.bl;
 				},
 				currentPage));
 		return A3(
@@ -10097,7 +10097,7 @@ var $author$project$View$MainArea$viewEditor = F2(
 					$elm$html$Html$Attributes$property,
 					'theme',
 					$elm$json$Json$Encode$string(
-						$author$project$Domain$Selector$colorThemeToString(model.bi))),
+						$author$project$Domain$Selector$colorThemeToString(model.bk))),
 					A2(
 					$elm$html$Html$Attributes$property,
 					'fontSize',
@@ -10146,7 +10146,7 @@ var $author$project$View$MarkdownStyles$codeBlockStyle = function (theme) {
 			case 1:
 				return $author$project$View$MarkdownStyles$tw(
 					_List_fromArray(
-						[c.cY, 'text-[#E8E6E0]', 'bg-[#171716]', 'rounded-lg', 'border-[#3A3A36]', '[&_code]:text-[#E8E6E0]']));
+						[c.cZ, 'text-[#E8E6E0]', 'bg-[#171716]', 'rounded-lg', 'border-[#3A3A36]', '[&_code]:text-[#E8E6E0]']));
 			default:
 				return $author$project$View$MarkdownStyles$tw(
 					_List_fromArray(
@@ -10166,7 +10166,7 @@ var $author$project$View$MarkdownStyles$codeSpanStyle = F2(
 					return $author$project$View$MarkdownStyles$tw(
 						_List_fromArray(
 							[
-								$author$project$View$Style$basecolors(theme).cY,
+								$author$project$View$Style$basecolors(theme).cZ,
 								'text-[#d2691e] border-[#3A3A36] [&_code]:text-[#54cfe8] rounded'
 							]));
 				default:
@@ -10246,7 +10246,7 @@ var $dillonkearns$elm_markdown$Markdown$Html$attributesToString = function (attr
 			$elm$core$List$map,
 			function (_v0) {
 				var name = _v0.cF;
-				var value = _v0.ay;
+				var value = _v0.aB;
 				return name + ('=\"' + (value + '\"'));
 			},
 			attributes));
@@ -10340,10 +10340,10 @@ var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('
 var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $elm$core$String$words = _String_words;
 var $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer = {
-	aB: $elm$html$Html$blockquote(_List_Nil),
+	aF: $elm$html$Html$blockquote(_List_Nil),
 	ch: function (_v0) {
-		var body = _v0.aC;
-		var language = _v0.aP;
+		var body = _v0.aG;
+		var language = _v0.aR;
 		var classes = function () {
 			var _v1 = A2($elm$core$Maybe$map, $elm$core$String$words, language);
 			if ((!_v1.$) && _v1.a.b) {
@@ -10380,13 +10380,13 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer = {
 					$elm$html$Html$text(content)
 				]));
 	},
-	aG: function (children) {
+	aJ: function (children) {
 		return A2($elm$html$Html$em, _List_Nil, children);
 	},
-	aJ: A2($elm$html$Html$br, _List_Nil, _List_Nil),
-	bs: function (_v3) {
-		var level = _v3.V;
-		var children = _v3.bg;
+	aL: A2($elm$html$Html$br, _List_Nil, _List_Nil),
+	bv: function (_v3) {
+		var level = _v3.X;
+		var children = _v3.bi;
 		switch (level) {
 			case 0:
 				return A2($elm$html$Html$h1, _List_Nil, children);
@@ -10402,17 +10402,17 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer = {
 				return A2($elm$html$Html$h6, _List_Nil, children);
 		}
 	},
-	aL: $dillonkearns$elm_markdown$Markdown$Html$oneOf(_List_Nil),
-	aM: function (imageInfo) {
-		var _v5 = imageInfo.b4;
+	aN: $dillonkearns$elm_markdown$Markdown$Html$oneOf(_List_Nil),
+	aO: function (imageInfo) {
+		var _v5 = imageInfo.b6;
 		if (!_v5.$) {
 			var title = _v5.a;
 			return A2(
 				$elm$html$Html$img,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$src(imageInfo.a$),
-						$elm$html$Html$Attributes$alt(imageInfo.aA),
+						$elm$html$Html$Attributes$src(imageInfo.a1),
+						$elm$html$Html$Attributes$alt(imageInfo.aD),
 						$elm$html$Html$Attributes$title(title)
 					]),
 				_List_Nil);
@@ -10421,15 +10421,15 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer = {
 				$elm$html$Html$img,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$src(imageInfo.a$),
-						$elm$html$Html$Attributes$alt(imageInfo.aA)
+						$elm$html$Html$Attributes$src(imageInfo.a1),
+						$elm$html$Html$Attributes$alt(imageInfo.aD)
 					]),
 				_List_Nil);
 		}
 	},
-	aR: F2(
+	aT: F2(
 		function (link, content) {
-			var _v6 = link.b4;
+			var _v6 = link.b6;
 			if (!_v6.$) {
 				var title = _v6.a;
 				return A2(
@@ -10450,7 +10450,7 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer = {
 					content);
 			}
 		}),
-	aV: F2(
+	aX: F2(
 		function (startingIndex, items) {
 			return A2(
 				$elm$html$Html$ol,
@@ -10471,16 +10471,16 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer = {
 					},
 					items));
 		}),
-	aW: $elm$html$Html$p(_List_Nil),
-	a1: function (children) {
+	aY: $elm$html$Html$p(_List_Nil),
+	a3: function (children) {
 		return A2($elm$html$Html$del, _List_Nil, children);
 	},
-	a2: function (children) {
+	a4: function (children) {
 		return A2($elm$html$Html$strong, _List_Nil, children);
 	},
-	cZ: $elm$html$Html$table(_List_Nil),
-	a3: $elm$html$Html$tbody(_List_Nil),
-	a4: function (maybeAlignment) {
+	c_: $elm$html$Html$table(_List_Nil),
+	a5: $elm$html$Html$tbody(_List_Nil),
+	a6: function (maybeAlignment) {
 		var attrs = A2(
 			$elm$core$Maybe$withDefault,
 			_List_Nil,
@@ -10505,8 +10505,8 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer = {
 						maybeAlignment))));
 		return $elm$html$Html$td(attrs);
 	},
-	a5: $elm$html$Html$thead(_List_Nil),
-	a6: function (maybeAlignment) {
+	a7: $elm$html$Html$thead(_List_Nil),
+	a8: function (maybeAlignment) {
 		var attrs = A2(
 			$elm$core$Maybe$withDefault,
 			_List_Nil,
@@ -10531,10 +10531,10 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer = {
 						maybeAlignment))));
 		return $elm$html$Html$th(attrs);
 	},
-	av: $elm$html$Html$tr(_List_Nil),
-	c$: $elm$html$Html$text,
-	a7: A2($elm$html$Html$hr, _List_Nil, _List_Nil),
-	a8: function (items) {
+	ay: $elm$html$Html$tr(_List_Nil),
+	c0: $elm$html$Html$text,
+	ba: A2($elm$html$Html$hr, _List_Nil, _List_Nil),
+	bb: function (items) {
 		return A2(
 			$elm$html$Html$ul,
 			_List_Nil,
@@ -10660,9 +10660,9 @@ var $author$project$View$Markdown$customRenderer = F3(
 	function (theme, renderStyle, searchText) {
 		var _default = $dillonkearns$elm_markdown$Markdown$Renderer$defaultHtmlRenderer;
 		var headingRenderer = function (_v2) {
-			var level = _v2.V;
-			var rawText = _v2.bP;
-			var children = _v2.bg;
+			var level = _v2.X;
+			var rawText = _v2.bS;
+			var children = _v2.bi;
 			var slug = A3(
 				$elm$core$String$replace,
 				'\\',
@@ -10706,8 +10706,8 @@ var $author$project$View$Markdown$customRenderer = F3(
 							]),
 						children);
 				default:
-					return _default.bs(
-						{bg: children, V: level, bP: rawText});
+					return _default.bv(
+						{bi: children, X: level, bS: rawText});
 			}
 		};
 		return _Utils_update(
@@ -10717,30 +10717,30 @@ var $author$project$View$Markdown$customRenderer = F3(
 					var lang = A2(
 						$elm$core$Maybe$map,
 						A2($elm$core$Basics$composeR, $elm$core$String$trim, $elm$core$String$toLower),
-						block.aP);
+						block.aR);
 					if ((!lang.$) && (lang.a === 'math')) {
 						return A3(
 							$elm$html$Html$node,
 							'katex-display',
 							_List_fromArray(
 								[
-									A2($elm$html$Html$Attributes$attribute, 'formula', block.aC),
+									A2($elm$html$Html$Attributes$attribute, 'formula', block.aG),
 									A2($elm$html$Html$Attributes$attribute, 'display-mode', 'true'),
 									$author$project$View$MarkdownStyles$mathBlockStyle(theme)
 								]),
 							_List_Nil);
 					} else {
-						var combinedKey = A2($elm$core$Maybe$withDefault, 'none', block.aP) + ('_' + block.aC);
+						var combinedKey = A2($elm$core$Maybe$withDefault, 'none', block.aR) + ('_' + block.aG);
 						return A3(
 							$elm$html$Html$node,
 							'highlight-code',
 							_List_fromArray(
 								[
-									A2($elm$html$Html$Attributes$attribute, 'code', block.aC),
+									A2($elm$html$Html$Attributes$attribute, 'code', block.aG),
 									A2(
 									$elm$html$Html$Attributes$attribute,
 									'lang',
-									A2($elm$core$Maybe$withDefault, '', block.aP)),
+									A2($elm$core$Maybe$withDefault, '', block.aR)),
 									A2(
 									$elm$html$Html$Attributes$attribute,
 									'theme',
@@ -10780,8 +10780,8 @@ var $author$project$View$Markdown$customRenderer = F3(
 							_List_Nil);
 					}
 				},
-				bs: headingRenderer,
-				cZ: function (children) {
+				bv: headingRenderer,
+				c_: function (children) {
 					return A2(
 						$elm$html$Html$table,
 						_List_fromArray(
@@ -10791,7 +10791,7 @@ var $author$project$View$Markdown$customRenderer = F3(
 							]),
 						children);
 				},
-				c$: function (str) {
+				c0: function (str) {
 					return A2(
 						$elm$html$Html$span,
 						_List_Nil,
@@ -10875,7 +10875,6 @@ var $author$project$View$MarkdownStyles$themeColors = F2(
 				var elements = _List_fromArray(
 					['[&_h1]:text-[#c86d51] [&_h1]:border-b-0', '[&_h2]:text-[#c86d51] [&_h2]:border-b-0', '[&_h3]:text-[#c86d51]', '[&_h4]:text-[#c86d51]', '[&_h5]:text-[#c86d51]', '[&_h6]:text-[#c86d51]', '[&_strong]:text-[#38332c]', '[&_strong]:font-bold', '[&_a]:text-[#b85d41]', '[&_a]:underline-offset-4', '[&_a]:decoration-[#b85d41]/30', 'hover:[&_a]:decoration-[#b85d41]', '[&_blockquote]:border-l-[#b85d41]', '[&_blockquote]:text-[#7a7267]', '[&_blockquote]:italic', '[&_hr]:border-[rgba(74,69,62,0.12)]', '[&_th]:text-[#38332c]', '[&_th]:bg-[#f3efe6]', '[&_th]:border-[rgba(74,69,62,0.12)]', '[&_td]:border-[rgba(74,69,62,0.12)]']);
 				var common = 'bg-[#fbf8f5] text-[#4a453e] border-[rgba(74,69,62,0.12)]';
-				var base = $author$project$View$Style$basecolors(theme);
 				return $author$project$View$MarkdownStyles$tw(
 					A2($elm$core$List$cons, common, elements));
 			case 1:
@@ -10885,7 +10884,7 @@ var $author$project$View$MarkdownStyles$themeColors = F2(
 				var c = $author$project$View$Style$basecolors(theme);
 				var common = $author$project$View$MarkdownStyles$tw(
 					_List_fromArray(
-						[c.cc, c.c$, 'border-[#2A2A27]']));
+						[c.aE, c.c0, 'border-[#2A2A27]']));
 				return $author$project$View$MarkdownStyles$tw(
 					_List_fromArray(
 						[common, elements]));
@@ -11146,13 +11145,13 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 	function (isGood, offset, row, col, s0) {
 		chompWhileHelp:
 		while (true) {
-			var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, offset, s0.a$);
+			var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, offset, s0.a1);
 			if (_Utils_eq(newOffset, -1)) {
 				return A3(
 					$elm$parser$Parser$Advanced$Good,
 					_Utils_cmp(s0.d, offset) < 0,
 					0,
-					{bh: col, f: s0.f, h: s0.h, d: offset, cT: row, a$: s0.a$});
+					{bj: col, f: s0.f, h: s0.h, d: offset, cU: row, a1: s0.a1});
 			} else {
 				if (_Utils_eq(newOffset, -2)) {
 					var $temp$isGood = isGood,
@@ -11184,7 +11183,7 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 	});
 var $elm$parser$Parser$Advanced$chompWhile = function (isGood) {
 	return function (s) {
-		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.d, s.cT, s.bh, s);
+		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.d, s.cU, s.bj, s);
 	};
 };
 var $elm$core$Basics$always = F2(
@@ -11298,14 +11297,14 @@ var $elm$parser$Parser$Advanced$AddRight = F2(
 	});
 var $elm$parser$Parser$Advanced$DeadEnd = F4(
 	function (row, col, problem, contextStack) {
-		return {bh: col, ck: contextStack, cP: problem, cT: row};
+		return {bj: col, ck: contextStack, cP: problem, cU: row};
 	});
 var $elm$parser$Parser$Advanced$fromState = F2(
 	function (s, x) {
 		return A2(
 			$elm$parser$Parser$Advanced$AddRight,
 			$elm$parser$Parser$Advanced$Empty,
-			A4($elm$parser$Parser$Advanced$DeadEnd, s.cT, s.bh, x, s.f));
+			A4($elm$parser$Parser$Advanced$DeadEnd, s.cU, s.bj, x, s.f));
 	});
 var $elm$parser$Parser$Advanced$isSubString = _Parser_isSubString;
 var $elm$parser$Parser$Advanced$token = function (_v0) {
@@ -11313,7 +11312,7 @@ var $elm$parser$Parser$Advanced$token = function (_v0) {
 	var expecting = _v0.b;
 	var progress = !$elm$core$String$isEmpty(str);
 	return function (s) {
-		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.d, s.cT, s.bh, s.a$);
+		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.d, s.cU, s.bj, s.a1);
 		var newOffset = _v1.a;
 		var newRow = _v1.b;
 		var newCol = _v1.c;
@@ -11324,7 +11323,7 @@ var $elm$parser$Parser$Advanced$token = function (_v0) {
 			$elm$parser$Parser$Advanced$Good,
 			progress,
 			0,
-			{bh: newCol, f: s.f, h: s.h, d: newOffset, cT: newRow, a$: s.a$});
+			{bj: newCol, f: s.f, h: s.h, d: newOffset, cU: newRow, a1: s.a1});
 	};
 };
 var $dillonkearns$elm_markdown$Whitespace$lineEnd = $elm$parser$Parser$Advanced$oneOf(
@@ -11438,7 +11437,7 @@ var $elm$parser$Parser$Advanced$mapChompedString = F2(
 					p,
 					A2(
 						func,
-						A3($elm$core$String$slice, s0.d, s1.d, s0.a$),
+						A3($elm$core$String$slice, s0.d, s1.d, s0.a1),
 						a),
 					s1);
 			}
@@ -11454,7 +11453,7 @@ var $elm$parser$Parser$Advanced$keeper = F2(
 var $elm$parser$Parser$Advanced$end = function (x) {
 	return function (s) {
 		return _Utils_eq(
-			$elm$core$String$length(s.a$),
+			$elm$core$String$length(s.a1),
 			s.d) ? A3($elm$parser$Parser$Advanced$Good, false, 0, s) : A2(
 			$elm$parser$Parser$Advanced$Bad,
 			false,
@@ -11521,7 +11520,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$problemToString = function (probl
 	}
 };
 var $dillonkearns$elm_markdown$Markdown$Parser$deadEndToString = function (deadEnd) {
-	return 'Problem at row ' + ($elm$core$String$fromInt(deadEnd.cT) + ('\n' + $dillonkearns$elm_markdown$Markdown$Parser$problemToString(deadEnd.cP)));
+	return 'Problem at row ' + ($elm$core$String$fromInt(deadEnd.cU) + ('\n' + $dillonkearns$elm_markdown$Markdown$Parser$problemToString(deadEnd.cP)));
 };
 var $dillonkearns$elm_markdown$Markdown$Parser$deadEndsToString = function (deadEnds) {
 	return A2(
@@ -11582,7 +11581,7 @@ var $dillonkearns$elm_markdown$HtmlParser$Text = function (a) {
 var $elm$parser$Parser$Advanced$chompIf = F2(
 	function (isGood, expecting) {
 		return function (s) {
-			var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, s.d, s.a$);
+			var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, s.d, s.a1);
 			return _Utils_eq(newOffset, -1) ? A2(
 				$elm$parser$Parser$Advanced$Bad,
 				false,
@@ -11590,11 +11589,11 @@ var $elm$parser$Parser$Advanced$chompIf = F2(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{bh: 1, f: s.f, h: s.h, d: s.d + 1, cT: s.cT + 1, a$: s.a$}) : A3(
+				{bj: 1, f: s.f, h: s.h, d: s.d + 1, cU: s.cU + 1, a1: s.a1}) : A3(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{bh: s.bh + 1, f: s.f, h: s.h, d: newOffset, cT: s.cT, a$: s.a$}));
+				{bj: s.bj + 1, f: s.f, h: s.h, d: newOffset, cU: s.cU, a1: s.a1}));
 		};
 	});
 var $dillonkearns$elm_markdown$HtmlParser$expectTagNameCharacter = $elm$parser$Parser$Expecting('at least 1 tag name character');
@@ -12496,23 +12495,23 @@ var $dillonkearns$elm_markdown$HtmlParser$attributes = A2(
 			function (key, value, accum) {
 				return A2(
 					$elm$core$List$cons,
-					{cF: key, ay: value},
+					{cF: key, aB: value},
 					accum);
 			}),
 		_List_Nil),
 	A2($elm$parser$Parser$Advanced$loop, $elm$core$Dict$empty, $dillonkearns$elm_markdown$HtmlParser$attributesStep));
 var $elm$parser$Parser$Advanced$chompUntilEndOr = function (str) {
 	return function (s) {
-		var _v0 = A5(_Parser_findSubString, str, s.d, s.cT, s.bh, s.a$);
+		var _v0 = A5(_Parser_findSubString, str, s.d, s.cU, s.bj, s.a1);
 		var newOffset = _v0.a;
 		var newRow = _v0.b;
 		var newCol = _v0.c;
-		var adjustedOffset = (newOffset < 0) ? $elm$core$String$length(s.a$) : newOffset;
+		var adjustedOffset = (newOffset < 0) ? $elm$core$String$length(s.a1) : newOffset;
 		return A3(
 			$elm$parser$Parser$Advanced$Good,
 			_Utils_cmp(s.d, adjustedOffset) < 0,
 			0,
-			{bh: newCol, f: s.f, h: s.h, d: adjustedOffset, cT: newRow, a$: s.a$});
+			{bj: newCol, f: s.f, h: s.h, d: adjustedOffset, cU: newRow, a1: s.a1});
 	};
 };
 var $dillonkearns$elm_markdown$HtmlParser$cdata = A2(
@@ -12857,10 +12856,10 @@ var $dillonkearns$elm_markdown$Markdown$Parser$innerParagraphParser = A2(
 var $dillonkearns$elm_markdown$Markdown$Parser$openBlockOrParagraphParser = A2($elm$parser$Parser$Advanced$ignorer, $dillonkearns$elm_markdown$Markdown$Parser$innerParagraphParser, $dillonkearns$elm_markdown$Helpers$lineEndOrEnd);
 var $dillonkearns$elm_markdown$Markdown$OrderedList$ListItem = F4(
 	function (order, intended, marker, body) {
-		return {aC: body, cA: intended, cC: marker, Y: order};
+		return {aG: body, cA: intended, cC: marker, _: order};
 	});
 var $elm$parser$Parser$Advanced$getCol = function (s) {
-	return A3($elm$parser$Parser$Advanced$Good, false, s.bh, s);
+	return A3($elm$parser$Parser$Advanced$Good, false, s.bj, s);
 };
 var $dillonkearns$elm_markdown$Markdown$OrderedList$orderedListEmptyItemParser = A2(
 	$elm$parser$Parser$Advanced$keeper,
@@ -13048,7 +13047,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$orderedListBlock = function (prev
 	return A2(
 		$elm$parser$Parser$Advanced$map,
 		function (item) {
-			return A6($dillonkearns$elm_markdown$Markdown$RawBlock$OrderedListBlock, true, item.cA, item.cC, item.Y, _List_Nil, item.aC);
+			return A6($dillonkearns$elm_markdown$Markdown$RawBlock$OrderedListBlock, true, item.cA, item.cC, item._, _List_Nil, item.aG);
 		},
 		$dillonkearns$elm_markdown$Markdown$OrderedList$parser(previousWasBody));
 };
@@ -13078,11 +13077,11 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$matchToInline = function (_
 	var _v1 = match.j;
 	switch (_v1.$) {
 		case 0:
-			return $dillonkearns$elm_markdown$Markdown$Inline$Text(match.c$);
+			return $dillonkearns$elm_markdown$Markdown$Inline$Text(match.c0);
 		case 1:
 			return $dillonkearns$elm_markdown$Markdown$Inline$HardLineBreak;
 		case 2:
-			return $dillonkearns$elm_markdown$Markdown$Inline$CodeInline(match.c$);
+			return $dillonkearns$elm_markdown$Markdown$Inline$CodeInline(match.c0);
 		case 3:
 			var _v2 = _v1.a;
 			var text = _v2.a;
@@ -13133,7 +13132,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$matchesToInlines = function
 var $dillonkearns$elm_markdown$Markdown$InlineParser$Match = $elm$core$Basics$identity;
 var $dillonkearns$elm_markdown$Markdown$InlineParser$prepareChildMatch = F2(
 	function (parentMatch, childMatch) {
-		return {g: childMatch.g - parentMatch.q, o: childMatch.o, i: childMatch.i - parentMatch.q, c$: childMatch.c$, u: childMatch.u - parentMatch.q, q: childMatch.q - parentMatch.q, j: childMatch.j};
+		return {g: childMatch.g - parentMatch.q, o: childMatch.o, i: childMatch.i - parentMatch.q, c0: childMatch.c0, u: childMatch.u - parentMatch.q, q: childMatch.q - parentMatch.q, j: childMatch.j};
 	});
 var $dillonkearns$elm_markdown$Markdown$InlineParser$addChild = F2(
 	function (parentMatch, childMatch) {
@@ -13144,7 +13143,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$addChild = F2(
 				A2($dillonkearns$elm_markdown$Markdown$InlineParser$prepareChildMatch, parentMatch, childMatch),
 				parentMatch.o),
 			i: parentMatch.i,
-			c$: parentMatch.c$,
+			c0: parentMatch.c0,
 			u: parentMatch.u,
 			q: parentMatch.q,
 			j: parentMatch.j
@@ -13157,7 +13156,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$organizeChildren = function
 		g: match.g,
 		o: $dillonkearns$elm_markdown$Markdown$InlineParser$organizeMatches(match.o),
 		i: match.i,
-		c$: match.c$,
+		c0: match.c0,
 		u: match.u,
 		q: match.q,
 		j: match.j
@@ -13231,7 +13230,7 @@ var $dillonkearns$elm_markdown$Markdown$Helpers$containsAmpersand = function (st
 };
 var $elm$regex$Regex$Match = F4(
 	function (match, index, number, submatches) {
-		return {c: index, bA: match, cG: number, b0: submatches};
+		return {c: index, bD: match, cG: number, b2: submatches};
 	});
 var $elm$regex$Regex$fromStringWith = _Regex_fromStringWith;
 var $elm$regex$Regex$fromString = function (string) {
@@ -13260,7 +13259,7 @@ var $dillonkearns$elm_markdown$Markdown$Entity$validUnicode = function (_int) {
 		$elm$core$Char$fromCode(65533));
 };
 var $dillonkearns$elm_markdown$Markdown$Entity$replaceDecimal = function (match) {
-	var _v0 = match.b0;
+	var _v0 = match.b2;
 	if (_v0.b && (!_v0.a.$)) {
 		var first = _v0.a.a;
 		var _v1 = $elm$core$String$toInt(first);
@@ -13268,10 +13267,10 @@ var $dillonkearns$elm_markdown$Markdown$Entity$replaceDecimal = function (match)
 			var v = _v1.a;
 			return $dillonkearns$elm_markdown$Markdown$Entity$validUnicode(v);
 		} else {
-			return match.bA;
+			return match.bD;
 		}
 	} else {
-		return match.bA;
+		return match.bD;
 	}
 };
 var $dillonkearns$elm_markdown$Markdown$Entity$replaceDecimals = A2($elm$regex$Regex$replace, $dillonkearns$elm_markdown$Markdown$Entity$decimalRegex, $dillonkearns$elm_markdown$Markdown$Entity$replaceDecimal);
@@ -13537,7 +13536,7 @@ var $dillonkearns$elm_markdown$Markdown$Entity$entities = $elm$core$Dict$fromLis
 			_Utils_Tuple2('diams', 9830)
 		]));
 var $dillonkearns$elm_markdown$Markdown$Entity$replaceEntity = function (match) {
-	var _v0 = match.b0;
+	var _v0 = match.b2;
 	if (_v0.b && (!_v0.a.$)) {
 		var first = _v0.a.a;
 		var _v1 = A2($elm$core$Dict$get, first, $dillonkearns$elm_markdown$Markdown$Entity$entities);
@@ -13546,10 +13545,10 @@ var $dillonkearns$elm_markdown$Markdown$Entity$replaceEntity = function (match) 
 			return $elm$core$String$fromChar(
 				$elm$core$Char$fromCode(code));
 		} else {
-			return match.bA;
+			return match.bD;
 		}
 	} else {
-		return match.bA;
+		return match.bD;
 	}
 };
 var $dillonkearns$elm_markdown$Markdown$Entity$replaceEntities = A2($elm$regex$Regex$replace, $dillonkearns$elm_markdown$Markdown$Entity$entitiesRegex, $dillonkearns$elm_markdown$Markdown$Entity$replaceEntity);
@@ -13561,7 +13560,7 @@ var $dillonkearns$elm_markdown$Markdown$Helpers$replaceEscapable = A2(
 	$elm$regex$Regex$replace,
 	$dillonkearns$elm_markdown$Markdown$Helpers$escapableRegex,
 	function (regexMatch) {
-		var _v0 = regexMatch.b0;
+		var _v0 = regexMatch.b2;
 		if (((_v0.b && (!_v0.a.$)) && _v0.b.b) && (!_v0.b.a.$)) {
 			var backslashes = _v0.a.a;
 			var _v1 = _v0.b;
@@ -13573,7 +13572,7 @@ var $dillonkearns$elm_markdown$Markdown$Helpers$replaceEscapable = A2(
 					'\\'),
 				escapedStr);
 		} else {
-			return regexMatch.bA;
+			return regexMatch.bD;
 		}
 	});
 var $dillonkearns$elm_markdown$Markdown$Entity$hexadecimalRegex = A2(
@@ -13596,13 +13595,13 @@ var $dillonkearns$elm_markdown$Markdown$Entity$hexToInt = function (string) {
 		$elm$core$String$toLower(string));
 };
 var $dillonkearns$elm_markdown$Markdown$Entity$replaceHexadecimal = function (match) {
-	var _v0 = match.b0;
+	var _v0 = match.b2;
 	if (_v0.b && (!_v0.a.$)) {
 		var first = _v0.a.a;
 		return $dillonkearns$elm_markdown$Markdown$Entity$validUnicode(
 			$dillonkearns$elm_markdown$Markdown$Entity$hexToInt(first));
 	} else {
-		return match.bA;
+		return match.bD;
 	}
 };
 var $dillonkearns$elm_markdown$Markdown$Entity$replaceHexadecimals = A2($elm$regex$Regex$replace, $dillonkearns$elm_markdown$Markdown$Entity$hexadecimalRegex, $dillonkearns$elm_markdown$Markdown$Entity$replaceHexadecimal);
@@ -13617,7 +13616,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$normalMatch = function (tex
 		g: 0,
 		o: _List_Nil,
 		i: 0,
-		c$: $dillonkearns$elm_markdown$Markdown$Helpers$formatStr(text),
+		c0: $dillonkearns$elm_markdown$Markdown$Helpers$formatStr(text),
 		u: 0,
 		q: 0,
 		j: $dillonkearns$elm_markdown$Markdown$InlineParser$NormalType
@@ -13628,9 +13627,9 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$parseTextMatch = F3(
 		var matchModel = _v2;
 		var updtMatch = {
 			g: matchModel.g,
-			o: A3($dillonkearns$elm_markdown$Markdown$InlineParser$parseTextMatches, matchModel.c$, _List_Nil, matchModel.o),
+			o: A3($dillonkearns$elm_markdown$Markdown$InlineParser$parseTextMatches, matchModel.c0, _List_Nil, matchModel.o),
 			i: matchModel.i,
-			c$: matchModel.c$,
+			c0: matchModel.c0,
 			u: matchModel.u,
 			q: matchModel.q,
 			j: matchModel.j
@@ -13780,7 +13779,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$angleBracketLTokenRegex = A
 var $elm$regex$Regex$find = _Regex_findAtMost(_Regex_infinity);
 var $dillonkearns$elm_markdown$Markdown$InlineParser$AngleBracketOpen = {$: 4};
 var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToAngleBracketLToken = function (regMatch) {
-	var _v0 = regMatch.b0;
+	var _v0 = regMatch.b2;
 	if ((_v0.b && _v0.b.b) && (!_v0.b.a.$)) {
 		var maybeBackslashes = _v0.a;
 		var _v1 = _v0.b;
@@ -13789,7 +13788,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToAngleBracketLToke
 			0,
 			A2($elm$core$Maybe$map, $elm$core$String$length, maybeBackslashes));
 		return $dillonkearns$elm_markdown$Markdown$Helpers$isEven(backslashesLength) ? $elm$core$Maybe$Just(
-			{c: regMatch.c + backslashesLength, aQ: 1, e: $dillonkearns$elm_markdown$Markdown$InlineParser$AngleBracketOpen}) : $elm$core$Maybe$Nothing;
+			{c: regMatch.c + backslashesLength, aS: 1, e: $dillonkearns$elm_markdown$Markdown$InlineParser$AngleBracketOpen}) : $elm$core$Maybe$Nothing;
 	} else {
 		return $elm$core$Maybe$Nothing;
 	}
@@ -13810,7 +13809,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$AngleBracketClose = functio
 var $dillonkearns$elm_markdown$Markdown$InlineParser$Escaped = 0;
 var $dillonkearns$elm_markdown$Markdown$InlineParser$NotEscaped = 1;
 var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToAngleBracketRToken = function (regMatch) {
-	var _v0 = regMatch.b0;
+	var _v0 = regMatch.b2;
 	if ((_v0.b && _v0.b.b) && (!_v0.b.a.$)) {
 		var maybeBackslashes = _v0.a;
 		var _v1 = _v0.b;
@@ -13821,7 +13820,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToAngleBracketRToke
 		return $elm$core$Maybe$Just(
 			{
 				c: regMatch.c + backslashesLength,
-				aQ: 1,
+				aS: 1,
 				e: $dillonkearns$elm_markdown$Markdown$Helpers$isEven(backslashesLength) ? $dillonkearns$elm_markdown$Markdown$InlineParser$AngleBracketClose(1) : $dillonkearns$elm_markdown$Markdown$InlineParser$AngleBracketClose(0)
 			});
 	} else {
@@ -13942,7 +13941,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$getFringeRank = function (m
 };
 var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToEmphasisToken = F3(
 	function (_char, rawText, regMatch) {
-		var _v0 = regMatch.b0;
+		var _v0 = regMatch.b2;
 		if ((((_v0.b && _v0.b.b) && _v0.b.b.b) && (!_v0.b.b.a.$)) && _v0.b.b.b.b) {
 			var maybeBackslashes = _v0.a;
 			var _v1 = _v0.b;
@@ -13986,11 +13985,11 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToEmphasisToken = F
 				return $elm$core$Maybe$Just(
 					{
 						c: index,
-						aQ: delimiterLength,
+						aS: delimiterLength,
 						e: A2(
 							$dillonkearns$elm_markdown$Markdown$InlineParser$EmphasisToken,
 							_char,
-							{ap: lFringeRank, ar: rFringeRank})
+							{as: lFringeRank, au: rFringeRank})
 					});
 			}
 		} else {
@@ -14011,7 +14010,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$CodeToken = function (a) {
 	return {$: 0, a: a};
 };
 var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToCodeToken = function (regMatch) {
-	var _v0 = regMatch.b0;
+	var _v0 = regMatch.b2;
 	if ((_v0.b && _v0.b.b) && (!_v0.b.a.$)) {
 		var maybeBackslashes = _v0.a;
 		var _v1 = _v0.b;
@@ -14023,7 +14022,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToCodeToken = funct
 		return $elm$core$Maybe$Just(
 			{
 				c: regMatch.c + backslashesLength,
-				aQ: $elm$core$String$length(backtick),
+				aS: $elm$core$String$length(backtick),
 				e: $dillonkearns$elm_markdown$Markdown$Helpers$isEven(backslashesLength) ? $dillonkearns$elm_markdown$Markdown$InlineParser$CodeToken(1) : $dillonkearns$elm_markdown$Markdown$InlineParser$CodeToken(0)
 			});
 	} else {
@@ -14042,7 +14041,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$hardBreakTokenRegex = A2(
 	$elm$regex$Regex$fromString('(?:(\\\\+)|( {2,}))\\n'));
 var $dillonkearns$elm_markdown$Markdown$InlineParser$HardLineBreakToken = {$: 8};
 var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToHardBreakToken = function (regMatch) {
-	var _v0 = regMatch.b0;
+	var _v0 = regMatch.b2;
 	_v0$2:
 	while (true) {
 		if (_v0.b) {
@@ -14050,14 +14049,14 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToHardBreakToken = 
 				var backslashes = _v0.a.a;
 				var backslashesLength = $elm$core$String$length(backslashes);
 				return (!$dillonkearns$elm_markdown$Markdown$Helpers$isEven(backslashesLength)) ? $elm$core$Maybe$Just(
-					{c: (regMatch.c + backslashesLength) - 1, aQ: 2, e: $dillonkearns$elm_markdown$Markdown$InlineParser$HardLineBreakToken}) : $elm$core$Maybe$Nothing;
+					{c: (regMatch.c + backslashesLength) - 1, aS: 2, e: $dillonkearns$elm_markdown$Markdown$InlineParser$HardLineBreakToken}) : $elm$core$Maybe$Nothing;
 			} else {
 				if (_v0.b.b && (!_v0.b.a.$)) {
 					var _v1 = _v0.b;
 					return $elm$core$Maybe$Just(
 						{
 							c: regMatch.c,
-							aQ: $elm$core$String$length(regMatch.bA),
+							aS: $elm$core$String$length(regMatch.bD),
 							e: $dillonkearns$elm_markdown$Markdown$InlineParser$HardLineBreakToken
 						});
 				} else {
@@ -14071,7 +14070,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToHardBreakToken = 
 	return $elm$core$Maybe$Nothing;
 };
 var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToSoftHardBreakToken = function (regMatch) {
-	var _v0 = regMatch.b0;
+	var _v0 = regMatch.b2;
 	_v0$2:
 	while (true) {
 		if (_v0.b) {
@@ -14079,15 +14078,15 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToSoftHardBreakToke
 				var backslashes = _v0.a.a;
 				var backslashesLength = $elm$core$String$length(backslashes);
 				return $dillonkearns$elm_markdown$Markdown$Helpers$isEven(backslashesLength) ? $elm$core$Maybe$Just(
-					{c: regMatch.c + backslashesLength, aQ: 1, e: $dillonkearns$elm_markdown$Markdown$InlineParser$HardLineBreakToken}) : $elm$core$Maybe$Just(
-					{c: (regMatch.c + backslashesLength) - 1, aQ: 2, e: $dillonkearns$elm_markdown$Markdown$InlineParser$HardLineBreakToken});
+					{c: regMatch.c + backslashesLength, aS: 1, e: $dillonkearns$elm_markdown$Markdown$InlineParser$HardLineBreakToken}) : $elm$core$Maybe$Just(
+					{c: (regMatch.c + backslashesLength) - 1, aS: 2, e: $dillonkearns$elm_markdown$Markdown$InlineParser$HardLineBreakToken});
 			} else {
 				if (_v0.b.b) {
 					var _v1 = _v0.b;
 					return $elm$core$Maybe$Just(
 						{
 							c: regMatch.c,
-							aQ: $elm$core$String$length(regMatch.bA),
+							aS: $elm$core$String$length(regMatch.bD),
 							e: $dillonkearns$elm_markdown$Markdown$InlineParser$HardLineBreakToken
 						});
 				} else {
@@ -14120,7 +14119,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$linkImageCloseTokenRegex = 
 	$elm$regex$Regex$fromString('(\\\\*)(\\])'));
 var $dillonkearns$elm_markdown$Markdown$InlineParser$SquareBracketClose = {$: 3};
 var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToLinkImageCloseToken = function (regMatch) {
-	var _v0 = regMatch.b0;
+	var _v0 = regMatch.b2;
 	if ((_v0.b && _v0.b.b) && (!_v0.b.a.$)) {
 		var maybeBackslashes = _v0.a;
 		var _v1 = _v0.b;
@@ -14129,7 +14128,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToLinkImageCloseTok
 			0,
 			A2($elm$core$Maybe$map, $elm$core$String$length, maybeBackslashes));
 		return $dillonkearns$elm_markdown$Markdown$Helpers$isEven(backslashesLength) ? $elm$core$Maybe$Just(
-			{c: regMatch.c + backslashesLength, aQ: 1, e: $dillonkearns$elm_markdown$Markdown$InlineParser$SquareBracketClose}) : $elm$core$Maybe$Nothing;
+			{c: regMatch.c + backslashesLength, aS: 1, e: $dillonkearns$elm_markdown$Markdown$InlineParser$SquareBracketClose}) : $elm$core$Maybe$Nothing;
 	} else {
 		return $elm$core$Maybe$Nothing;
 	}
@@ -14150,7 +14149,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$LinkOpenToken = function (a
 	return {$: 1, a: a};
 };
 var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToLinkImageOpenToken = function (regMatch) {
-	var _v0 = regMatch.b0;
+	var _v0 = regMatch.b2;
 	if (((_v0.b && _v0.b.b) && _v0.b.b.b) && (!_v0.b.b.a.$)) {
 		var maybeBackslashes = _v0.a;
 		var _v1 = _v0.b;
@@ -14167,7 +14166,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToLinkImageOpenToke
 				return $elm$core$Maybe$Just(
 					{
 						c: index,
-						aQ: 1,
+						aS: 1,
 						e: $dillonkearns$elm_markdown$Markdown$InlineParser$LinkOpenToken(0)
 					});
 			} else {
@@ -14176,12 +14175,12 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToLinkImageOpenToke
 		} else {
 			if (!maybeImageOpen.$) {
 				return $elm$core$Maybe$Just(
-					{c: index, aQ: 2, e: $dillonkearns$elm_markdown$Markdown$InlineParser$ImageOpenToken});
+					{c: index, aS: 2, e: $dillonkearns$elm_markdown$Markdown$InlineParser$ImageOpenToken});
 			} else {
 				return $elm$core$Maybe$Just(
 					{
 						c: index,
-						aQ: 1,
+						aS: 1,
 						e: $dillonkearns$elm_markdown$Markdown$InlineParser$LinkOpenToken(0)
 					});
 			}
@@ -14200,7 +14199,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$StrikethroughToken = functi
 	return {$: 9, a: a};
 };
 var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToStrikethroughToken = function (regMatch) {
-	var _v0 = regMatch.b0;
+	var _v0 = regMatch.b2;
 	if ((_v0.b && _v0.b.b) && (!_v0.b.a.$)) {
 		var maybeBackslashes = _v0.a;
 		var _v1 = _v0.b;
@@ -14217,7 +14216,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$regMatchToStrikethroughToke
 		var length = _v2.a;
 		var meaning = _v2.b;
 		return $elm$core$Maybe$Just(
-			{c: regMatch.c + backslashesLength, aQ: length, e: meaning});
+			{c: regMatch.c + backslashesLength, aS: length, e: meaning});
 	} else {
 		return $elm$core$Maybe$Nothing;
 	}
@@ -14336,8 +14335,8 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$encodeUrl = A2(
 		function (match) {
 			return A2(
 				$elm$core$Maybe$withDefault,
-				match.bA,
-				$elm$url$Url$percentDecode(match.bA));
+				match.bD,
+				$elm$url$Url$percentDecode(match.bD));
 		}));
 var $dillonkearns$elm_markdown$Markdown$InlineParser$urlRegex = A2(
 	$elm$core$Maybe$withDefault,
@@ -14345,14 +14344,14 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$urlRegex = A2(
 	$elm$regex$Regex$fromString('^([A-Za-z][A-Za-z0-9.+\\-]{1,31}:[^<>\\x00-\\x20]*)$'));
 var $dillonkearns$elm_markdown$Markdown$InlineParser$autolinkToMatch = function (_v0) {
 	var match = _v0;
-	return A2($elm$regex$Regex$contains, $dillonkearns$elm_markdown$Markdown$InlineParser$urlRegex, match.c$) ? $elm$core$Result$Ok(
+	return A2($elm$regex$Regex$contains, $dillonkearns$elm_markdown$Markdown$InlineParser$urlRegex, match.c0) ? $elm$core$Result$Ok(
 		_Utils_update(
 			match,
 			{
 				j: $dillonkearns$elm_markdown$Markdown$InlineParser$AutolinkType(
 					_Utils_Tuple2(
-						match.c$,
-						$dillonkearns$elm_markdown$Markdown$InlineParser$encodeUrl(match.c$)))
+						match.c0,
+						$dillonkearns$elm_markdown$Markdown$InlineParser$encodeUrl(match.c0)))
 			})) : $elm$core$Result$Err(match);
 };
 var $elm$regex$Regex$findAtMost = _Regex_findAtMost;
@@ -14375,11 +14374,11 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$prepareUrlAndTitle = F2(
 var $dillonkearns$elm_markdown$Markdown$InlineParser$refRegexToMatch = F3(
 	function (matchModel, references, maybeRegexMatch) {
 		var refLabel = function (str) {
-			return $elm$core$String$isEmpty(str) ? matchModel.c$ : str;
+			return $elm$core$String$isEmpty(str) ? matchModel.c0 : str;
 		}(
 			A2(
 				$elm$core$Maybe$withDefault,
-				matchModel.c$,
+				matchModel.c0,
 				A2(
 					$elm$core$Maybe$withDefault,
 					$elm$core$Maybe$Nothing,
@@ -14388,7 +14387,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$refRegexToMatch = F3(
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.b0;
+								return $.b2;
 							},
 							$elm$core$List$head),
 						maybeRegexMatch))));
@@ -14414,7 +14413,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$refRegexToMatch = F3(
 			}();
 			var regexMatchLength = function () {
 				if (!maybeRegexMatch.$) {
-					var match = maybeRegexMatch.a.bA;
+					var match = maybeRegexMatch.a.bD;
 					return $elm$core$String$length(match);
 				} else {
 					return 0;
@@ -14458,7 +14457,7 @@ var $dillonkearns$elm_markdown$Markdown$Helpers$returnFirstJust = function (mayb
 };
 var $dillonkearns$elm_markdown$Markdown$InlineParser$inlineLinkTypeOrImageTypeRegexToMatch = F2(
 	function (matchModel, regexMatch) {
-		var _v0 = regexMatch.b0;
+		var _v0 = regexMatch.b2;
 		if ((((_v0.b && _v0.b.b) && _v0.b.b.b) && _v0.b.b.b.b) && _v0.b.b.b.b.b) {
 			var maybeRawUrlAngleBrackets = _v0.a;
 			var _v1 = _v0.b;
@@ -14476,7 +14475,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$inlineLinkTypeOrImageTypeRe
 				return _Utils_update(
 					matchModel,
 					{
-						g: matchModel.g + $elm$core$String$length(regexMatch.bA),
+						g: matchModel.g + $elm$core$String$length(regexMatch.bD),
 						j: function () {
 							var _v5 = matchModel.j;
 							if (_v5.$ === 5) {
@@ -14533,14 +14532,14 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$emailRegex = A2(
 	$elm$regex$Regex$fromString('^([a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~\\-]+@[a-zA-Z0-9](?:[a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?)*)$'));
 var $dillonkearns$elm_markdown$Markdown$InlineParser$emailAutolinkTypeToMatch = function (_v0) {
 	var match = _v0;
-	return A2($elm$regex$Regex$contains, $dillonkearns$elm_markdown$Markdown$InlineParser$emailRegex, match.c$) ? $elm$core$Result$Ok(
+	return A2($elm$regex$Regex$contains, $dillonkearns$elm_markdown$Markdown$InlineParser$emailRegex, match.c0) ? $elm$core$Result$Ok(
 		_Utils_update(
 			match,
 			{
 				j: $dillonkearns$elm_markdown$Markdown$InlineParser$AutolinkType(
 					_Utils_Tuple2(
-						match.c$,
-						'mailto:' + $dillonkearns$elm_markdown$Markdown$InlineParser$encodeUrl(match.c$)))
+						match.c0,
+						'mailto:' + $dillonkearns$elm_markdown$Markdown$InlineParser$encodeUrl(match.c0)))
 			})) : $elm$core$Result$Err(match);
 };
 var $dillonkearns$elm_markdown$Markdown$InlineParser$findTokenHelp = F3(
@@ -14612,7 +14611,7 @@ var $elm$parser$Parser$Advanced$run = F2(
 	function (_v0, src) {
 		var parse = _v0;
 		var _v1 = parse(
-			{bh: 1, f: _List_Nil, h: 1, d: 0, cT: 1, a$: src});
+			{bj: 1, f: _List_Nil, h: 1, d: 0, cU: 1, a1: src});
 		if (!_v1.$) {
 			var value = _v1.b;
 			return $elm$core$Result$Ok(value);
@@ -14634,7 +14633,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$htmlToToken = F2(
 					$elm$parser$Parser$Advanced$succeed(
 						F3(
 							function (startOffset, htmlTag, endOffset) {
-								return {bv: htmlTag, aQ: endOffset - startOffset};
+								return {by: htmlTag, aS: endOffset - startOffset};
 							})),
 					$elm$parser$Parser$Advanced$getOffset),
 				$dillonkearns$elm_markdown$HtmlParser$html),
@@ -14644,11 +14643,11 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$htmlToToken = F2(
 			consumedCharacters,
 			A2($elm$core$String$dropLeft, match.i, rawText));
 		if (!parsed.$) {
-			var htmlTag = parsed.a.bv;
-			var length = parsed.a.aQ;
+			var htmlTag = parsed.a.by;
+			var length = parsed.a.aS;
 			var htmlToken = A2($dillonkearns$elm_markdown$Markdown$InlineParser$HtmlToken, 0, htmlTag);
 			return $elm$core$Maybe$Just(
-				{c: match.i, aQ: length, e: htmlToken});
+				{c: match.i, aS: length, e: htmlToken});
 		} else {
 			return $elm$core$Maybe$Nothing;
 		}
@@ -14668,10 +14667,10 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$isCodeTokenPair = F2(
 		if (!_v0.$) {
 			if (!_v0.a) {
 				var _v1 = _v0.a;
-				return _Utils_eq(openToken.aQ - 1, closeToken.aQ);
+				return _Utils_eq(openToken.aS - 1, closeToken.aS);
 			} else {
 				var _v2 = _v0.a;
-				return _Utils_eq(openToken.aQ, closeToken.aQ);
+				return _Utils_eq(openToken.aS, closeToken.aS);
 			}
 		} else {
 			return false;
@@ -14698,7 +14697,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$isOpenEmphasisToken = F2(
 			if (_v1.$ === 7) {
 				var closeChar = _v1.a;
 				var close = _v1.b;
-				return _Utils_eq(openChar, closeChar) ? ((_Utils_eq(open.ap, open.ar) || _Utils_eq(close.ap, close.ar)) ? ((!(!A2($elm$core$Basics$modBy, 3, closeToken.aQ + openToken.aQ))) || ((!A2($elm$core$Basics$modBy, 3, closeToken.aQ)) && (!A2($elm$core$Basics$modBy, 3, openToken.aQ)))) : true) : false;
+				return _Utils_eq(openChar, closeChar) ? ((_Utils_eq(open.as, open.au) || _Utils_eq(close.as, close.au)) ? ((!(!A2($elm$core$Basics$modBy, 3, closeToken.aS + openToken.aS))) || ((!A2($elm$core$Basics$modBy, 3, closeToken.aS)) && (!A2($elm$core$Basics$modBy, 3, openToken.aS)))) : true) : false;
 			} else {
 				return false;
 			}
@@ -14713,10 +14712,10 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$isStrikethroughTokenPair = 
 			if (_v1.$ === 9) {
 				if (!_v1.a) {
 					var _v2 = _v1.a;
-					return _Utils_Tuple2(true, openToken.aQ - 1);
+					return _Utils_Tuple2(true, openToken.aS - 1);
 				} else {
 					var _v3 = _v1.a;
-					return _Utils_Tuple2(true, openToken.aQ);
+					return _Utils_Tuple2(true, openToken.aS);
 				}
 			} else {
 				return _Utils_Tuple2(false, 0);
@@ -14729,10 +14728,10 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$isStrikethroughTokenPair = 
 			if (_v5.$ === 9) {
 				if (!_v5.a) {
 					var _v6 = _v5.a;
-					return _Utils_Tuple2(true, closeToken.aQ - 1);
+					return _Utils_Tuple2(true, closeToken.aS - 1);
 				} else {
 					var _v7 = _v5.a;
-					return _Utils_Tuple2(true, closeToken.aQ);
+					return _Utils_Tuple2(true, closeToken.aS);
 				}
 			} else {
 				return _Utils_Tuple2(false, 0);
@@ -14745,7 +14744,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$isStrikethroughTokenPair = 
 var $dillonkearns$elm_markdown$Markdown$InlineParser$HardLineBreakType = {$: 1};
 var $dillonkearns$elm_markdown$Markdown$InlineParser$tokenToMatch = F2(
 	function (token, type_) {
-		return {g: token.c + token.aQ, o: _List_Nil, i: token.c, c$: '', u: 0, q: 0, j: type_};
+		return {g: token.c + token.aS, o: _List_Nil, i: token.c, c0: '', u: 0, q: 0, j: type_};
 	});
 var $dillonkearns$elm_markdown$Markdown$InlineParser$lineBreakTTM = F2(
 	function (remaining, matches) {
@@ -14970,7 +14969,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$codeToMatch = F5(
 				var _v34 = _v33.a;
 				return _Utils_update(
 					openToken,
-					{c: openToken.c + 1, aQ: openToken.aQ - 1});
+					{c: openToken.c + 1, aS: openToken.aS - 1});
 			} else {
 				return openToken;
 			}
@@ -14998,8 +14997,8 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$emphasisTTM = F5(
 				var _v27 = token.e;
 				if (_v27.$ === 7) {
 					var _char = _v27.a;
-					var leftFringeRank = _v27.b.ap;
-					var rightFringeRank = _v27.b.ar;
+					var leftFringeRank = _v27.b.as;
+					var rightFringeRank = _v27.b.au;
 					if (_Utils_eq(leftFringeRank, rightFringeRank)) {
 						if ((!(!rightFringeRank)) && ((_char !== '_') || (rightFringeRank === 1))) {
 							var _v28 = A2(
@@ -15120,30 +15119,30 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$emphasisToMatch = F5(
 		var openToken = _v25.a;
 		var innerTokens = _v25.b;
 		var remainTokens = _v25.c;
-		var remainLength = openToken.aQ - closeToken.aQ;
-		var updt = (!remainLength) ? {ak: closeToken, X: openToken, aq: remainTokens, ax: tokensTail} : ((remainLength > 0) ? {
-			ak: closeToken,
-			X: _Utils_update(
+		var remainLength = openToken.aS - closeToken.aS;
+		var updt = (!remainLength) ? {an: closeToken, Z: openToken, at: remainTokens, aA: tokensTail} : ((remainLength > 0) ? {
+			an: closeToken,
+			Z: _Utils_update(
 				openToken,
-				{c: openToken.c + remainLength, aQ: closeToken.aQ}),
-			aq: A2(
+				{c: openToken.c + remainLength, aS: closeToken.aS}),
+			at: A2(
 				$elm$core$List$cons,
 				_Utils_update(
 					openToken,
-					{aQ: remainLength}),
+					{aS: remainLength}),
 				remainTokens),
-			ax: tokensTail
+			aA: tokensTail
 		} : {
-			ak: _Utils_update(
+			an: _Utils_update(
 				closeToken,
-				{aQ: openToken.aQ}),
-			X: openToken,
-			aq: remainTokens,
-			ax: A2(
+				{aS: openToken.aS}),
+			Z: openToken,
+			at: remainTokens,
+			aA: A2(
 				$elm$core$List$cons,
 				_Utils_update(
 					closeToken,
-					{c: closeToken.c + openToken.aQ, aQ: -remainLength}),
+					{c: closeToken.c + openToken.aS, aS: -remainLength}),
 				tokensTail)
 		});
 		var match = A7(
@@ -15153,11 +15152,11 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$emphasisToMatch = F5(
 			function (s) {
 				return s;
 			},
-			$dillonkearns$elm_markdown$Markdown$InlineParser$EmphasisType(updt.X.aQ),
-			updt.X,
-			updt.ak,
+			$dillonkearns$elm_markdown$Markdown$InlineParser$EmphasisType(updt.Z.aS),
+			updt.Z,
+			updt.an,
 			$elm$core$List$reverse(innerTokens));
-		return _Utils_Tuple3(updt.ax, match, updt.aq);
+		return _Utils_Tuple3(updt.aA, match, updt.at);
 	});
 var $dillonkearns$elm_markdown$Markdown$InlineParser$htmlElementTTM = F5(
 	function (remaining, tokens, matches, references, rawText) {
@@ -15450,7 +15449,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$strikethroughToMatch = F5(
 				var _v3 = _v2.a;
 				return _Utils_update(
 					openToken,
-					{c: openToken.c + 1, aQ: openToken.aQ - 1});
+					{c: openToken.c + 1, aS: openToken.aS - 1});
 			} else {
 				return openToken;
 			}
@@ -15462,13 +15461,13 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$strikethroughToMatch = F5(
 	});
 var $dillonkearns$elm_markdown$Markdown$InlineParser$tokenPairToMatch = F7(
 	function (references, rawText, processText, type_, openToken, closeToken, innerTokens) {
-		var textStart = openToken.c + openToken.aQ;
+		var textStart = openToken.c + openToken.aS;
 		var textEnd = closeToken.c;
 		var text = processText(
 			A3($elm$core$String$slice, textStart, textEnd, rawText));
 		var start = openToken.c;
-		var end = closeToken.c + closeToken.aQ;
-		var match = {g: end, o: _List_Nil, i: start, c$: text, u: textEnd, q: textStart, j: type_};
+		var end = closeToken.c + closeToken.aS;
+		var match = {g: end, o: _List_Nil, i: start, c0: text, u: textEnd, q: textStart, j: type_};
 		var matches = A2(
 			$elm$core$List$map,
 			function (_v0) {
@@ -15476,7 +15475,7 @@ var $dillonkearns$elm_markdown$Markdown$InlineParser$tokenPairToMatch = F7(
 				return A2($dillonkearns$elm_markdown$Markdown$InlineParser$prepareChildMatch, match, matchModel);
 			},
 			A4($dillonkearns$elm_markdown$Markdown$InlineParser$tokensToMatches, innerTokens, _List_Nil, references, rawText));
-		return {g: end, o: matches, i: start, c$: text, u: textEnd, q: textStart, j: type_};
+		return {g: end, o: matches, i: start, c0: text, u: textEnd, q: textStart, j: type_};
 	});
 var $dillonkearns$elm_markdown$Markdown$InlineParser$tokensToMatches = F4(
 	function (tokens, matches, references, rawText) {
@@ -15709,7 +15708,7 @@ var $dillonkearns$elm_markdown$Markdown$TableParser$parseHeader = F2(
 				$elm$core$List$map2,
 				F2(
 					function (headerCell, alignment) {
-						return {ag: alignment, P: headerCell};
+						return {ai: alignment, R: headerCell};
 					}),
 				headers,
 				columnAlignments);
@@ -15733,7 +15732,7 @@ var $dillonkearns$elm_markdown$Markdown$TableParser$parseHeader = F2(
 	});
 var $dillonkearns$elm_markdown$Markdown$CodeBlock$CodeBlock = F2(
 	function (language, body) {
-		return {aC: body, aP: language};
+		return {aG: body, aR: language};
 	});
 var $dillonkearns$elm_markdown$Markdown$CodeBlock$infoString = function (fenceCharacter) {
 	var toInfoString = F2(
@@ -15746,7 +15745,7 @@ var $dillonkearns$elm_markdown$Markdown$CodeBlock$infoString = function (fenceCh
 				return $elm$core$Maybe$Just(trimmed);
 			}
 		});
-	var _v0 = fenceCharacter.ao;
+	var _v0 = fenceCharacter.ar;
 	if (!_v0) {
 		return A2(
 			$elm$parser$Parser$Advanced$mapChompedString,
@@ -15768,7 +15767,7 @@ var $dillonkearns$elm_markdown$Parser$Token$backtick = A2(
 	$elm$parser$Parser$Advanced$Token,
 	'`',
 	$elm$parser$Parser$Expecting('a \'`\''));
-var $dillonkearns$elm_markdown$Markdown$CodeBlock$backtick = {ai: '`', ao: 0, aw: $dillonkearns$elm_markdown$Parser$Token$backtick};
+var $dillonkearns$elm_markdown$Markdown$CodeBlock$backtick = {al: '`', ar: 0, az: $dillonkearns$elm_markdown$Parser$Token$backtick};
 var $dillonkearns$elm_markdown$Markdown$CodeBlock$colToIndentation = function (_int) {
 	switch (_int) {
 		case 1:
@@ -15796,7 +15795,7 @@ var $dillonkearns$elm_markdown$Markdown$CodeBlock$fenceOfAtLeast = F2(
 			A2(
 				$elm$core$List$repeat,
 				minLength,
-				$elm$parser$Parser$Advanced$token(fenceCharacter.aw)));
+				$elm$parser$Parser$Advanced$token(fenceCharacter.az)));
 		return A2(
 			$elm$parser$Parser$Advanced$mapChompedString,
 			F2(
@@ -15809,14 +15808,14 @@ var $dillonkearns$elm_markdown$Markdown$CodeBlock$fenceOfAtLeast = F2(
 				$elm$parser$Parser$Advanced$ignorer,
 				builtTokens,
 				$elm$parser$Parser$Advanced$chompWhile(
-					$elm$core$Basics$eq(fenceCharacter.ai))));
+					$elm$core$Basics$eq(fenceCharacter.al))));
 	});
 var $dillonkearns$elm_markdown$Markdown$CodeBlock$Tilde = 1;
 var $dillonkearns$elm_markdown$Parser$Token$tilde = A2(
 	$elm$parser$Parser$Advanced$Token,
 	'~',
 	$elm$parser$Parser$Expecting('a `~`'));
-var $dillonkearns$elm_markdown$Markdown$CodeBlock$tilde = {ai: '~', ao: 1, aw: $dillonkearns$elm_markdown$Parser$Token$tilde};
+var $dillonkearns$elm_markdown$Markdown$CodeBlock$tilde = {al: '~', ar: 1, az: $dillonkearns$elm_markdown$Parser$Token$tilde};
 var $dillonkearns$elm_markdown$Whitespace$upToThreeSpaces = $elm$parser$Parser$Advanced$oneOf(
 	_List_fromArray(
 		[
@@ -15850,7 +15849,7 @@ var $dillonkearns$elm_markdown$Markdown$CodeBlock$openingFence = A2(
 					function (indent, _v0) {
 						var character = _v0.a;
 						var length = _v0.b;
-						return {aj: character, aN: indent, aQ: length};
+						return {am: character, aP: indent, aS: length};
 					})),
 			$dillonkearns$elm_markdown$Whitespace$upToThreeSpaces),
 		A2($elm$parser$Parser$Advanced$andThen, $dillonkearns$elm_markdown$Markdown$CodeBlock$colToIndentation, $elm$parser$Parser$Advanced$getCol)),
@@ -15891,7 +15890,7 @@ var $dillonkearns$elm_markdown$Markdown$CodeBlock$codeBlockLine = function (inde
 			$dillonkearns$elm_markdown$Helpers$lineEndOrEnd));
 };
 var $elm$parser$Parser$Advanced$getSource = function (s) {
-	return A3($elm$parser$Parser$Advanced$Good, false, s.a$, s);
+	return A3($elm$parser$Parser$Advanced$Good, false, s.a1, s);
 };
 var $dillonkearns$elm_markdown$Markdown$CodeBlock$remainingBlockHelp = function (_v0) {
 	var fence = _v0.a;
@@ -15919,7 +15918,7 @@ var $dillonkearns$elm_markdown$Markdown$CodeBlock$remainingBlockHelp = function 
 					$elm$parser$Parser$Advanced$ignorer,
 					$elm$parser$Parser$Advanced$succeed(
 						$elm$parser$Parser$Advanced$Done(body)),
-					A2($dillonkearns$elm_markdown$Markdown$CodeBlock$closingFence, fence.aQ, fence.aj))),
+					A2($dillonkearns$elm_markdown$Markdown$CodeBlock$closingFence, fence.aS, fence.am))),
 				A2(
 				$elm$parser$Parser$Advanced$keeper,
 				A2(
@@ -15936,7 +15935,7 @@ var $dillonkearns$elm_markdown$Markdown$CodeBlock$remainingBlockHelp = function 
 												body,
 												A3($elm$core$String$slice, start, end, source))));
 								})),
-						$dillonkearns$elm_markdown$Markdown$CodeBlock$codeBlockLine(fence.aN)),
+						$dillonkearns$elm_markdown$Markdown$CodeBlock$codeBlockLine(fence.aP)),
 					$elm$parser$Parser$Advanced$getOffset),
 				$elm$parser$Parser$Advanced$getSource)
 			]));
@@ -15957,7 +15956,7 @@ var $dillonkearns$elm_markdown$Markdown$CodeBlock$parser = A2(
 				$elm$parser$Parser$Advanced$succeed($dillonkearns$elm_markdown$Markdown$CodeBlock$CodeBlock),
 				A2(
 					$elm$parser$Parser$Advanced$ignorer,
-					$dillonkearns$elm_markdown$Markdown$CodeBlock$infoString(fence.aj),
+					$dillonkearns$elm_markdown$Markdown$CodeBlock$infoString(fence.am),
 					$dillonkearns$elm_markdown$Helpers$lineEndOrEnd)),
 			$dillonkearns$elm_markdown$Markdown$CodeBlock$remainingBlock(fence));
 	},
@@ -16064,7 +16063,7 @@ var $elm$parser$Parser$Advanced$chompUntil = function (_v0) {
 	var str = _v0.a;
 	var expecting = _v0.b;
 	return function (s) {
-		var _v1 = A5($elm$parser$Parser$Advanced$findSubString, str, s.d, s.cT, s.bh, s.a$);
+		var _v1 = A5($elm$parser$Parser$Advanced$findSubString, str, s.d, s.cU, s.bj, s.a1);
 		var newOffset = _v1.a;
 		var newRow = _v1.b;
 		var newCol = _v1.c;
@@ -16075,7 +16074,7 @@ var $elm$parser$Parser$Advanced$chompUntil = function (_v0) {
 			$elm$parser$Parser$Advanced$Good,
 			_Utils_cmp(s.d, newOffset) < 0,
 			0,
-			{bh: newCol, f: s.f, h: s.h, d: newOffset, cT: newRow, a$: s.a$});
+			{bj: newCol, f: s.f, h: s.h, d: newOffset, cU: newRow, a1: s.a1});
 	};
 };
 var $dillonkearns$elm_markdown$Parser$Token$greaterThan = A2(
@@ -16084,11 +16083,11 @@ var $dillonkearns$elm_markdown$Parser$Token$greaterThan = A2(
 	$elm$parser$Parser$Expecting('a `>`'));
 var $elm$parser$Parser$Advanced$Located = F3(
 	function (row, col, context) {
-		return {bh: col, f: context, cT: row};
+		return {bj: col, f: context, cU: row};
 	});
 var $elm$parser$Parser$Advanced$changeContext = F2(
 	function (newContext, s) {
-		return {bh: s.bh, f: newContext, h: s.h, d: s.d, cT: s.cT, a$: s.a$};
+		return {bj: s.bj, f: newContext, h: s.h, d: s.d, cU: s.cU, a1: s.a1};
 	});
 var $elm$parser$Parser$Advanced$inContext = F2(
 	function (context, _v0) {
@@ -16099,7 +16098,7 @@ var $elm$parser$Parser$Advanced$inContext = F2(
 					$elm$parser$Parser$Advanced$changeContext,
 					A2(
 						$elm$core$List$cons,
-						A3($elm$parser$Parser$Advanced$Located, s0.cT, s0.bh, context),
+						A3($elm$parser$Parser$Advanced$Located, s0.cU, s0.bj, context),
 						s0.f),
 					s0));
 			if (!_v1.$) {
@@ -16286,7 +16285,7 @@ var $dillonkearns$elm_markdown$Markdown$LinkReferenceDefinition$parser = A2(
 							function (label, destination, title) {
 								return _Utils_Tuple2(
 									label,
-									{cn: destination, b4: title});
+									{cn: destination, b6: title});
 							})),
 					$dillonkearns$elm_markdown$Whitespace$upToThreeSpaces),
 				A2(
@@ -16542,7 +16541,7 @@ var $dillonkearns$elm_markdown$Markdown$TableParser$delimiterToAlignment = funct
 var $dillonkearns$elm_markdown$Markdown$TableParser$delimiterRowParser = A2(
 	$elm$parser$Parser$Advanced$andThen,
 	function (delimiterRow) {
-		var trimmed = delimiterRow.a.b6;
+		var trimmed = delimiterRow.a.b8;
 		var headers = delimiterRow.b;
 		return $elm$core$List$isEmpty(headers) ? $elm$parser$Parser$Advanced$problem(
 			$elm$parser$Parser$Expecting('Must have at least one column in delimiter row.')) : ((($elm$core$List$length(headers) === 1) && (!(A2($elm$core$String$startsWith, '|', trimmed) && A2($elm$core$String$endsWith, '|', trimmed)))) ? $elm$parser$Parser$Advanced$problem(
@@ -16555,8 +16554,8 @@ var $dillonkearns$elm_markdown$Markdown$TableParser$delimiterRowParser = A2(
 				return A2(
 					$dillonkearns$elm_markdown$Markdown$Table$TableDelimiterRow,
 					{
-						bO: delimiterText,
-						b6: $elm$core$String$trim(delimiterText)
+						bR: delimiterText,
+						b8: $elm$core$String$trim(delimiterText)
 					},
 					A2(
 						$elm$core$List$map,
@@ -16809,7 +16808,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$unorderedListBlock = function (pr
 					var completion = unparsedListItem.a;
 					var body = unparsedListItem.b;
 					return {
-						aC: body,
+						aG: body,
 						cC: listmarker,
 						k: $elm$core$Maybe$Just(
 							function () {
@@ -16822,9 +16821,9 @@ var $dillonkearns$elm_markdown$Markdown$Parser$unorderedListBlock = function (pr
 					};
 				case 1:
 					var body = unparsedListItem.a;
-					return {aC: body, cC: listmarker, k: $elm$core$Maybe$Nothing};
+					return {aG: body, cC: listmarker, k: $elm$core$Maybe$Nothing};
 				default:
-					return {aC: '', cC: listmarker, k: $elm$core$Maybe$Nothing};
+					return {aG: '', cC: listmarker, k: $elm$core$Maybe$Nothing};
 			}
 		});
 	return A2(
@@ -16961,7 +16960,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeBlocks = function (state)
 					var _v94 = A2(
 						$elm$parser$Parser$Advanced$run,
 						$dillonkearns$elm_markdown$Markdown$Parser$cyclic$rawBlockParser(),
-						openListItem.aC);
+						openListItem.aG);
 					if (!_v94.$) {
 						var value = _v94.a;
 						var tight2 = A2($elm$core$List$member, $dillonkearns$elm_markdown$Markdown$RawBlock$BlankLine, value.b) ? false : tight;
@@ -16976,7 +16975,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeBlocks = function (state)
 										intended,
 										A2(
 											$elm$core$List$cons,
-											{aC: value.b, k: openListItem.k},
+											{aG: value.b, k: openListItem.k},
 											closeListItems),
 										openListItem),
 									rest)
@@ -17039,7 +17038,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeBlocks = function (state)
 								var _v98 = A2(
 									$elm$parser$Parser$Advanced$run,
 									$dillonkearns$elm_markdown$Markdown$Parser$cyclic$rawBlockParser(),
-									openListItem.aC);
+									openListItem.aG);
 								if (!_v98.$) {
 									var value = _v98.a;
 									var tight2 = A2($elm$core$List$member, $dillonkearns$elm_markdown$Markdown$RawBlock$BlankLine, value.b) ? false : tight;
@@ -17054,7 +17053,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeBlocks = function (state)
 													intended,
 													A2(
 														$elm$core$List$cons,
-														{aC: value.b, k: openListItem.k},
+														{aG: value.b, k: openListItem.k},
 														closeListItems),
 													openListItem),
 												rest)
@@ -17139,8 +17138,8 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 										$elm$core$List$cons,
 										$dillonkearns$elm_markdown$Markdown$RawBlock$CodeBlock(
 											{
-												aC: A2($dillonkearns$elm_markdown$Markdown$Parser$joinStringsPreserveAll, block2.aC, block1.aC),
-												aP: $elm$core$Maybe$Nothing
+												aG: A2($dillonkearns$elm_markdown$Markdown$Parser$joinStringsPreserveAll, block2.aG, block1.aG),
+												aR: $elm$core$Maybe$Nothing
 											}),
 										rest)
 								});
@@ -17364,7 +17363,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 									var _v59 = A2(
 										$elm$parser$Parser$Advanced$run,
 										$dillonkearns$elm_markdown$Markdown$Parser$cyclic$rawBlockParser(),
-										openListItem2.aC);
+										openListItem2.aG);
 									if (!_v59.$) {
 										var value = _v59.a;
 										return A2($elm$core$List$member, $dillonkearns$elm_markdown$Markdown$RawBlock$BlankLine, value.b) ? $elm$parser$Parser$Advanced$succeed(
@@ -17378,7 +17377,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 														intended2,
 														A2(
 															$elm$core$List$cons,
-															{aC: value.b, k: openListItem2.k},
+															{aG: value.b, k: openListItem2.k},
 															closeListItems2),
 														openListItem1),
 													rest)
@@ -17393,7 +17392,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 														intended2,
 														A2(
 															$elm$core$List$cons,
-															{aC: value.b, k: openListItem2.k},
+															{aG: value.b, k: openListItem2.k},
 															closeListItems2),
 														openListItem1),
 													rest)
@@ -17408,7 +17407,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 									var _v60 = A2(
 										$elm$parser$Parser$Advanced$run,
 										$dillonkearns$elm_markdown$Markdown$Parser$cyclic$rawBlockParser(),
-										openListItem2.aC);
+										openListItem2.aG);
 									if (!_v60.$) {
 										var value = _v60.a;
 										var tight2 = A2($elm$core$List$member, $dillonkearns$elm_markdown$Markdown$RawBlock$BlankLine, value.b) ? false : tight;
@@ -17426,7 +17425,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 															intended1,
 															A2(
 																$elm$core$List$cons,
-																{aC: value.b, k: openListItem2.k},
+																{aG: value.b, k: openListItem2.k},
 																closeListItems2),
 															openListItem1),
 														rest))
@@ -17453,7 +17452,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 												_Utils_update(
 													openListItem2,
 													{
-														aC: A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '\n', openListItem2.aC, body1)
+														aG: A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '\n', openListItem2.aG, body1)
 													})),
 											rest)
 									});
@@ -17461,7 +17460,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 								var _v61 = A2(
 									$elm$parser$Parser$Advanced$run,
 									$dillonkearns$elm_markdown$Markdown$Parser$cyclic$rawBlockParser(),
-									openListItem2.aC);
+									openListItem2.aG);
 								if (!_v61.$) {
 									var value = _v61.a;
 									var tight2 = A2($elm$core$List$member, $dillonkearns$elm_markdown$Markdown$RawBlock$BlankLine, value.b) ? false : tight;
@@ -17479,7 +17478,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 														intended1,
 														A2(
 															$elm$core$List$cons,
-															{aC: value.b, k: openListItem2.k},
+															{aG: value.b, k: openListItem2.k},
 															closeListItems2),
 														openListItem2),
 													rest))
@@ -17686,7 +17685,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 											b: A2(
 												$elm$core$List$cons,
 												$dillonkearns$elm_markdown$Markdown$RawBlock$OpenBlockOrParagraph(
-													A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '\n', rawHeaders, text.bO)),
+													A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '\n', rawHeaders, text.bR)),
 												rest)
 										});
 								}
@@ -17790,7 +17789,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 									var _v89 = A2(
 										$elm$parser$Parser$Advanced$run,
 										$dillonkearns$elm_markdown$Markdown$Parser$cyclic$rawBlockParser(),
-										openListItem2.aC);
+										openListItem2.aG);
 									if (!_v89.$) {
 										var value = _v89.a;
 										if (newRawBlock.$ === 3) {
@@ -17806,7 +17805,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 															intended1,
 															A2(
 																$elm$core$List$cons,
-																{aC: value.b, k: openListItem2.k},
+																{aG: value.b, k: openListItem2.k},
 																closeListItems2),
 															openListItem),
 														rest)
@@ -17829,7 +17828,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$completeOrMergeBlocks = F2(
 																	intended1,
 																	A2(
 																		$elm$core$List$cons,
-																		{aC: value.b, k: openListItem2.k},
+																		{aG: value.b, k: openListItem2.k},
 																		closeListItems2),
 																	openListItem2),
 																rest)))
@@ -17869,7 +17868,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$inlineParseHelper = F2(
 				$elm$core$Tuple$mapSecond(
 					function (_v37) {
 						var destination = _v37.cn;
-						var title = _v37.b4;
+						var title = _v37.b6;
 						return _Utils_Tuple2(destination, title);
 					}),
 				referencesDict));
@@ -18084,13 +18083,13 @@ var $dillonkearns$elm_markdown$Markdown$Parser$parseHeaderInlines = F2(
 		return A2(
 			$elm$core$List$map,
 			function (_v24) {
-				var label = _v24.P;
-				var alignment = _v24.ag;
+				var label = _v24.R;
+				var alignment = _v24.ai;
 				return A3(
 					$dillonkearns$elm_markdown$Markdown$Parser$parseRawInline,
 					linkReferences,
 					function (parsedHeaderLabel) {
-						return {ag: alignment, P: parsedHeaderLabel};
+						return {ai: alignment, R: parsedHeaderLabel};
 					},
 					label);
 			},
@@ -18159,7 +18158,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$parseInlines = F2(
 							A2(
 								$elm$core$List$map,
 								function (item) {
-									return A2(parseItem, item.k, item.aC);
+									return A2(parseItem, item.k, item.aG);
 								},
 								unparsedItems))));
 			case 4:
@@ -18209,7 +18208,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$parseInlines = F2(
 				var codeBlockBody = rawBlock.a;
 				return $dillonkearns$elm_markdown$Markdown$Parser$ParsedBlock(
 					$dillonkearns$elm_markdown$Markdown$Block$CodeBlock(
-						{aC: codeBlockBody, aP: $elm$core$Maybe$Nothing}));
+						{aG: codeBlockBody, aR: $elm$core$Maybe$Nothing}));
 			case 8:
 				var _v22 = rawBlock.a;
 				var header = _v22.a;
@@ -18224,7 +18223,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$parseInlines = F2(
 				var text = _v23.a;
 				return $dillonkearns$elm_markdown$Markdown$Parser$ParsedBlock(
 					$dillonkearns$elm_markdown$Markdown$Block$Paragraph(
-						A2($dillonkearns$elm_markdown$Markdown$Parser$inlineParseHelper, linkReferences, text.bO)));
+						A2($dillonkearns$elm_markdown$Markdown$Parser$inlineParseHelper, linkReferences, text.bR)));
 			default:
 				var raw = rawBlock.b;
 				return $dillonkearns$elm_markdown$Markdown$Parser$ParsedBlock(
@@ -18325,7 +18324,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$stepRawBlock = function (revStmts
 															_Utils_update(
 																openListItem,
 																{
-																	aC: A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '', openListItem.aC, newString)
+																	aG: A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '', openListItem.aG, newString)
 																})),
 														rest))
 											});
@@ -18345,7 +18344,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$stepRawBlock = function (revStmts
 														_Utils_update(
 															openListItem,
 															{
-																aC: A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '\n', openListItem.aC, newString)
+																aG: A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '\n', openListItem.aG, newString)
 															})),
 													rest)
 											});
@@ -18506,7 +18505,7 @@ var $dillonkearns$elm_markdown$Markdown$Parser$stepRawBlock = function (revStmts
 																		_Utils_update(
 																			openListItem,
 																			{
-																				aC: A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '', openListItem.aC, newString)
+																				aG: A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '', openListItem.aG, newString)
 																			})),
 																	rest))
 														});
@@ -18526,12 +18525,12 @@ var $dillonkearns$elm_markdown$Markdown$Parser$stepRawBlock = function (revStmts
 																	_Utils_update(
 																		openListItem,
 																		{
-																			aC: A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '\n', openListItem.aC, newString)
+																			aG: A3($dillonkearns$elm_markdown$Markdown$Parser$joinRawStringsWith, '\n', openListItem.aG, newString)
 																		})),
 																rest)
 														});
 												});
-											return ($elm$core$String$trim(openListItem.aC) === '') ? A2(
+											return ($elm$core$String$trim(openListItem.aG) === '') ? A2(
 												$elm$parser$Parser$Advanced$map,
 												function (block) {
 													return $elm$parser$Parser$Advanced$Loop(block);
@@ -18884,26 +18883,26 @@ var $author$project$View$Markdown$preprocessMathForParser = function (input) {
 						$author$project$View$Markdown$replaceRegex,
 						'(^|[^\\\\])\\$(?!\\s)(?!\\d+(?:\\.\\d+)?(?:\\s|〜|~|-|to))([^\\$\\n]+?)(?<!\\s)\\$(?!\\d)',
 						function (m) {
-							var _v1 = m.b0;
+							var _v1 = m.b2;
 							if (((_v1.b && (!_v1.a.$)) && _v1.b.b) && (!_v1.b.a.$)) {
 								var prefix = _v1.a.a;
 								var _v2 = _v1.b;
 								var formula = _v2.a.a;
 								return prefix + ('`math ' + (formula + '`'));
 							} else {
-								return m.bA;
+								return m.bD;
 							}
 						},
 						A3(
 							$author$project$View$Markdown$replaceRegex,
 							'\\$\\$([\\s\\S]+?)\\$\\$',
 							function (m) {
-								var _v0 = m.b0;
+								var _v0 = m.b2;
 								if (_v0.b && (!_v0.a.$)) {
 									var formula = _v0.a.a;
 									return '\n```math\n' + ($elm$core$String$trim(formula) + '\n```\n');
 								} else {
-									return m.bA;
+									return m.bD;
 								}
 							},
 							A3(
@@ -19154,7 +19153,7 @@ var $dillonkearns$elm_markdown$Markdown$Block$extractInlineBlockText = function 
 							A2(
 								$elm$core$List$map,
 								function ($) {
-									return $.P;
+									return $.R;
 								},
 								header)),
 							$elm$core$List$concat(
@@ -19164,7 +19163,7 @@ var $dillonkearns$elm_markdown$Markdown$Block$extractInlineBlockText = function 
 								rows))
 						])));
 		case 7:
-			var body = block.a.aC;
+			var body = block.a.aG;
 			return body;
 		default:
 			return '';
@@ -19270,11 +19269,11 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderHelperSingle = function (
 					A2(
 						$elm$core$Result$map,
 						function (children) {
-							return renderer.bs(
+							return renderer.bv(
 								{
-									bg: children,
-									V: level,
-									bP: $dillonkearns$elm_markdown$Markdown$Block$extractInlineText(content)
+									bi: children,
+									X: level,
+									bS: $dillonkearns$elm_markdown$Markdown$Block$extractInlineText(content)
 								});
 						},
 						A2($dillonkearns$elm_markdown$Markdown$Renderer$renderStyled, renderer, content)));
@@ -19283,7 +19282,7 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderHelperSingle = function (
 				return $elm$core$Maybe$Just(
 					A2(
 						$elm$core$Result$map,
-						renderer.aW,
+						renderer.aY,
 						A2($dillonkearns$elm_markdown$Markdown$Renderer$renderStyled, renderer, content)));
 			case 0:
 				var html = block.a;
@@ -19303,7 +19302,7 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderHelperSingle = function (
 					A2(
 						$elm$core$Result$map,
 						function (listItems) {
-							return renderer.a8(
+							return renderer.bb(
 								A2(
 									$elm$core$List$map,
 									function (_v7) {
@@ -19356,7 +19355,7 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderHelperSingle = function (
 						$elm$core$Result$map,
 						function (listItems) {
 							return A2(
-								renderer.aV,
+								renderer.aX,
 								startingIndex,
 								A2(
 									$elm$core$List$map,
@@ -19398,13 +19397,13 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderHelperSingle = function (
 						renderer.ch(codeBlock)));
 			case 8:
 				return $elm$core$Maybe$Just(
-					$elm$core$Result$Ok(renderer.a7));
+					$elm$core$Result$Ok(renderer.ba));
 			case 3:
 				var nestedBlocks = block.a;
 				return $elm$core$Maybe$Just(
 					A2(
 						$elm$core$Result$map,
-						renderer.aB,
+						renderer.aF,
 						$dillonkearns$elm_markdown$Markdown$Renderer$combineResults(
 							A2($dillonkearns$elm_markdown$Markdown$Renderer$renderHelper, renderer, nestedBlocks))));
 			default:
@@ -19414,8 +19413,8 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderHelperSingle = function (
 					A2(
 						$elm$core$List$map,
 						function (_v11) {
-							var label = _v11.P;
-							var alignment = _v11.ag;
+							var label = _v11.R;
+							var alignment = _v11.ai;
 							return A2(
 								$elm$core$Result$map,
 								$elm$core$Tuple$pair(alignment),
@@ -19425,15 +19424,15 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderHelperSingle = function (
 				var renderedHeader = A2(
 					$elm$core$Result$map,
 					function (listListView) {
-						return renderer.a5(
+						return renderer.a7(
 							$elm$core$List$singleton(
-								renderer.av(
+								renderer.ay(
 									A2(
 										$elm$core$List$map,
 										function (_v10) {
 											var maybeAlignment = _v10.a;
 											var item = _v10.b;
-											return A2(renderer.a6, maybeAlignment, item);
+											return A2(renderer.a8, maybeAlignment, item);
 										},
 										listListView))));
 					},
@@ -19441,14 +19440,14 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderHelperSingle = function (
 				var renderedBody = function (r) {
 					return $elm$core$List$isEmpty(r) ? _List_Nil : _List_fromArray(
 						[
-							renderer.a3(r)
+							renderer.a5(r)
 						]);
 				};
 				var alignmentForColumn = function (columnIndex) {
 					return A2(
 						$elm$core$Maybe$andThen,
 						function ($) {
-							return $.ag;
+							return $.ai;
 						},
 						$elm$core$List$head(
 							A2($elm$core$List$drop, columnIndex, header)));
@@ -19456,14 +19455,14 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderHelperSingle = function (
 				var renderRow = function (cells) {
 					return A2(
 						$elm$core$Result$map,
-						renderer.av,
+						renderer.ay,
 						A2(
 							$elm$core$Result$map,
 							$elm$core$List$indexedMap(
 								F2(
 									function (index, cell) {
 										return A2(
-											renderer.a4,
+											renderer.a6,
 											alignmentForColumn(index),
 											cell);
 									})),
@@ -19480,7 +19479,7 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderHelperSingle = function (
 						$elm$core$Result$map2,
 						F2(
 							function (h, r) {
-								return renderer.cZ(
+								return renderer.c_(
 									A2(
 										$elm$core$List$cons,
 										h,
@@ -19498,7 +19497,7 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderHtmlNode = F4(
 			tag,
 			attributes,
 			children,
-			renderer.aL,
+			renderer.aN,
 			A2($dillonkearns$elm_markdown$Markdown$Renderer$renderHelper, renderer, children));
 	});
 var $dillonkearns$elm_markdown$Markdown$Renderer$renderSingleInline = F2(
@@ -19509,21 +19508,21 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderSingleInline = F2(
 				return $elm$core$Maybe$Just(
 					A2(
 						$elm$core$Result$map,
-						renderer.a2,
+						renderer.a4,
 						A2($dillonkearns$elm_markdown$Markdown$Renderer$renderStyled, renderer, innerInlines)));
 			case 3:
 				var innerInlines = inline.a;
 				return $elm$core$Maybe$Just(
 					A2(
 						$elm$core$Result$map,
-						renderer.aG,
+						renderer.aJ,
 						A2($dillonkearns$elm_markdown$Markdown$Renderer$renderStyled, renderer, innerInlines)));
 			case 5:
 				var innerInlines = inline.a;
 				return $elm$core$Maybe$Just(
 					A2(
 						$elm$core$Result$map,
-						renderer.a1,
+						renderer.a3,
 						A2($dillonkearns$elm_markdown$Markdown$Renderer$renderStyled, renderer, innerInlines)));
 			case 2:
 				var src = inline.a;
@@ -19531,17 +19530,17 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderSingleInline = F2(
 				var children = inline.c;
 				return $elm$core$Maybe$Just(
 					$elm$core$Result$Ok(
-						renderer.aM(
+						renderer.aO(
 							{
-								aA: $dillonkearns$elm_markdown$Markdown$Block$extractInlineText(children),
-								a$: src,
-								b4: title
+								aD: $dillonkearns$elm_markdown$Markdown$Block$extractInlineText(children),
+								a1: src,
+								b6: title
 							})));
 			case 7:
 				var string = inline.a;
 				return $elm$core$Maybe$Just(
 					$elm$core$Result$Ok(
-						renderer.c$(string)));
+						renderer.c0(string)));
 			case 6:
 				var string = inline.a;
 				return $elm$core$Maybe$Just(
@@ -19557,14 +19556,14 @@ var $dillonkearns$elm_markdown$Markdown$Renderer$renderSingleInline = F2(
 						function (children) {
 							return $elm$core$Result$Ok(
 								A2(
-									renderer.aR,
-									{cn: destination, b4: title},
+									renderer.aT,
+									{cn: destination, b6: title},
 									children));
 						},
 						A2($dillonkearns$elm_markdown$Markdown$Renderer$renderStyled, renderer, inlines)));
 			case 8:
 				return $elm$core$Maybe$Just(
-					$elm$core$Result$Ok(renderer.aJ));
+					$elm$core$Result$Ok(renderer.aL));
 			default:
 				var html = inline.a;
 				if (!html.$) {
@@ -19669,7 +19668,7 @@ var $author$project$View$Markdown$render = F5(
 var $author$project$View$MainArea$viewMarkdownView = F2(
 	function (model, page) {
 		var paddingClass = function () {
-			var _v0 = model.a_;
+			var _v0 = model.a0;
 			switch (_v0) {
 				case 0:
 					var _v1 = model.cj;
@@ -19715,12 +19714,12 @@ var $author$project$View$MainArea$viewMarkdownView = F2(
 				]),
 			_List_fromArray(
 				[
-					A5($author$project$View$Markdown$render, model.bi, model.cR, model.cu, model.cV, page.bj)
+					A5($author$project$View$Markdown$render, model.bk, model.cR, model.cu, model.cW, page.bl)
 				]));
 	});
 var $author$project$Type$DragPage = 2;
 var $author$project$View$Reorder$reorderStyle = {
-	bk: function (theme) {
+	bm: function (theme) {
 		return $author$project$View$Style$tw(
 			_List_fromArray(
 				[
@@ -19728,11 +19727,11 @@ var $author$project$View$Reorder$reorderStyle = {
 					'text-xs',
 					'px-1',
 					'pb-1',
-					$author$project$View$Style$basecolors(theme).ba,
-					$author$project$View$Style$basecolors(theme).aD
+					$author$project$View$Style$basecolors(theme).E,
+					$author$project$View$Style$basecolors(theme).J
 				]));
 	},
-	bE: F2(
+	bH: F2(
 		function (theme, isSelected) {
 			var base = _List_fromArray(
 				[
@@ -19746,17 +19745,17 @@ var $author$project$View$Reorder$reorderStyle = {
 					'w-full',
 					'text-left',
 					'items-stretch',
-					$author$project$View$Style$basecolors(theme).aD,
-					$author$project$View$Style$basecolors(theme).bU
+					$author$project$View$Style$basecolors(theme).J,
+					$author$project$View$Style$basecolors(theme).cT
 				]);
 			var activeBorder = isSelected ? _List_fromArray(
 				[
 					'ring-2',
 					'ring-blue-200',
-					$author$project$View$Style$basecolors(theme).be
+					$author$project$View$Style$basecolors(theme).bg
 				]) : _List_fromArray(
 				[
-					$author$project$View$Style$basecolors(theme).cd
+					$author$project$View$Style$basecolors(theme).ce
 				]);
 			return $author$project$View$Style$tw(
 				_Utils_ap(base, activeBorder));
@@ -19764,29 +19763,29 @@ var $author$project$View$Reorder$reorderStyle = {
 	cL: $author$project$View$Style$tw(
 		_List_fromArray(
 			['absolute', 'inset-x-0', 'bottom-0', 'h-8', 'bg-gradient-to-t', 'from-white', 'to-transparent'])),
-	bF: function (theme) {
+	bI: function (theme) {
 		return $author$project$View$Style$tw(
 			_List_fromArray(
 				[
 					'px-2',
 					'border-b',
-					$author$project$View$Style$basecolors(theme).cY,
-					$author$project$View$Style$basecolors(theme).cd,
+					$author$project$View$Style$basecolors(theme).cZ,
+					$author$project$View$Style$basecolors(theme).ce,
 					'flex',
 					'justify-between',
 					'items-center'
 				]));
 	},
-	bG: function (theme) {
+	bJ: function (theme) {
 		return $author$project$View$Style$tw(
 			_List_fromArray(
 				[
 					'text-[12px]',
 					'font-black',
-					$author$project$View$Style$basecolors(theme).c$
+					$author$project$View$Style$basecolors(theme).c0
 				]));
 	},
-	bH: function (theme) {
+	bK: function (theme) {
 		return $author$project$View$Style$tw(
 			_List_fromArray(
 				[
@@ -19799,11 +19798,11 @@ var $author$project$View$Reorder$reorderStyle = {
 					'pointer-events-none',
 					'whitespace-normal',
 					'break-words',
-					$author$project$View$Style$basecolors(theme).ba,
-					$author$project$View$Style$basecolors(theme).ce
+					$author$project$View$Style$basecolors(theme).E,
+					$author$project$View$Style$basecolors(theme).ak
 				]));
 	},
-	bR: $author$project$View$Style$tw(
+	bU: $author$project$View$Style$tw(
 		_List_fromArray(
 			['grid', 'grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-4', 'xl:grid-cols-5', 'gap-8', 'py-24', 'px-8']))
 };
@@ -19822,9 +19821,9 @@ var $author$project$View$Style$buttonBaseStyle = F2(
 				case 1:
 					return _List_fromArray(
 						[
-							$author$project$View$Style$basecolors(theme).cc,
-							$author$project$View$Style$basecolors(theme).c$,
-							$author$project$View$Style$basecolors(theme).cd,
+							$author$project$View$Style$basecolors(theme).aE,
+							$author$project$View$Style$basecolors(theme).c0,
+							$author$project$View$Style$basecolors(theme).ce,
 							'hover:bg-white/25',
 							'border-2',
 							'rounded-lg',
@@ -19846,9 +19845,9 @@ var $author$project$View$Style$buttonBaseStyle = F2(
 							'font-bold',
 							'hover:opacity-80',
 							'shadow-sm',
-							$author$project$View$Style$basecolors(theme).cd,
-							$author$project$View$Style$basecolors(theme).bU,
-							$author$project$View$Style$basecolors(theme).c$
+							$author$project$View$Style$basecolors(theme).ce,
+							$author$project$View$Style$basecolors(theme).cT,
+							$author$project$View$Style$basecolors(theme).c0
 						]);
 				case 3:
 					var _v1 = kind.a;
@@ -19859,7 +19858,7 @@ var $author$project$View$Style$buttonBaseStyle = F2(
 							'absolute',
 							'top-' + $elm$core$String$fromInt(top),
 							'right-' + $elm$core$String$fromInt(right),
-							$author$project$View$Style$basecolors(theme).c$,
+							$author$project$View$Style$basecolors(theme).c0,
 							'p-2',
 							'hover:text-red-500'
 						]);
@@ -19872,10 +19871,10 @@ var $author$project$View$Style$buttonBaseStyle = F2(
 							'uppercase',
 							'hover:bg-white/10',
 							'transition-colors',
-							$author$project$View$Style$basecolors(theme).c0,
+							$author$project$View$Style$basecolors(theme).a9,
 							'border',
 							'rounded-sm',
-							$author$project$View$Style$basecolors(theme).cd
+							$author$project$View$Style$basecolors(theme).ce
 						]);
 			}
 		}();
@@ -19913,13 +19912,13 @@ var $author$project$View$Reorder$viewAddPageCard = function (model) {
 			A2(
 				$elm$core$Basics$composeR,
 				function ($) {
-					return $.Q;
+					return $.S;
 				},
 				$elm$core$List$length),
 			$author$project$Domain$Helper$getCurrentBook(model.x)));
 	return A4(
 		$author$project$View$ViewHelper$viewButton,
-		model.bi,
+		model.bk,
 		$author$project$Type$Create,
 		$author$project$Type$CreatePage(page),
 		$elm$html$Html$text('+ PAGE'));
@@ -19956,7 +19955,7 @@ var $author$project$View$Reorder$copyButton = F2(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$View$Reorder$reorderStyle.bk(model.bi)),
+					$author$project$View$Reorder$reorderStyle.bm(model.bk)),
 					$elm$html$Html$Events$onClick(
 					$author$project$Type$DuplicatePage(index))
 				]),
@@ -19972,7 +19971,7 @@ var $author$project$View$Reorder$viewPageCardHeader = F3(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$View$Reorder$reorderStyle.bF(model.bi))
+					$author$project$View$Reorder$reorderStyle.bI(model.bk))
 				]),
 			_List_fromArray(
 				[
@@ -19981,7 +19980,7 @@ var $author$project$View$Reorder$viewPageCardHeader = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class(
-							$author$project$View$Reorder$reorderStyle.bG(model.bi))
+							$author$project$View$Reorder$reorderStyle.bJ(model.bk))
 						]),
 					_List_fromArray(
 						[
@@ -19991,7 +19990,7 @@ var $author$project$View$Reorder$viewPageCardHeader = F3(
 					A2($author$project$View$Reorder$copyButton, model, index),
 					A4(
 					$author$project$View$ViewHelper$viewButton,
-					model.bi,
+					model.bk,
 					$author$project$Type$Delete,
 					$author$project$Type$DeletePage(pageId),
 					$elm$html$Html$text('×'))
@@ -20008,7 +20007,7 @@ var $author$project$View$Reorder$viewPageCardPreview = F3(
 			if (allHeadings.b && (!allHeadings.b.b)) {
 				var h = allHeadings.a;
 				return (_Utils_eq(
-					h.c$,
+					h.c0,
 					'Page ' + $elm$core$String$fromInt(index + 1)) && (!A2($elm$core$String$contains, '#', content))) ? _List_Nil : allHeadings;
 			} else {
 				return allHeadings;
@@ -20017,19 +20016,19 @@ var $author$project$View$Reorder$viewPageCardPreview = F3(
 		var h1List = A2(
 			$elm$core$List$filter,
 			function (h) {
-				return h.V === 1;
+				return h.X === 1;
 			},
 			actualHeadings);
 		var h2List = A2(
 			$elm$core$List$filter,
 			function (h) {
-				return h.V === 2;
+				return h.X === 2;
 			},
 			actualHeadings);
 		var h3List = A2(
 			$elm$core$List$filter,
 			function (h) {
-				return h.V === 3;
+				return h.X === 3;
 			},
 			actualHeadings);
 		var items = (!$elm$core$List$isEmpty(h1List)) ? A2(
@@ -20043,7 +20042,7 @@ var $author$project$View$Reorder$viewPageCardPreview = F3(
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('# ' + h.c$)
+							$elm$html$Html$text('# ' + h.c0)
 						]));
 			},
 			h1List) : ((!$elm$core$List$isEmpty(h2List)) ? A2(
@@ -20057,7 +20056,7 @@ var $author$project$View$Reorder$viewPageCardPreview = F3(
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('## ' + h.c$)
+							$elm$html$Html$text('## ' + h.c0)
 						]));
 			},
 			h2List) : ((!$elm$core$List$isEmpty(h3List)) ? A2(
@@ -20071,7 +20070,7 @@ var $author$project$View$Reorder$viewPageCardPreview = F3(
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('### ' + h.c$)
+							$elm$html$Html$text('### ' + h.c0)
 						]));
 			},
 			h3List) : _List_fromArray(
@@ -20100,20 +20099,20 @@ var $author$project$View$Reorder$viewPageCardPreview = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class(
-							$author$project$View$Reorder$reorderStyle.bH(model.bi))
+							$author$project$View$Reorder$reorderStyle.bK(model.bk))
 						]),
 					items)
 				]));
 	});
 var $author$project$View$Reorder$viewPageCard = F5(
 	function (model, present, index, page, pageId) {
-		var isSelected = _Utils_eq(present.am, index);
+		var isSelected = _Utils_eq(present.ap, index);
 		return A2(
 			$elm$html$Html$button,
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					A2($author$project$View$Reorder$reorderStyle.bE, model.bi, isSelected)),
+					A2($author$project$View$Reorder$reorderStyle.bH, model.bk, isSelected)),
 					$elm$html$Html$Events$onClick(
 					$author$project$Type$SelectPage(index)),
 					$elm$html$Html$Events$onDoubleClick(
@@ -20122,7 +20121,7 @@ var $author$project$View$Reorder$viewPageCard = F5(
 			_List_fromArray(
 				[
 					A3($author$project$View$Reorder$viewPageCardHeader, model, index, pageId),
-					A3($author$project$View$Reorder$viewPageCardPreview, model, index, page.bj)
+					A3($author$project$View$Reorder$viewPageCardPreview, model, index, page.bl)
 				]));
 	});
 var $author$project$Type$DragEnd = {$: 35};
@@ -20179,7 +20178,7 @@ var $author$project$View$ViewHelper$viewSortableItem = F6(
 		var isOver = function () {
 			if (!maybeDrag.$) {
 				var d = maybeDrag.a;
-				return _Utils_eq(d.b3, target) && _Utils_eq(d.bD, index);
+				return _Utils_eq(d.b5, target) && _Utils_eq(d.bG, index);
 			} else {
 				return false;
 			}
@@ -20198,7 +20197,7 @@ var $author$project$View$ViewHelper$viewSortableItem = F6(
 				function () {
 					if (!maybeDrag.$) {
 						var d = maybeDrag.a;
-						return A3($author$project$Type$Reorder, d.b3, d.cv, index);
+						return A3($author$project$Type$Reorder, d.b5, d.cv, index);
 					} else {
 						return $author$project$Type$DragEnd;
 					}
@@ -20229,7 +20228,7 @@ var $author$project$View$Reorder$viewReorder = F3(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class($author$project$View$Reorder$reorderStyle.bR)
+					$elm$html$Html$Attributes$class($author$project$View$Reorder$reorderStyle.bU)
 				]),
 			_Utils_ap(
 				A2(
@@ -20238,14 +20237,14 @@ var $author$project$View$Reorder$viewReorder = F3(
 						function (index, page) {
 							return A6(
 								$author$project$View$ViewHelper$viewSortableItem,
-								model.bi,
+								model.bk,
 								model.cp,
 								2,
 								index,
 								false,
 								A5($author$project$View$Reorder$viewPageCard, model, present, index, page, page.z));
 						}),
-					book.Q),
+					book.S),
 				_List_fromArray(
 					[
 						$author$project$View$Reorder$viewAddPageCard(model)
@@ -20298,7 +20297,7 @@ var $author$project$View$MainArea$centralArea = F3(
 							$author$project$Type$OnScroll('page-view-area'),
 							$author$project$Domain$Helper$scrollDecoder))
 					]),
-				$author$project$View$Style$scrollbarStyle(model.bi)),
+				$author$project$View$Style$scrollbarStyle(model.bk)),
 			_List_fromArray(
 				[
 					A3($author$project$View$MainArea$viewContentBody, model, present, book)
@@ -20315,7 +20314,7 @@ var $author$project$View$MainArea$mainWrapperStyle = function (theme) {
 				'w-full',
 				'h-full',
 				'overflow-hidden',
-				$author$project$View$Style$basecolors(theme).cc
+				$author$project$View$Style$basecolors(theme).aE
 			]));
 };
 var $elm$html$Html$main_ = _VirtualDom_node('main');
@@ -20344,7 +20343,7 @@ var $author$project$View$ViewHelper$viewEmptyState = function (model) {
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$class(
-				$author$project$View$ViewHelper$emptyStateStyle(model.bi))
+				$author$project$View$ViewHelper$emptyStateStyle(model.bk))
 			]),
 		_List_fromArray(
 			[
@@ -20367,7 +20366,7 @@ var $elm$html$Html$Attributes$step = function (n) {
 	return A2($elm$html$Html$Attributes$stringProperty, 'step', n);
 };
 var $author$project$View$MainFooter$mainFooter = {
-	bd: function (theme) {
+	bf: function (theme) {
 		return $author$project$View$Style$tw(
 			_List_fromArray(
 				[
@@ -20376,15 +20375,15 @@ var $author$project$View$MainFooter$mainFooter = {
 					'cursor-pointer',
 					'hover:opacity-70',
 					'truncate',
-					$author$project$View$Style$basecolors(theme).c$
+					$author$project$View$Style$basecolors(theme).c0
 				]));
 	},
-	bm: function (colorClass) {
+	bo: function (colorClass) {
 		return $author$project$View$Style$tw(
 			_List_fromArray(
 				['border', 'rounded', 'truncate', 'flex-1', 'px-2', 'py-1', 'text-xs', colorClass, 'hover:bg-white/5', 'border-gray-500/20', 'text-red-400']));
 	},
-	bq: function (theme) {
+	bt: function (theme) {
 		return $author$project$View$Style$tw(
 			_List_fromArray(
 				[
@@ -20394,14 +20393,14 @@ var $author$project$View$MainFooter$mainFooter = {
 					'py-1',
 					'items-center',
 					'gap-10',
-					$author$project$View$Style$basecolors(theme).cY,
-					$author$project$View$Style$basecolors(theme).cd
+					$author$project$View$Style$basecolors(theme).cZ,
+					$author$project$View$Style$basecolors(theme).ce
 				]));
 	},
-	bW: $author$project$View$Style$tw(
+	bY: $author$project$View$Style$tw(
 		_List_fromArray(
 			['relative', 'w-full', 'max-w-4xl', 'h-5', 'flex', 'items-center', 'cursor-pointer'])),
-	bX: function (total) {
+	bZ: function (total) {
 		return _List_fromArray(
 			[
 				$elm$html$Html$Attributes$type_('range'),
@@ -20412,7 +20411,7 @@ var $author$project$View$MainFooter$mainFooter = {
 				$elm$html$Html$Attributes$step('1')
 			]);
 	},
-	bY: F2(
+	b_: F2(
 		function (theme, percent) {
 			return _List_fromArray(
 				[
@@ -20423,11 +20422,11 @@ var $author$project$View$MainFooter$mainFooter = {
 					A2(
 					$elm$html$Html$Attributes$style,
 					'background-color',
-					$author$project$View$Style$basecolors(theme).cU),
+					$author$project$View$Style$basecolors(theme).cV),
 					$elm$html$Html$Attributes$class('h-full')
 				]);
 		}),
-	bZ: $author$project$View$Style$tw(
+	b$: $author$project$View$Style$tw(
 		_List_fromArray(
 			['absolute', 'w-full', 'h-1', 'bg-gray-500/20', 'overflow-hidden']))
 };
@@ -20443,18 +20442,18 @@ var $author$project$View$MainFooter$viewBookTitle = F2(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$View$MainFooter$mainFooter.bd(model.bi)),
+					$author$project$View$MainFooter$mainFooter.bf(model.bk)),
 					A2(
 					$elm$html$Html$Attributes$style,
 					'font-family',
-					$author$project$View$Style$basecolors(model.bi).aI),
+					$author$project$View$Style$basecolors(model.bk).bs),
 					$elm$html$Html$Events$onDoubleClick(
-					A3($author$project$Type$EditBegin, 1, book.z, book.b4)),
-					$elm$html$Html$Attributes$title(book.b4)
+					A3($author$project$Type$EditBegin, 1, book.z, book.b6)),
+					$elm$html$Html$Attributes$title(book.b6)
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text(book.b4)
+					$elm$html$Html$text(book.b6)
 				]));
 	});
 var $author$project$View$MainFooter$deletePageButton = function (pageId) {
@@ -20463,7 +20462,7 @@ var $author$project$View$MainFooter$deletePageButton = function (pageId) {
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$class(
-				$author$project$View$MainFooter$mainFooter.bm('text-red-400')),
+				$author$project$View$MainFooter$mainFooter.bo('text-red-400')),
 				$elm$html$Html$Events$onClick(
 				$author$project$Type$DeletePage(pageId))
 			]),
@@ -20473,8 +20472,8 @@ var $author$project$View$MainFooter$deletePageButton = function (pageId) {
 			]));
 };
 var $author$project$View$MainFooter$isMiniWindowCollapsed = function (model) {
-	var usesMiniWindow = (model.a_ === 1) || (model.a_ === 2);
-	return usesMiniWindow && (!model.aO);
+	var usesMiniWindow = (model.a0 === 1) || (model.a0 === 2);
+	return usesMiniWindow && (!model.aQ);
 };
 var $author$project$Type$OpenRightSideWindow = {$: 56};
 var $author$project$View$MainFooter$footerMiniBtnStyle = function (theme) {
@@ -20487,9 +20486,9 @@ var $author$project$View$MainFooter$footerMiniBtnStyle = function (theme) {
 				'opacity-70',
 				'font-semibold',
 				'border',
-				$author$project$View$Style$basecolors(theme).bU,
-				$author$project$View$Style$basecolors(theme).aD,
-				$author$project$View$Style$basecolors(theme).c$,
+				$author$project$View$Style$basecolors(theme).cT,
+				$author$project$View$Style$basecolors(theme).J,
+				$author$project$View$Style$basecolors(theme).c0,
 				'hover:opacity-90'
 			]));
 };
@@ -20514,7 +20513,7 @@ var $author$project$View$MainFooter$viewCollapsedControls = F2(
 							A2(
 							$elm$html$Html$Attributes$style,
 							'font-family',
-							$author$project$View$Style$basecolors(theme).aI),
+							$author$project$View$Style$basecolors(theme).bs),
 							$elm$html$Html$Events$onClick(
 							$author$project$Type$ChangeMode(nextMode))
 						]),
@@ -20531,7 +20530,7 @@ var $author$project$View$MainFooter$viewCollapsedControls = F2(
 							A2(
 							$elm$html$Html$Attributes$style,
 							'font-family',
-							$author$project$View$Style$basecolors(theme).aI),
+							$author$project$View$Style$basecolors(theme).bs),
 							$elm$html$Html$Events$onClick($author$project$Type$OpenRightSideWindow),
 							$elm$html$Html$Attributes$title('Open side menu')
 						]),
@@ -20615,7 +20614,7 @@ var $author$project$View$MainFooter$viewWidthSlider = F2(
 									[
 										'text-[11px]',
 										'opacity-70',
-										$author$project$View$Style$basecolors(theme).c$
+										$author$project$View$Style$basecolors(theme).c0
 									])))
 						]),
 					_List_fromArray(
@@ -20707,13 +20706,13 @@ var $author$project$Domain$Helper$wheelDecoder = F2(
 	});
 var $author$project$View$MainFooter$viewSeekBar = F3(
 	function (model, present, total) {
-		var currentVal = present.am;
+		var currentVal = present.ap;
 		var progress = A2($author$project$Domain$Helper$calcProgress, currentVal, total);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class($author$project$View$MainFooter$mainFooter.bW),
+					$elm$html$Html$Attributes$class($author$project$View$MainFooter$mainFooter.bY),
 					A2(
 					$elm$html$Html$Events$on,
 					'wheel',
@@ -20725,19 +20724,19 @@ var $author$project$View$MainFooter$viewSeekBar = F3(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class($author$project$View$MainFooter$mainFooter.bZ)
+							$elm$html$Html$Attributes$class($author$project$View$MainFooter$mainFooter.b$)
 						]),
 					_List_fromArray(
 						[
 							A2(
 							$elm$html$Html$div,
-							A2($author$project$View$MainFooter$mainFooter.bY, model.bi, progress),
+							A2($author$project$View$MainFooter$mainFooter.b_, model.bk, progress),
 							_List_Nil)
 						])),
 					A2(
 					$elm$html$Html$input,
 					_Utils_ap(
-						$author$project$View$MainFooter$mainFooter.bX(total),
+						$author$project$View$MainFooter$mainFooter.bZ(total),
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$value(
@@ -20757,7 +20756,7 @@ var $author$project$View$MainFooter$viewSeekBar = F3(
 	});
 var $author$project$View$MainFooter$viewFooter = F4(
 	function (model, state, book, theme) {
-		var total = $elm$core$List$length(book.Q);
+		var total = $elm$core$List$length(book.S);
 		var currentPageId = A2(
 			$elm$core$Maybe$withDefault,
 			'',
@@ -20772,7 +20771,7 @@ var $author$project$View$MainFooter$viewFooter = F4(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$View$MainFooter$mainFooter.bq(theme))
+					$author$project$View$MainFooter$mainFooter.bt(theme))
 				]),
 			_List_fromArray(
 				[
@@ -20820,7 +20819,7 @@ var $author$project$View$MainArea$pageContentView = F2(
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class(
-						$author$project$View$MainArea$mainWrapperStyle(model.bi))
+						$author$project$View$MainArea$mainWrapperStyle(model.bk))
 					]),
 				_List_fromArray(
 					[
@@ -20834,7 +20833,7 @@ var $author$project$View$MainArea$pageContentView = F2(
 							[
 								A3($author$project$View$MainArea$centralArea, model, present, book)
 							])),
-						A4($author$project$View$MainFooter$viewFooter, model, present, book, model.bi)
+						A4($author$project$View$MainFooter$viewFooter, model, present, book, model.bk)
 					]));
 		}
 	});
@@ -20854,7 +20853,7 @@ var $author$project$View$MainArea$menuButtonStyle = function (theme) {
 				'hover:opacity-100',
 				'hover:underline',
 				'transition-opacity',
-				$author$project$View$Style$basecolors(theme).ba
+				$author$project$View$Style$basecolors(theme).E
 			]));
 };
 var $author$project$View$MainArea$bookFileImport = function (theme) {
@@ -20894,7 +20893,7 @@ var $author$project$View$MainArea$shelfListMenuStyle = $author$project$View$Styl
 var $author$project$View$MainArea$bookListMenu = F2(
 	function (model, shelfId) {
 		return _Utils_eq(
-			model.aS,
+			model.aU,
 			$author$project$Type$ShelfDetailView(shelfId)) ? A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -20903,19 +20902,19 @@ var $author$project$View$MainArea$bookListMenu = F2(
 				]),
 			_List_fromArray(
 				[
-					$author$project$View$MainArea$bookFileImport(model.bi),
+					$author$project$View$MainArea$bookFileImport(model.bk),
 					A2(
 					$elm$html$Html$p,
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class(
-							$author$project$View$MainArea$menuButtonStyle(model.bi))
+							$author$project$View$MainArea$menuButtonStyle(model.bk))
 						]),
 					_List_fromArray(
 						[
 							$elm$html$Html$text('/')
 						])),
-					$author$project$View$MainArea$makeNewBook(model.bi)
+					$author$project$View$MainArea$makeNewBook(model.bk)
 				])) : $elm$html$Html$text('');
 	});
 var $author$project$View$MainArea$shelfDetailTitle = F2(
@@ -20936,7 +20935,7 @@ var $author$project$View$MainArea$shelfDetailTitle = F2(
 							A2(
 							$elm$html$Html$Attributes$style,
 							'font-family',
-							$author$project$View$Style$basecolors(model.bi).aI)
+							$author$project$View$Style$basecolors(model.bk).bs)
 						]),
 					_List_fromArray(
 						[
@@ -20955,87 +20954,63 @@ var $author$project$View$MainArea$shelfDetailViewStyle = function (model) {
 	return $author$project$View$Style$tw(
 		_List_fromArray(
 			[
-				$author$project$View$MainArea$shelfViewPadding(model.a_),
+				$author$project$View$MainArea$shelfViewPadding(model.a0),
 				'py-8',
 				'overflow-y-auto',
 				'h-full',
-				$author$project$View$Style$basecolors(model.bi).c$,
-				$author$project$View$Style$basecolors(model.bi).cc
+				$author$project$View$Style$basecolors(model.bk).c0,
+				$author$project$View$Style$basecolors(model.bk).aE
 			]));
 };
 var $author$project$Type$DragBook = 1;
-var $author$project$View$MainArea$shelfBookGridStyle = $author$project$View$Style$tw(
-	_List_fromArray(
-		['grid', 'grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-2', 'xl:grid-cols-3', 'gap-8', 'auto-rows-[250px]']));
 var $author$project$Type$BookExportMenu = function (a) {
 	return {$: 1, a: a};
 };
 var $author$project$Type$DeleteBook = function (a) {
 	return {$: 7, a: a};
 };
-var $author$project$Type$DeleteButton = function (a) {
-	return {$: 3, a: a};
-};
 var $author$project$Type$EditSubmit = {$: 43};
 var $author$project$Type$SelectBook = function (a) {
 	return {$: 8, a: a};
 };
-var $author$project$View$MainArea$cardFooterStyle = function (theme) {
-	return $author$project$View$Style$tw(
-		_List_fromArray(
-			[
-				'flex',
-				'items-center',
-				'justify-between',
-				'w-full',
-				'py-2',
-				'mt-auto',
-				'border-t',
-				$author$project$View$Style$basecolors(theme).aE
-			]));
-};
-var $author$project$View$MainArea$countLabelStyle = function (theme) {
-	return $author$project$View$Style$tw(
-		_List_fromArray(
-			[
-				'text-xs',
-				'font-medium',
-				$author$project$View$Style$basecolors(theme).c$,
-				'mb-1',
-				'opacity-70',
-				'whitespace-nowrap'
-			]));
-};
-var $author$project$View$MainArea$formatBookCountText = function (book) {
-	return $elm$core$String$fromInt(
-		$elm$core$List$length(book.Q)) + ' Pages ';
-};
-var $author$project$View$MainArea$renderBookCountLabel = F2(
-	function (theme, book) {
-		return A2(
-			$elm$html$Html$span,
+var $author$project$View$Cards$TooltipLeft = 1;
+var $author$project$View$Cards$TooltipRight = 0;
+var $author$project$View$Cards$bookCardBodyStyle = F2(
+	function (theme, isActive) {
+		var borderActive = isActive ? $author$project$View$Style$tw(
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class(
-					$author$project$View$MainArea$countLabelStyle(theme))
-				]),
+					$author$project$View$Style$basecolors(theme).bg,
+					'border-2'
+				])) : $author$project$View$Style$basecolors(theme).J;
+		return $author$project$View$Style$tw(
 			_List_fromArray(
 				[
-					$elm$html$Html$text(
-					$author$project$View$MainArea$formatBookCountText(book))
+					'relative w-full min-w-0 aspect-[3/4] p-4 rounded-r-lg rounded-l-xs border shadow-sm hover:shadow-xl transition-all duration-200 group-hover:-translate-y-1 flex flex-col justify-between',
+					$author$project$View$Style$basecolors(theme).cZ,
+					borderActive
 				]));
 	});
-var $author$project$Type$Below = 1;
-var $author$project$View$MainArea$exportContainerStyle = function (isOpen) {
+var $author$project$View$Cards$bookOuterWrapperStyle = function (isOpen) {
+	var stackOrder = isOpen ? 'z-30' : 'z-0 hover:z-50';
 	return $author$project$View$Style$tw(
 		_List_fromArray(
-			[
-				'relative',
-				'mt-auto',
-				'flex',
-				'justify-end',
-				isOpen ? 'z-30' : 'z-0'
-			]));
+			['group relative cursor-pointer w-full min-w-0', stackOrder]));
+};
+var $author$project$View$Cards$getAllH1Headings = function (book) {
+	return A2(
+		$elm$core$List$filter,
+		function (h) {
+			return h.X === 1;
+		},
+		$elm$core$List$concat(
+			A2(
+				$elm$core$List$indexedMap,
+				F2(
+					function (i, p) {
+						return A2($author$project$Domain$Helper$extractHeadings, i, p.bl);
+					}),
+				book.S)));
 };
 var $author$project$Type$ExportBookJson = function (a) {
 	return {$: 37, a: a};
@@ -21043,173 +21018,23 @@ var $author$project$Type$ExportBookJson = function (a) {
 var $author$project$Type$ExportBookZip = function (a) {
 	return {$: 36, a: a};
 };
-var $author$project$View$MainArea$exportMenuItems = function (book) {
-	return _List_fromArray(
-		[
-			_Utils_Tuple2(
-			'JSON',
-			$author$project$Type$ExportBookJson(book)),
-			_Utils_Tuple2(
-			'ZIP',
-			$author$project$Type$ExportBookZip(book.z))
-		]);
-};
-var $author$project$View$ViewHelper$dropdownPositionStyle = function (direction) {
-	if (!direction) {
-		return 'absolute left-0 bottom-full mb-2';
-	} else {
-		return 'absolute right-0 top-full mt-2';
-	}
-};
-var $author$project$View$ViewHelper$dropdownMenuStyle = F2(
-	function (direction, theme) {
-		var themeCard = function () {
-			switch (theme) {
-				case 0:
-					return _List_fromArray(
-						['bg-[#FBF8F5]/95', 'border-[#DCD4C9]', 'shadow-black/10']);
-				case 1:
-					return _List_fromArray(
-						['bg-[#1E1E1D]/95', 'border-[#3A3A36]', 'shadow-black/50']);
-				default:
-					return _List_fromArray(
-						['bg-[#161626]/95', 'border-[#8B7355]/40', 'shadow-black/60']);
-			}
-		}();
-		var base = _List_fromArray(
-			[
-				$author$project$View$ViewHelper$dropdownPositionStyle(direction),
-				'z-50',
-				'flex flex-col',
-				'p-1.5',
-				'min-w-[150px]',
-				'border shadow-xl',
-				'backdrop-blur-sm',
-				'animate-[fadeIn_0.1s_ease-out]',
-				$author$project$View$Style$basecolors(theme).bU
-			]);
-		return $author$project$View$Style$tw(
-			_Utils_ap(base, themeCard));
-	});
+var $author$project$Type$CloseMenu = {$: 53};
 var $author$project$Type$SelectMenuItem = function (a) {
 	return {$: 59, a: a};
 };
-var $author$project$View$ViewHelper$dropdownItemStyle = function (theme) {
-	var themeItem = function () {
-		switch (theme) {
-			case 0:
-				return _List_fromArray(
-					['text-[#4A453E]', 'hover:bg-black/5', 'hover:text-[#C86D51]']);
-			case 1:
-				return _List_fromArray(
-					['text-[#CCCCCC]', 'hover:bg-white/10', 'hover:text-[#C9A84C]']);
-			default:
-				return _List_fromArray(
-					['text-[#E0D5C0]', 'hover:bg-[#8B7355]/30', 'hover:text-[#D9A74A]']);
-		}
-	}();
-	var base = _List_fromArray(
-		['w-full', 'px-3', 'py-1.5', 'text-left', 'text-xs', 'font-medium', 'tracking-wide', 'rounded-md', 'whitespace-nowrap', 'cursor-pointer', 'transition-colors duration-150']);
-	return $author$project$View$Style$tw(
-		_Utils_ap(base, themeItem));
-};
-var $author$project$View$ViewHelper$renderMenuItem = F2(
-	function (theme, _v0) {
-		var label = _v0.a;
-		var msg = _v0.b;
-		return A2(
-			$elm$html$Html$button,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class(
-					$author$project$View$ViewHelper$dropdownItemStyle(theme)),
-					A2(
-					$elm$html$Html$Attributes$style,
-					'font-family',
-					$author$project$View$Style$basecolors(theme).aI),
-					$author$project$View$ViewHelper$stopClickPropagation(
-					$author$project$Type$SelectMenuItem(msg))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(label)
-				]));
-	});
-var $author$project$View$ViewHelper$renderMenuList = F3(
-	function (direction, theme, items) {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class(
-					A2($author$project$View$ViewHelper$dropdownMenuStyle, direction, theme))
-				]),
-			A2(
-				$elm$core$List$map,
-				$author$project$View$ViewHelper$renderMenuItem(theme),
-				items));
-	});
-var $author$project$Type$CloseMenu = {$: 53};
-var $author$project$View$ViewHelper$renderMenuOverlay = A2(
-	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('fixed inset-0 z-40 cursor-default bg-transparent'),
-			$author$project$View$ViewHelper$stopClickPropagation($author$project$Type$CloseMenu)
-		]),
-	_List_Nil);
-var $author$project$View$ViewHelper$renderDropdownMenu = F3(
-	function (direction, theme, items) {
-		return A2(
-			$elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$author$project$View$ViewHelper$renderMenuOverlay,
-					A3($author$project$View$ViewHelper$renderMenuList, direction, theme, items)
-				]));
-	});
-var $author$project$View$ViewHelper$openDropdown = F4(
-	function (isOpen, direction, theme, items) {
-		return isOpen ? A3($author$project$View$ViewHelper$renderDropdownMenu, direction, theme, items) : $elm$html$Html$text('');
-	});
 var $author$project$Type$ToggleMenu = function (a) {
 	return {$: 52, a: a};
 };
-var $author$project$View$MainArea$miniButtonStyle = function (theme) {
+var $author$project$View$Cards$miniExportBtnStyle = function (theme) {
 	return $author$project$View$Style$tw(
 		_List_fromArray(
 			[
-				'px-1',
-				'text-[12px]',
-				'font-bold',
-				'uppercase',
-				'hover:bg-white/10',
-				$author$project$View$Style$basecolors(theme).c0,
-				'border',
-				'rounded-sm',
-				$author$project$View$Style$basecolors(theme).aD
+				'px-1.5 py-0.5 text-xs font-mono font-bold uppercase rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors',
+				$author$project$View$Style$basecolors(theme).E
 			]));
 };
-var $author$project$View$MainArea$renderTriggerButton = F2(
-	function (theme, menuId) {
-		return A2(
-			$elm$html$Html$button,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class(
-					$author$project$View$MainArea$miniButtonStyle(theme)),
-					$author$project$View$ViewHelper$stopClickPropagation(
-					$author$project$Type$ToggleMenu(menuId))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Export ▾')
-				]));
-	});
-var $author$project$View$MainArea$renderExportControls = F3(
-	function (model, theme, book) {
-		var menuId = $author$project$Type$BookExportMenu(book.z);
+var $author$project$View$Cards$viewCompactExportMenu = F4(
+	function (model, theme, menuId, items) {
 		var isOpen = _Utils_eq(
 			model.cK,
 			$elm$core$Maybe$Just(menuId));
@@ -21217,194 +21042,517 @@ var $author$project$View$MainArea$renderExportControls = F3(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class(
-					$author$project$View$MainArea$exportContainerStyle(isOpen))
+					$elm$html$Html$Attributes$class('relative flex justify-end')
 				]),
 			_List_fromArray(
 				[
-					A2($author$project$View$MainArea$renderTriggerButton, theme, menuId),
-					A4(
-					$author$project$View$ViewHelper$openDropdown,
-					isOpen,
-					1,
-					theme,
-					$author$project$View$MainArea$exportMenuItems(book))
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Cards$miniExportBtnStyle(theme)),
+							$author$project$View$ViewHelper$stopClickPropagation(
+							$author$project$Type$ToggleMenu(menuId))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Export ▾')
+						])),
+					isOpen ? A2(
+					$elm$html$Html$div,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('fixed inset-0 z-40 bg-transparent cursor-default'),
+									$author$project$View$ViewHelper$stopClickPropagation($author$project$Type$CloseMenu)
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class(
+									$author$project$View$Style$tw(
+										_List_fromArray(
+											[
+												'absolute right-0 top-full mt-1.5 z-50 flex flex-col p-1 w-24 border shadow-xl backdrop-blur-md rounded-lg animate-[fadeIn_0.1s_ease-out]',
+												$author$project$View$Style$basecolors(theme).cZ,
+												$author$project$View$Style$basecolors(theme).J
+											])))
+								]),
+							A2(
+								$elm$core$List$map,
+								function (_v0) {
+									var label = _v0.a;
+									var msg = _v0.b;
+									return A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class(
+												$author$project$View$Style$tw(
+													_List_fromArray(
+														[
+															'w-full px-2 py-1 text-center text-xs font-mono font-semibold rounded cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-colors',
+															$author$project$View$Style$basecolors(theme).c0
+														]))),
+												$author$project$View$ViewHelper$stopClickPropagation(
+												$author$project$Type$SelectMenuItem(msg))
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(label)
+											]));
+								},
+								items))
+						])) : $elm$html$Html$text('')
 				]));
 	});
-var $author$project$View$MainArea$bookCardFooter = F3(
+var $author$project$View$Cards$viewBookCardFooter = F3(
 	function (model, theme, book) {
+		var menuId = $author$project$Type$BookExportMenu(book.z);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$View$MainArea$cardFooterStyle(theme))
+					$author$project$View$Style$tw(
+						_List_fromArray(
+							[
+								'pl-3 pt-2 mt-auto border-t flex items-center justify-between text-xs shrink-0 relative',
+								$author$project$View$Style$basecolors(theme).aH
+							])))
 				]),
 			_List_fromArray(
 				[
-					A2($author$project$View$MainArea$renderBookCountLabel, theme, book),
-					A3($author$project$View$MainArea$renderExportControls, model, theme, book)
-				]));
-	});
-var $author$project$View$MainArea$bookCardStyle = F3(
-	function (theme, isActive, isOpen) {
-		var stackOrder = isOpen ? 'z-30' : 'z-0';
-		var corners = (theme === 2) ? $author$project$View$Style$basecolors(theme).bU : 'rounded-2xl';
-		var activeBorder = isActive ? $author$project$View$Style$tw(
-			_List_fromArray(
-				[
-					$author$project$View$Style$basecolors(theme).be,
-					'border-2'
-				])) : $author$project$View$Style$basecolors(theme).aD;
-		return $author$project$View$Style$tw(
-			_List_fromArray(
-				[
-					'flex',
-					'flex-col',
-					'relative',
-					'w-full',
-					'h-full',
-					'pt-5',
-					'px-5',
-					'shadow-lg',
-					'hover:shadow-xl',
-					'border',
-					'cursor-pointer',
-					stackOrder,
-					corners,
-					$author$project$View$Style$basecolors(theme).cY,
-					activeBorder
-				]));
-	});
-var $author$project$View$MainArea$headingItemStyle = F2(
-	function (theme, _v0) {
-		return $author$project$View$Style$tw(
-			_List_fromArray(
-				[
-					'text-sm',
-					'truncate',
-					'mb-1',
-					'mx-3',
-					$author$project$View$Style$basecolors(theme).c$ + ' opacity-80'
-				]));
-	});
-var $author$project$View$MainArea$bookHeadingItem = F3(
-	function (theme, index, textContent) {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class(
-					A2($author$project$View$MainArea$headingItemStyle, theme, index))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(textContent)
-				]));
-	});
-var $author$project$View$MainArea$getBookHeadingsForCard = function (book) {
-	return A2(
-		$elm$core$List$take,
-		6,
-		A2(
-			$elm$core$List$filter,
-			function (h) {
-				return h.V === 1;
-			},
-			$elm$core$List$concat(
-				A2(
-					$elm$core$List$indexedMap,
-					F2(
-						function (i, p) {
-							return A2($author$project$Domain$Helper$extractHeadings, i, p.bj);
-						}),
-					book.Q))));
-};
-var $author$project$View$MainArea$bookHeadingList = F2(
-	function (theme, book) {
-		var headings = A2(
-			$elm$core$List$indexedMap,
-			$elm$core$Tuple$pair,
-			$author$project$View$MainArea$getBookHeadingsForCard(book));
-		return A2(
-			$elm$html$Html$div,
-			_List_Nil,
-			A2(
-				$elm$core$List$map,
-				function (_v0) {
-					var i = _v0.a;
-					var h = _v0.b;
-					return A3($author$project$View$MainArea$bookHeadingItem, theme, i, h.c$);
-				},
-				headings));
-	});
-var $author$project$View$MainArea$bookTitleTextStyle = function (theme) {
-	return $author$project$View$Style$tw(
-		_List_fromArray(
-			[
-				'text-lg',
-				'font-bold',
-				'ml-2',
-				'mb-1',
-				$author$project$View$Style$basecolors(theme).c$,
-				$author$project$View$Style$basecolors(theme).cY,
-				'truncate'
-			]));
-};
-var $author$project$View$MainArea$bookTitleText = F2(
-	function (model, book) {
-		return A2(
-			$elm$html$Html$h3,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class(
-					$author$project$View$MainArea$bookTitleTextStyle(model.bi)),
-					$elm$html$Html$Events$onDoubleClick(
-					A3($author$project$Type$EditBegin, 1, book.z, book.b4)),
-					$author$project$View$ViewHelper$stopClickPropagation($author$project$Type$NoOp)
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(book.b4)
-				]));
-	});
-var $author$project$View$MainArea$bookTitleRow = F2(
-	function (model, book) {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('flex items-center gap-2 mb-2'),
-					$elm$html$Html$Attributes$title('Edit Title')
-				]),
-			_List_fromArray(
-				[
-					A2($author$project$View$MainArea$bookTitleText, model, book)
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-xs font-mono opacity-65',
+										$author$project$View$Style$basecolors(theme).c0
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$elm$core$String$fromInt(
+								$elm$core$List$length(book.S)) + ' Pages')
+						])),
+					A4(
+					$author$project$View$Cards$viewCompactExportMenu,
+					model,
+					theme,
+					menuId,
+					_List_fromArray(
+						[
+							_Utils_Tuple2(
+							'JSON',
+							$author$project$Type$ExportBookJson(book)),
+							_Utils_Tuple2(
+							'ZIP',
+							$author$project$Type$ExportBookZip(book.z))
+						]))
 				]));
 	});
 var $author$project$Domain$Helper$stripEmphasis = function (input) {
 	return A3($elm$core$String$replace, '**', '', input);
 };
-var $author$project$View$MainArea$bookTooltipText = function (book) {
-	var headings = A2(
-		$elm$core$List$map,
-		function (h) {
-			return '・ ' + $author$project$Domain$Helper$stripEmphasis(h.c$);
-		},
-		A2(
-			$elm$core$List$filter,
-			function (h) {
-				return h.V === 1;
-			},
-			$elm$core$List$concat(
-				A2(
-					$elm$core$List$indexedMap,
-					F2(
-						function (i, p) {
-							return A2($author$project$Domain$Helper$extractHeadings, i, p.bj);
-						}),
-					book.Q))));
-	return $elm$core$List$isEmpty(headings) ? '（見出しがありません）' : A2($elm$core$String$join, '\n', headings);
+var $author$project$View$Cards$viewBookChapterItem = F3(
+	function (theme, index, heading) {
+		var visibilityClass = (index < 4) ? 'flex' : ((index < 6) ? 'hidden xl:flex' : 'hidden 2xl:flex');
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(
+					$author$project$View$Style$tw(
+						_List_fromArray(
+							[
+								'text-xs font-medium truncate items-center gap-2 opacity-90 min-w-0',
+								visibilityClass,
+								$author$project$View$Style$basecolors(theme).c0
+							])))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'w-1.5 h-1.5 rounded-full shrink-0',
+										$author$project$View$Style$basecolors(theme).cO
+									])))
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('truncate flex-1')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$author$project$Domain$Helper$stripEmphasis(heading.c0))
+						]))
+				]));
+	});
+var $author$project$View$Cards$viewBookCoverContent = F3(
+	function (theme, book, allHeadings) {
+		var total = $elm$core$List$length(allHeadings);
+		var previewHeadings = A2($elm$core$List$take, 7, allHeadings);
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('pl-3 flex-1 flex flex-col min-w-0 overflow-hidden')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-xs font-mono tracking-widest uppercase font-bold block mb-1 shrink-0',
+										$author$project$View$Style$basecolors(theme).E
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('BOOK')
+						])),
+					A2(
+					$elm$html$Html$h3,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-lg font-bold leading-snug line-clamp-2 cursor-pointer shrink-0 opacity-85',
+										$author$project$View$Style$basecolors(theme).c0
+									]))),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'font-family',
+							$author$project$View$Style$basecolors(theme).bs),
+							$elm$html$Html$Events$onDoubleClick(
+							A3($author$project$Type$EditBegin, 1, book.z, book.b6)),
+							$author$project$View$ViewHelper$stopClickPropagation($author$project$Type$NoOp),
+							$elm$html$Html$Attributes$title('ダブルクリックで名前変更')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(book.b6)
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'w-8 h-[2px] my-3 shrink-0',
+										$author$project$View$Style$basecolors(theme).cO
+									])))
+						]),
+					_List_Nil),
+					$elm$core$List$isEmpty(allHeadings) ? A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-xs italic opacity-40 py-2',
+										$author$project$View$Style$basecolors(theme).c0
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('（見出しがありません）')
+						])) : A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('space-y-1.5 flex-1 min-w-0 overflow-hidden')
+						]),
+					A2(
+						$elm$core$List$indexedMap,
+						$author$project$View$Cards$viewBookChapterItem(theme),
+						previewHeadings)),
+					(total > 4) ? A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-xs font-mono font-semibold block mt-1.5 opacity-85 shrink-0',
+										$author$project$View$Style$basecolors(theme).E
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('+ more chapters →')
+						])) : $elm$html$Html$text('')
+				]));
+	});
+var $author$project$View$Cards$viewBookEdgeShadow = function (theme) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class(
+				$author$project$View$Style$tw(
+					_List_fromArray(
+						[
+							'absolute right-[-4px] top-1.5 bottom-1.5 w-2 rounded-r-xs border-r shadow-xs pointer-events-none',
+							$author$project$View$Style$basecolors(theme).ak,
+							$author$project$View$Style$basecolors(theme).J
+						])))
+			]),
+		_List_Nil);
+};
+var $author$project$View$Cards$viewBookSpineShadow = A2(
+	$elm$html$Html$div,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('absolute left-0 top-0 bottom-0 w-3.5 rounded-l-xs bg-gradient-to-r from-black/20 via-black/5 to-transparent pointer-events-none z-10')
+				]),
+			_List_Nil),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('absolute left-3.5 top-0 bottom-0 w-[1px] bg-black/10 pointer-events-none z-10')
+				]),
+			_List_Nil)
+		]));
+var $author$project$View$Cards$tooltipBoxStyle = function (theme) {
+	return $author$project$View$Style$tw(
+		_List_fromArray(
+			[
+				'p-3.5 rounded-xl border shadow-2xl backdrop-blur-md',
+				$author$project$View$Style$basecolors(theme).aE,
+				$author$project$View$Style$basecolors(theme).J
+			]));
+};
+var $author$project$View$Cards$viewBookTooltipItem = F2(
+	function (theme, heading) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(
+					$author$project$View$Style$tw(
+						_List_fromArray(
+							[
+								'text-xs truncate py-1 px-1.5 rounded cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center gap-2',
+								$author$project$View$Style$basecolors(theme).c0
+							]))),
+					$author$project$View$ViewHelper$stopClickPropagation(
+					$author$project$Type$SelectPage(heading.ab)),
+					$elm$html$Html$Attributes$title(
+					'P.' + ($elm$core$String$fromInt(heading.ab + 1) + ' へジャンプ'))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-xs font-mono opacity-60 shrink-0',
+										$author$project$View$Style$basecolors(theme).E
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							'P.' + $elm$core$String$fromInt(heading.ab + 1))
+						])),
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('truncate flex-1 font-medium')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$author$project$Domain$Helper$stripEmphasis(heading.c0))
+						]))
+				]));
+	});
+var $author$project$View$Cards$viewTooltipArrow = F2(
+	function (theme, side) {
+		var arrowPosition = function () {
+			if (!side) {
+				return '-left-1.5 top-4 border-l border-b';
+			} else {
+				return '-right-1.5 top-4 border-r border-t';
+			}
+		}();
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(
+					$author$project$View$Style$tw(
+						_List_fromArray(
+							[
+								'absolute w-3 h-3 rotate-45',
+								arrowPosition,
+								$author$project$View$Style$basecolors(theme).aE,
+								$author$project$View$Style$basecolors(theme).J
+							])))
+				]),
+			_List_Nil);
+	});
+var $author$project$View$Cards$viewTooltipContainer = F3(
+	function (side, widthClass, children) {
+		var sideClasses = function () {
+			if (!side) {
+				return $author$project$View$Style$tw(
+					_List_fromArray(
+						['left-[calc(100%+12px)] top-1/2', 'before:absolute before:-left-3 before:-top-2 before:bottom-0 before:w-3 before:content-[\'\']']));
+			} else {
+				return $author$project$View$Style$tw(
+					_List_fromArray(
+						['right-[calc(100%+12px)] top-1/2', 'before:absolute before:-right-3 before:-top-2 before:bottom-0 before:w-3 before:content-[\'\']']));
+			}
+		}();
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(
+					$author$project$View$Style$tw(
+						_List_fromArray(
+							['absolute z-50', widthClass, sideClasses, 'opacity-0 pointer-events-none', 'group-hover:opacity-100 group-hover:pointer-events-auto', 'transition-all duration-150 ease-out'])))
+				]),
+			children);
+	});
+var $author$project$View$Cards$viewTooltipHeader = F3(
+	function (theme, titleText, badgeText) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(
+					$author$project$View$Style$tw(
+						_List_fromArray(
+							[
+								'flex items-center justify-between pb-2 mb-2 border-b',
+								$author$project$View$Style$basecolors(theme).aH
+							])))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-xs font-bold font-mono uppercase tracking-wider',
+										$author$project$View$Style$basecolors(theme).c0
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(titleText)
+						])),
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-xs font-mono px-2 py-0.5 rounded-full font-bold',
+										$author$project$View$Style$basecolors(theme).ak,
+										$author$project$View$Style$basecolors(theme).E
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(badgeText)
+						]))
+				]));
+	});
+var $author$project$View$Cards$viewBookTooltip = F3(
+	function (theme, side, allHeadings) {
+		return $elm$core$List$isEmpty(allHeadings) ? $elm$html$Html$text('') : A3(
+			$author$project$View$Cards$viewTooltipContainer,
+			side,
+			'w-72',
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Cards$tooltipBoxStyle(theme))
+						]),
+					_List_fromArray(
+						[
+							A3(
+							$author$project$View$Cards$viewTooltipHeader,
+							theme,
+							'Table of Contents',
+							'全 ' + ($elm$core$String$fromInt(
+								$elm$core$List$length(allHeadings)) + ' 章')),
+							A2(
+							$elm$html$Html$div,
+							A2(
+								$elm$core$List$cons,
+								$elm$html$Html$Attributes$class('max-h-52 overflow-y-auto space-y-1.5 pr-1'),
+								$author$project$View$Style$scrollbarStyle(theme)),
+							A2(
+								$elm$core$List$map,
+								$author$project$View$Cards$viewBookTooltipItem(theme),
+								allHeadings)),
+							A2($author$project$View$Cards$viewTooltipArrow, theme, side)
+						]))
+				]));
+	});
+var $author$project$Type$DeleteButton = function (a) {
+	return {$: 3, a: a};
 };
 var $author$project$Icon$cansel = _List_fromArray(
 	['M512,52.535L459.467,0.002L256.002,203.462L52.538,0.002L0,52.535L203.47,256.005L0,459.475L52.533,511.998L256.002,308.527L459.467,511.998L512,459.475L308.536,256.005z']);
@@ -21446,17 +21594,28 @@ var $author$project$View$Style$icon = F2(
 				},
 				pathList));
 	});
-var $author$project$View$MainArea$viewBookCard = F3(
-	function (model, book, isEditing) {
-		var theme = model.bi;
+var $author$project$View$Cards$viewCardDeleteButton = F2(
+	function (theme, deleteMsg) {
+		return A4(
+			$author$project$View$ViewHelper$viewButton,
+			theme,
+			$author$project$Type$DeleteButton(
+				_Utils_Tuple2(1, 1)),
+			deleteMsg,
+			A2($author$project$View$Style$icon, $author$project$Icon$cansel, 'w-2 h-2'));
+	});
+var $author$project$View$Cards$viewBookCard = F4(
+	function (model, index, book, isEditing) {
+		var theme = model.bk;
+		var side = (A2($elm$core$Basics$modBy, 4, index) >= 2) ? 1 : 0;
 		var isOpen = _Utils_eq(
 			model.cK,
 			$elm$core$Maybe$Just(
 				$author$project$Type$BookExportMenu(book.z)));
 		var isActive = _Utils_eq(
-			model.x.al,
+			model.x.ao,
 			$elm$core$Maybe$Just(book.z));
-		var cardEventHandlers = isEditing ? _List_fromArray(
+		var cardEvents = isEditing ? _List_fromArray(
 			[
 				A2(
 				$elm$html$Html$Events$stopPropagationOn,
@@ -21473,60 +21632,66 @@ var $author$project$View$MainArea$viewBookCard = F3(
 				$elm$html$Html$Events$onClick(
 				$author$project$Type$SelectBook(book.z))
 			]);
+		var allHeadings = $author$project$View$Cards$getAllH1Headings(book);
 		return A2(
 			$elm$html$Html$div,
-			A2(
-				$elm$core$List$cons,
-				$elm$html$Html$Attributes$class(
-					A3($author$project$View$MainArea$bookCardStyle, theme, isActive, isOpen)),
-				A2(
-					$elm$core$List$cons,
-					$elm$html$Html$Attributes$title(
-						$author$project$View$MainArea$bookTooltipText(book)),
-					cardEventHandlers)),
 			_List_fromArray(
 				[
-					A4(
-					$author$project$View$ViewHelper$viewButton,
-					theme,
-					$author$project$Type$DeleteButton(
-						_Utils_Tuple2(1, 1)),
-					$author$project$Type$DeleteBook(book.z),
-					A2($author$project$View$Style$icon, $author$project$Icon$cansel, 'w-2 h-2')),
-					A2($author$project$View$MainArea$bookTitleRow, model, book),
-					A2($author$project$View$MainArea$bookHeadingList, theme, book),
-					A3($author$project$View$MainArea$bookCardFooter, model, theme, book)
+					$elm$html$Html$Attributes$class(
+					$author$project$View$Cards$bookOuterWrapperStyle(isOpen))
+				]),
+			_List_fromArray(
+				[
+					$author$project$View$Cards$viewBookEdgeShadow(theme),
+					A2(
+					$elm$html$Html$div,
+					A2(
+						$elm$core$List$cons,
+						$elm$html$Html$Attributes$class(
+							A2($author$project$View$Cards$bookCardBodyStyle, theme, isActive)),
+						cardEvents),
+					_List_fromArray(
+						[
+							$author$project$View$Cards$viewBookSpineShadow,
+							A2(
+							$author$project$View$Cards$viewCardDeleteButton,
+							theme,
+							$author$project$Type$DeleteBook(book.z)),
+							A3($author$project$View$Cards$viewBookCoverContent, theme, book, allHeadings),
+							A3($author$project$View$Cards$viewBookCardFooter, model, theme, book)
+						])),
+					A3($author$project$View$Cards$viewBookTooltip, theme, side, allHeadings)
 				]));
 	});
-var $author$project$View$MainArea$viewShelfBookGrid = F2(
+var $author$project$View$Cards$viewShelfBookGrid = F2(
 	function (model, books) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class($author$project$View$MainArea$shelfBookGridStyle)
+					$elm$html$Html$Attributes$class('grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8')
 				]),
 			A2(
 				$elm$core$List$indexedMap,
 				F2(
 					function (i, b) {
-						var isEditingThisBook = function () {
+						var isEditing = function () {
 							var _v0 = model.cq;
 							if (!_v0.$) {
 								var buffer = _v0.a;
-								return (buffer.b3 === 1) && _Utils_eq(buffer.z, b.z);
+								return (buffer.b5 === 1) && _Utils_eq(buffer.z, b.z);
 							} else {
 								return false;
 							}
 						}();
 						return A6(
 							$author$project$View$ViewHelper$viewSortableItem,
-							model.bi,
+							model.bk,
 							model.cp,
 							1,
 							i,
-							isEditingThisBook,
-							A3($author$project$View$MainArea$viewBookCard, model, b, isEditingThisBook));
+							isEditing,
+							A4($author$project$View$Cards$viewBookCard, model, i, b, isEditing));
 					}),
 				books));
 	});
@@ -21538,7 +21703,7 @@ var $author$project$View$MainArea$shelfDetailView = F2(
 				function (s) {
 					return _Utils_eq(s.z, shelfId);
 				},
-				model.x.R));
+				model.x.T));
 		if (!maybeShelf.$) {
 			var shelf = maybeShelf.a;
 			return A2(
@@ -21547,20 +21712,17 @@ var $author$project$View$MainArea$shelfDetailView = F2(
 					$elm$core$List$cons,
 					$elm$html$Html$Attributes$class(
 						$author$project$View$MainArea$shelfDetailViewStyle(model)),
-					$author$project$View$Style$scrollbarStyle(model.bi)),
+					$author$project$View$Style$scrollbarStyle(model.bk)),
 				_List_fromArray(
 					[
 						A2($author$project$View$MainArea$shelfDetailTitle, model, shelf.cF),
-						A2($author$project$View$MainArea$viewShelfBookGrid, model, shelf.ah),
+						A2($author$project$View$Cards$viewShelfBookGrid, model, shelf.aj),
 						A2($author$project$View$MainArea$bookListMenu, model, shelfId)
 					]));
 		} else {
 			return $author$project$View$ViewHelper$viewEmptyState(model);
 		}
 	});
-var $author$project$View$MainArea$shelfGridStyle = $author$project$View$Style$tw(
-	_List_fromArray(
-		['grid', 'grid-cols-1', 'gap-8', 'auto-rows-[250px]', 'sm:grid-cols-2', 'lg:grid-cols-2', 'xl:grid-cols-3']));
 var $author$project$Type$DragShelf = 0;
 var $author$project$Type$ShelfTitle = 0;
 var $author$project$Type$DeleteShelf = function (a) {
@@ -21572,83 +21734,22 @@ var $author$project$Type$SelectShelf = function (a) {
 var $author$project$Type$ShelfExportMenu = function (a) {
 	return {$: 0, a: a};
 };
-var $author$project$View$MainArea$shelfCardStyle = F3(
+var $author$project$View$Cards$shelfCardWrapperStyle = F3(
 	function (theme, isActive, isOpen) {
-		var stackOrder = isOpen ? 'z-30' : 'z-0';
-		var activeBorder = isActive ? $author$project$View$Style$tw(
+		var stackOrder = isOpen ? 'z-30' : 'z-0 hover:z-50';
+		var borderActive = isActive ? $author$project$View$Style$tw(
 			_List_fromArray(
 				[
-					$author$project$View$Style$basecolors(theme).be,
+					$author$project$View$Style$basecolors(theme).bg,
 					'border-2'
-				])) : $author$project$View$Style$basecolors(theme).aD;
+				])) : $author$project$View$Style$basecolors(theme).J;
 		return $author$project$View$Style$tw(
 			_List_fromArray(
 				[
-					'pt-6',
-					'px-6',
-					'w-full',
-					'h-full',
-					'relative',
-					'transition-all duration-200',
-					'flex',
-					'flex-col',
-					'border',
-					stackOrder,
-					'cursor-pointer',
-					'hover:shadow-xl',
-					$author$project$View$Style$basecolors(theme).c$,
-					$author$project$View$Style$basecolors(theme).cY,
-					$author$project$View$Style$basecolors(theme).bU,
-					activeBorder
-				]));
-	});
-var $author$project$View$MainArea$footerRowStyle = function (theme) {
-	return $author$project$View$Style$tw(
-		_List_fromArray(
-			[
-				'flex',
-				'items-center',
-				'justify-between',
-				'w-full',
-				'py-2',
-				'mt-auto',
-				'border-t',
-				$author$project$View$Style$basecolors(theme).aE
-			]));
-};
-var $author$project$View$MainArea$formatShelfCountText = function (shelf) {
-	return $elm$core$String$fromInt(
-		$elm$core$List$length(shelf.ah)) + ' Books';
-};
-var $author$project$View$MainArea$renderShelfCountLabel = F2(
-	function (theme, shelf) {
-		return A2(
-			$elm$html$Html$span,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class(
-					$author$project$View$MainArea$countLabelStyle(theme))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(
-					$author$project$View$MainArea$formatShelfCountText(shelf))
-				]));
-	});
-var $author$project$View$MainArea$renderShelfTriggerButton = F2(
-	function (theme, menuId) {
-		return A2(
-			$elm$html$Html$button,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class(
-					$author$project$View$MainArea$miniButtonStyle(theme)),
-					$author$project$View$ViewHelper$stopClickPropagation(
-					$author$project$Type$ToggleMenu(menuId))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Export ▾')
+					'group relative w-full h-72 px-5 pt-5 pb-4 rounded-xl border shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between',
+					$author$project$View$Style$basecolors(theme).cZ,
+					borderActive,
+					stackOrder
 				]));
 	});
 var $author$project$Type$ExportShelfJson = function (a) {
@@ -21657,223 +21758,496 @@ var $author$project$Type$ExportShelfJson = function (a) {
 var $author$project$Type$ExportShelfZip = function (a) {
 	return {$: 38, a: a};
 };
-var $author$project$View$MainArea$shelfExportMenuItems = function (shelf) {
-	return _List_fromArray(
-		[
-			_Utils_Tuple2(
-			'JSON',
-			$author$project$Type$ExportShelfJson(shelf)),
-			_Utils_Tuple2(
-			'ZIP',
-			$author$project$Type$ExportShelfZip(shelf.z))
-		]);
-};
-var $author$project$View$MainArea$renderShelfExportControls = F3(
-	function (model, theme, shelf) {
-		var menuId = $author$project$Type$ShelfExportMenu(shelf.z);
-		var isOpen = _Utils_eq(
-			model.cK,
-			$elm$core$Maybe$Just(menuId));
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class(
-					$author$project$View$MainArea$exportContainerStyle(isOpen))
-				]),
-			_List_fromArray(
-				[
-					A2($author$project$View$MainArea$renderShelfTriggerButton, theme, menuId),
-					A4(
-					$author$project$View$ViewHelper$openDropdown,
-					isOpen,
-					1,
-					theme,
-					$author$project$View$MainArea$shelfExportMenuItems(shelf))
-				]));
-	});
-var $author$project$View$MainArea$shelfCardfooter = F3(
-	function (model, theme, shelf) {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class(
-					$author$project$View$MainArea$footerRowStyle(theme))
-				]),
-			_List_fromArray(
-				[
-					A2($author$project$View$MainArea$renderShelfCountLabel, theme, shelf),
-					A3($author$project$View$MainArea$renderShelfExportControls, model, theme, shelf)
-				]));
-	});
-var $author$project$View$MainArea$shelfTooltipText = function (shelf) {
-	return $elm$core$List$isEmpty(shelf.ah) ? '（本がありません）' : A2(
-		$elm$core$String$join,
-		'\n',
-		A2(
-			$elm$core$List$map,
-			function (b) {
-				return '・ ' + b.b4;
-			},
-			shelf.ah));
-};
-var $author$project$View$MainArea$renderPreviewTitle = function (title) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('flex text-sm truncate opacity-80 gap-2')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text('・' + title)
-			]));
-};
-var $author$project$View$MainArea$viewShelfCardPreview = function (shelf) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('flex-1 flex-col gap-1 overflow-hidden')
-			]),
-		A2(
-			$elm$core$List$map,
-			$author$project$View$MainArea$renderPreviewTitle,
-			A2(
-				$elm$core$List$take,
-				7,
-				A2(
-					$elm$core$List$map,
-					function ($) {
-						return $.b4;
-					},
-					shelf.ah))));
-};
-var $author$project$View$MainArea$titleRowStyle = function (theme) {
+var $author$project$View$Cards$shelfFooterRowStyle = function (theme) {
 	return $author$project$View$Style$tw(
 		_List_fromArray(
 			[
-				'flex',
-				'items-center',
-				'gap-2',
-				'mb-2',
-				'border-b-1',
-				$author$project$View$Style$basecolors(theme).ba,
-				$author$project$View$Style$basecolors(theme).aE
+				'flex items-center justify-between pt-2 border-t text-xs shrink-0',
+				$author$project$View$Style$basecolors(theme).aH
 			]));
 };
-var $author$project$View$MainArea$viewShelfTitle = F2(
-	function (model, shelf) {
-		return A2(
-			$elm$html$Html$h3,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('text-lg font-bold truncate cursor-pointer'),
-					A2(
-					$elm$html$Html$Attributes$style,
-					'font-family',
-					$author$project$View$Style$basecolors(model.bi).aI),
-					$elm$html$Html$Events$onDoubleClick(
-					A3($author$project$Type$EditBegin, 0, shelf.z, shelf.cF)),
-					$author$project$View$ViewHelper$stopClickPropagation($author$project$Type$NoOp),
-					$elm$html$Html$Attributes$title('Double click to edit')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(shelf.cF)
-				]));
-	});
-var $author$project$View$MainArea$viewShelfCardTitleRow = F2(
-	function (model, shelf) {
-		var theme = model.bi;
+var $author$project$View$Cards$viewShelfCardFooter = F3(
+	function (model, theme, shelf) {
+		var menuId = $author$project$Type$ShelfExportMenu(shelf.z);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$View$MainArea$titleRowStyle(theme))
+					$author$project$View$Cards$shelfFooterRowStyle(theme))
 				]),
 			_List_fromArray(
 				[
-					A2($author$project$View$MainArea$viewShelfTitle, model, shelf)
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-xs opacity-60 font-mono',
+										$author$project$View$Style$basecolors(theme).c0
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('クリックで本棚を開く')
+						])),
+					A4(
+					$author$project$View$Cards$viewCompactExportMenu,
+					model,
+					theme,
+					menuId,
+					_List_fromArray(
+						[
+							_Utils_Tuple2(
+							'JSON',
+							$author$project$Type$ExportShelfJson(shelf)),
+							_Utils_Tuple2(
+							'ZIP',
+							$author$project$Type$ExportShelfZip(shelf.z))
+						]))
 				]));
 	});
-var $author$project$View$MainArea$viewShelfCard = F2(
-	function (model, shelf) {
-		var theme = model.bi;
-		var menuId = $author$project$Type$ShelfExportMenu(shelf.z);
+var $author$project$View$Cards$viewShelfCardHeader = F2(
+	function (theme, shelf) {
+		var bookCount = $elm$core$List$length(shelf.aj);
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex flex-col gap-1 min-w-0 pr-6 shrink-0')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('flex items-center justify-between')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('flex items-center gap-1.5')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$span,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class(
+											$author$project$View$Style$tw(
+												_List_fromArray(
+													[
+														'w-2 h-2 rounded-full shrink-0',
+														$author$project$View$Style$basecolors(theme).cO
+													])))
+										]),
+									_List_Nil),
+									A2(
+									$elm$html$Html$span,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class(
+											$author$project$View$Style$tw(
+												_List_fromArray(
+													[
+														'text-[11px] font-mono font-bold tracking-wider uppercase',
+														$author$project$View$Style$basecolors(theme).E
+													])))
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('SHELF')
+										]))
+								])),
+							A2(
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class(
+									$author$project$View$Style$tw(
+										_List_fromArray(
+											[
+												'text-xs font-mono px-2 py-0.5 rounded-full font-medium opacity-80',
+												$author$project$View$Style$basecolors(theme).ak,
+												$author$project$View$Style$basecolors(theme).c0
+											])))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(
+									$elm$core$String$fromInt(bookCount) + ' Books')
+								]))
+						])),
+					A2(
+					$elm$html$Html$h3,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-lg font-bold leading-tight cursor-pointer truncate mt-0.5',
+										$author$project$View$Style$basecolors(theme).c0
+									]))),
+							A2(
+							$elm$html$Html$Attributes$style,
+							'font-family',
+							$author$project$View$Style$basecolors(theme).bs),
+							$elm$html$Html$Events$onDoubleClick(
+							A3($author$project$Type$EditBegin, 0, shelf.z, shelf.cF)),
+							$author$project$View$ViewHelper$stopClickPropagation($author$project$Type$NoOp),
+							$elm$html$Html$Attributes$title('ダブルクリックで名前変更')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(shelf.cF)
+						]))
+				]));
+	});
+var $author$project$View$Cards$viewShelfSlotItem = F3(
+	function (theme, index, book) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex items-center px-2.5 h-7 min-w-0')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-xs font-mono opacity-50 mr-2.5 shrink-0',
+										$author$project$View$Style$basecolors(theme).c0
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							A3(
+								$elm$core$String$padLeft,
+								2,
+								'0',
+								$elm$core$String$fromInt(index + 1)))
+						])),
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'text-xs font-medium truncate flex-1',
+										$author$project$View$Style$basecolors(theme).c0
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(book.b6)
+						]))
+				]));
+	});
+var $author$project$View$Cards$viewShelfCardSlots = F2(
+	function (theme, books) {
+		var total = $elm$core$List$length(books);
+		var previewBooks = A2($elm$core$List$take, 4, books);
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('flex flex-col justify-center my-2 min-w-0')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'h-[124px] rounded-lg p-1.5 flex flex-col justify-start overflow-hidden',
+										$author$project$View$Style$basecolors(theme).ak
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$core$List$isEmpty(books) ? A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class(
+									$author$project$View$Style$tw(
+										_List_fromArray(
+											[
+												'h-full flex items-center justify-center text-xs italic opacity-40',
+												$author$project$View$Style$basecolors(theme).c0
+											])))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('（本がありません）')
+								])) : A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('flex flex-col min-w-0')
+								]),
+							A2(
+								$elm$core$List$indexedMap,
+								$author$project$View$Cards$viewShelfSlotItem(theme),
+								previewBooks))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('h-4 mt-1 flex items-center justify-end')
+						]),
+					_List_fromArray(
+						[
+							(total > 4) ? A2(
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class(
+									$author$project$View$Style$tw(
+										_List_fromArray(
+											[
+												'text-xs font-mono font-semibold opacity-85 block',
+												$author$project$View$Style$basecolors(theme).E
+											])))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(
+									'+' + ($elm$core$String$fromInt(total - 4) + ' more books →'))
+								])) : $elm$html$Html$text('')
+						]))
+				]));
+	});
+var $author$project$View$Cards$viewShelfTooltipArrow = F2(
+	function (theme, index) {
+		var m6 = A2($elm$core$Basics$modBy, 6, index);
+		var arrowPosition = ((!m6) || (m6 === 4)) ? '-left-1.5 top-4 border-l border-b' : ((m6 === 5) ? '-right-1.5 top-4 border-r border-t' : (((m6 === 1) || (m6 === 3)) ? $author$project$View$Style$tw(
+			_List_fromArray(
+				['top-4', '-left-1.5 right-auto border-l border-b border-r-0 border-t-0', 'md:left-auto md:-right-1.5 md:border-r md:border-t md:border-l-0 md:border-b-0', '2xl:-left-1.5 2xl:right-auto 2xl:border-l 2xl:border-b 2xl:border-r-0 2xl:border-t-0'])) : $author$project$View$Style$tw(
+			_List_fromArray(
+				['top-4', '-left-1.5 right-auto border-l border-b border-r-0 border-t-0', '2xl:left-auto 2xl:-right-1.5 2xl:border-r 2xl:border-t 2xl:border-l-0 2xl:border-b-0']))));
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(
+					$author$project$View$Style$tw(
+						_List_fromArray(
+							[
+								'absolute w-3 h-3 rotate-45',
+								arrowPosition,
+								$author$project$View$Style$basecolors(theme).aE,
+								$author$project$View$Style$basecolors(theme).J
+							])))
+				]),
+			_List_Nil);
+	});
+var $author$project$View$Cards$viewShelfTooltipContainer = F3(
+	function (index, widthClass, children) {
+		var m6 = A2($elm$core$Basics$modBy, 6, index);
+		var sideClasses = ((!m6) || (m6 === 4)) ? $author$project$View$Style$tw(
+			_List_fromArray(
+				['left-[calc(100%+12px)] top-1/2', 'before:absolute before:-left-3 before:-top-2 before:bottom-0 before:w-3 before:content-[\'\']'])) : ((m6 === 5) ? $author$project$View$Style$tw(
+			_List_fromArray(
+				['right-[calc(100%+12px)] top-1/2', 'before:absolute before:-right-3 before:-top-2 before:bottom-0 before:w-3 before:content-[\'\']'])) : (((m6 === 1) || (m6 === 3)) ? $author$project$View$Style$tw(
+			_List_fromArray(
+				['top-1/2', 'left-[calc(100%+12px)] right-auto before:absolute before:-left-3 before:right-auto before:-top-2 before:bottom-0 before:w-3 before:content-[\'\']', 'md:left-auto md:right-[calc(100%+12px)] md:before:-right-3 md:before:left-auto', '2xl:left-[calc(100%+12px)] 2xl:right-auto 2xl:before:-left-3 2xl:before:right-auto'])) : $author$project$View$Style$tw(
+			_List_fromArray(
+				['top-1/2', 'left-[calc(100%+12px)] right-auto before:absolute before:-left-3 before:right-auto before:-top-2 before:bottom-0 before:w-3 before:content-[\'\']', '2xl:left-auto 2xl:right-[calc(100%+12px)] 2xl:before:-right-3 2xl:before:left-auto']))));
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(
+					$author$project$View$Style$tw(
+						_List_fromArray(
+							['absolute z-50', widthClass, sideClasses, 'opacity-0 pointer-events-none', 'group-hover:opacity-100 group-hover:pointer-events-auto', 'transition-all duration-150 ease-out'])))
+				]),
+			children);
+	});
+var $author$project$View$Cards$viewShelfTooltipItem = F3(
+	function (theme, index, book) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(
+					$author$project$View$Style$tw(
+						_List_fromArray(
+							[
+								'flex items-center gap-2 text-xs py-1.5 px-2 rounded cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-colors',
+								$author$project$View$Style$basecolors(theme).c0
+							]))),
+					$author$project$View$ViewHelper$stopClickPropagation(
+					$author$project$Type$SelectBook(book.z)),
+					$elm$html$Html$Attributes$title('直接この本を開く')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Style$tw(
+								_List_fromArray(
+									[
+										'font-mono text-xs opacity-50 shrink-0',
+										$author$project$View$Style$basecolors(theme).E
+									])))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							A3(
+								$elm$core$String$padLeft,
+								2,
+								'0',
+								$elm$core$String$fromInt(index + 1)))
+						])),
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('font-medium truncate flex-1')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(book.b6)
+						]))
+				]));
+	});
+var $author$project$View$Cards$viewShelfTooltip = F3(
+	function (theme, index, shelf) {
+		return $elm$core$List$isEmpty(shelf.aj) ? $elm$html$Html$text('') : A3(
+			$author$project$View$Cards$viewShelfTooltipContainer,
+			index,
+			'w-[88%]',
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(
+							$author$project$View$Cards$tooltipBoxStyle(theme))
+						]),
+					_List_fromArray(
+						[
+							A3(
+							$author$project$View$Cards$viewTooltipHeader,
+							theme,
+							'All Books in Shelf',
+							$elm$core$String$fromInt(
+								$elm$core$List$length(shelf.aj)) + ' 冊'),
+							A2(
+							$elm$html$Html$div,
+							A2(
+								$elm$core$List$cons,
+								$elm$html$Html$Attributes$class('max-h-52 overflow-y-auto space-y-1 pr-1'),
+								$author$project$View$Style$scrollbarStyle(theme)),
+							A2(
+								$elm$core$List$indexedMap,
+								$author$project$View$Cards$viewShelfTooltipItem(theme),
+								shelf.aj)),
+							A2($author$project$View$Cards$viewShelfTooltipArrow, theme, index)
+						]))
+				]));
+	});
+var $author$project$View$Cards$viewShelfCard = F3(
+	function (model, index, shelf) {
+		var theme = model.bk;
 		var isOpen = _Utils_eq(
 			model.cK,
-			$elm$core$Maybe$Just(menuId));
-		var isActive = _Utils_eq(model.x.aF, shelf.z);
+			$elm$core$Maybe$Just(
+				$author$project$Type$ShelfExportMenu(shelf.z)));
+		var isActive = _Utils_eq(model.x.aI, shelf.z);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					A3($author$project$View$MainArea$shelfCardStyle, theme, isActive, isOpen)),
+					A3($author$project$View$Cards$shelfCardWrapperStyle, theme, isActive, isOpen)),
 					$elm$html$Html$Events$onClick(
-					$author$project$Type$SelectShelf(shelf.z)),
-					$elm$html$Html$Attributes$title(
-					$author$project$View$MainArea$shelfTooltipText(shelf))
+					$author$project$Type$SelectShelf(shelf.z))
 				]),
 			_List_fromArray(
 				[
-					A4(
-					$author$project$View$ViewHelper$viewButton,
+					A2(
+					$author$project$View$Cards$viewCardDeleteButton,
 					theme,
-					$author$project$Type$DeleteButton(
-						_Utils_Tuple2(1, 1)),
-					$author$project$Type$DeleteShelf(shelf.z),
-					A2($author$project$View$Style$icon, $author$project$Icon$cansel, 'w-2 h-2')),
-					A2($author$project$View$MainArea$viewShelfCardTitleRow, model, shelf),
-					$author$project$View$MainArea$viewShelfCardPreview(shelf),
-					A3($author$project$View$MainArea$shelfCardfooter, model, theme, shelf)
+					$author$project$Type$DeleteShelf(shelf.z)),
+					A2($author$project$View$Cards$viewShelfCardHeader, theme, shelf),
+					A2($author$project$View$Cards$viewShelfCardSlots, theme, shelf.aj),
+					A3($author$project$View$Cards$viewShelfCardFooter, model, theme, shelf),
+					A3($author$project$View$Cards$viewShelfTooltip, theme, index, shelf)
 				]));
 	});
-var $author$project$View$MainArea$viewSortableShelfCard = F3(
+var $author$project$View$Cards$viewSortableShelfCard = F3(
 	function (model, index, shelf) {
-		var isEditingThisShelf = function () {
+		var isEditing = function () {
 			var _v0 = model.cq;
 			if (!_v0.$) {
 				var buffer = _v0.a;
-				return (!buffer.b3) && _Utils_eq(buffer.z, shelf.z);
+				return (!buffer.b5) && _Utils_eq(buffer.z, shelf.z);
 			} else {
 				return false;
 			}
 		}();
 		return A6(
 			$author$project$View$ViewHelper$viewSortableItem,
-			model.bi,
+			model.bk,
 			model.cp,
 			0,
 			index,
-			isEditingThisShelf,
-			A2($author$project$View$MainArea$viewShelfCard, model, shelf));
+			isEditing,
+			A3($author$project$View$Cards$viewShelfCard, model, index, shelf));
 	});
-var $author$project$View$MainArea$shelfGrid = F2(
+var $author$project$View$Cards$shelfGrid = F2(
 	function (model, shelves) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class($author$project$View$MainArea$shelfGridStyle)
+					$elm$html$Html$Attributes$class('grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-8')
 				]),
 			A2(
 				$elm$core$List$indexedMap,
-				$author$project$View$MainArea$viewSortableShelfCard(model),
+				$author$project$View$Cards$viewSortableShelfCard(model),
 				shelves));
 	});
 var $author$project$View$MainArea$shelfListContainerStyle = function (model) {
 	return $author$project$View$Style$tw(
 		_List_fromArray(
 			[
-				$author$project$View$MainArea$shelfViewPadding(model.a_),
+				$author$project$View$MainArea$shelfViewPadding(model.a0),
 				'py-8',
 				'h-full',
 				'overflow-y-auto',
-				$author$project$View$Style$basecolors(model.bi).cc
+				$author$project$View$Style$basecolors(model.bk).aE
 			]));
 };
 var $author$project$Type$ShelfListView = {$: 1};
@@ -21918,8 +22292,8 @@ var $author$project$View$MainArea$shelfFileImport = function (theme) {
 			]));
 };
 var $author$project$View$MainArea$shelfListMenu = function (model) {
-	if (_Utils_eq(model.aS, $author$project$Type$ShelfListView)) {
-		var isGuiding = $elm$core$List$length(model.x.R) <= 2;
+	if (_Utils_eq(model.aU, $author$project$Type$ShelfListView)) {
+		var isGuiding = $elm$core$List$length(model.x.T) <= 2;
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -21928,19 +22302,19 @@ var $author$project$View$MainArea$shelfListMenu = function (model) {
 				]),
 			_List_fromArray(
 				[
-					$author$project$View$MainArea$shelfFileImport(model.bi),
+					$author$project$View$MainArea$shelfFileImport(model.bk),
 					A2(
 					$elm$html$Html$p,
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class(
-							$author$project$View$MainArea$menuButtonStyle(model.bi))
+							$author$project$View$MainArea$menuButtonStyle(model.bk))
 						]),
 					_List_fromArray(
 						[
 							$elm$html$Html$text('/')
 						])),
-					A2($author$project$View$MainArea$makeNewShelf, model.bi, isGuiding)
+					A2($author$project$View$MainArea$makeNewShelf, model.bk, isGuiding)
 				]));
 	} else {
 		return $elm$html$Html$text('');
@@ -21957,7 +22331,7 @@ var $author$project$View$MainArea$shelfListTitleStyle = function (theme) {
 				'py-1',
 				'w-xs',
 				'opacity-70',
-				$author$project$View$Style$basecolors(theme).c$
+				$author$project$View$Style$basecolors(theme).c0
 			]));
 };
 var $author$project$View$MainArea$shelfListTitle = function (model) {
@@ -21974,11 +22348,11 @@ var $author$project$View$MainArea$shelfListTitle = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class(
-						$author$project$View$MainArea$shelfListTitleStyle(model.bi)),
+						$author$project$View$MainArea$shelfListTitleStyle(model.bk)),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'font-family',
-						$author$project$View$Style$basecolors(model.bi).aI)
+						$author$project$View$Style$basecolors(model.bk).bs)
 					]),
 				_List_fromArray(
 					[
@@ -21993,11 +22367,11 @@ var $author$project$View$MainArea$shelfListView = function (model) {
 			$elm$core$List$cons,
 			$elm$html$Html$Attributes$class(
 				$author$project$View$MainArea$shelfListContainerStyle(model)),
-			$author$project$View$Style$scrollbarStyle(model.bi)),
+			$author$project$View$Style$scrollbarStyle(model.bk)),
 		_List_fromArray(
 			[
 				$author$project$View$MainArea$shelfListTitle(model),
-				A2($author$project$View$MainArea$shelfGrid, model, model.x.R),
+				A2($author$project$View$Cards$shelfGrid, model, model.x.T),
 				$author$project$View$MainArea$shelfListMenu(model)
 			]));
 };
@@ -22008,9 +22382,9 @@ var $author$project$View$AlertModal$modalBoxStyle = function (theme) {
 			[
 				'w-full max-w-sm p-5 rounded-xl shadow-2xl border',
 				'animate-[fadeIn_0.1s_ease-out]',
-				$author$project$View$Style$basecolors(theme).cY,
-				$author$project$View$Style$basecolors(theme).c$,
-				$author$project$View$Style$basecolors(theme).cd
+				$author$project$View$Style$basecolors(theme).cZ,
+				$author$project$View$Style$basecolors(theme).c0,
+				$author$project$View$Style$basecolors(theme).ce
 			]));
 };
 var $author$project$View$AlertModal$modalOkBtnStyle = function (theme) {
@@ -22041,7 +22415,7 @@ var $author$project$View$AlertModal$viewAlertModal = function (model) {
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class(
-							$author$project$View$AlertModal$modalBoxStyle(model.bi)),
+							$author$project$View$AlertModal$modalBoxStyle(model.bk)),
 							A2(
 							$elm$html$Html$Events$stopPropagationOn,
 							'click',
@@ -22083,7 +22457,7 @@ var $author$project$View$AlertModal$viewAlertModal = function (model) {
 									_List_fromArray(
 										[
 											$elm$html$Html$Attributes$class(
-											$author$project$View$AlertModal$modalOkBtnStyle(model.bi)),
+											$author$project$View$AlertModal$modalOkBtnStyle(model.bk)),
 											$elm$html$Html$Events$onClick($author$project$Type$DismissAlert)
 										]),
 									_List_fromArray(
@@ -22107,9 +22481,9 @@ var $author$project$View$TitleEditModal$modalContentStyle = function (theme) {
 				'rounded-xl',
 				'shadow-2xl',
 				'border',
-				$author$project$View$Style$basecolors(theme).cY,
-				$author$project$View$Style$basecolors(theme).c$,
-				$author$project$View$Style$basecolors(theme).cd
+				$author$project$View$Style$basecolors(theme).cZ,
+				$author$project$View$Style$basecolors(theme).c0,
+				$author$project$View$Style$basecolors(theme).ce
 			]));
 };
 var $author$project$View$TitleEditModal$modalBtnCancelStyle = function (theme) {
@@ -22124,7 +22498,7 @@ var $author$project$View$TitleEditModal$modalBtnCancelStyle = function (theme) {
 				'opacity-70',
 				'hover:opacity-100',
 				'transition-opacity',
-				$author$project$View$Style$basecolors(theme).c$
+				$author$project$View$Style$basecolors(theme).c0
 			]));
 };
 var $author$project$View$TitleEditModal$modalBtnSaveStyle = function (theme) {
@@ -22201,9 +22575,9 @@ var $author$project$View$TitleEditModal$modalInputStyle = function (theme) {
 				'rounded-md',
 				'border',
 				'outline-none',
-				$author$project$View$Style$basecolors(theme).cc,
-				$author$project$View$Style$basecolors(theme).c$,
-				$author$project$View$Style$basecolors(theme).cd
+				$author$project$View$Style$basecolors(theme).aE,
+				$author$project$View$Style$basecolors(theme).c0,
+				$author$project$View$Style$basecolors(theme).ce
 			]));
 };
 var $author$project$View$TitleEditModal$onEnter = function (msg) {
@@ -22223,7 +22597,7 @@ var $author$project$View$TitleEditModal$renderModalInput = F2(
 			$elm$html$Html$input,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$value(buffer.ay),
+					$elm$html$Html$Attributes$value(buffer.aB),
 					$elm$html$Html$Events$onInput($author$project$Type$EditUpdate),
 					$author$project$View$TitleEditModal$onEnter($author$project$Type$EditSubmit),
 					$elm$html$Html$Attributes$class(
@@ -22265,7 +22639,7 @@ var $author$project$View$TitleEditModal$viewTitleEditModal = function (model) {
 							$author$project$View$Style$tw(
 								_List_fromArray(
 									[
-										$author$project$View$TitleEditModal$modalContentStyle(model.bi),
+										$author$project$View$TitleEditModal$modalContentStyle(model.bk),
 										'relative z-10'
 									]))),
 							A2(
@@ -22282,8 +22656,8 @@ var $author$project$View$TitleEditModal$viewTitleEditModal = function (model) {
 					_List_fromArray(
 						[
 							$author$project$View$TitleEditModal$renderModalHeader,
-							A2($author$project$View$TitleEditModal$renderModalInput, model.bi, buffer),
-							$author$project$View$TitleEditModal$renderModalFooter(model.bi)
+							A2($author$project$View$TitleEditModal$renderModalInput, model.bk, buffer),
+							$author$project$View$TitleEditModal$renderModalFooter(model.bk)
 						]))
 				]));
 	} else {
@@ -22302,7 +22676,7 @@ var $author$project$View$MainArea$mainContentArea = F2(
 			_List_fromArray(
 				[
 					function () {
-					var _v0 = model.aS;
+					var _v0 = model.aU;
 					switch (_v0.$) {
 						case 1:
 							return $author$project$View$MainArea$shelfListView(model);
@@ -22353,7 +22727,7 @@ var $author$project$View$RightSideBar$pageCounterStyle = function (theme) {
 				'flex-col',
 				'items-center',
 				'gap-1',
-				$author$project$View$Style$basecolors(theme).c0
+				$author$project$View$Style$basecolors(theme).a9
 			]));
 };
 var $author$project$Icon$rightpage = _List_fromArray(
@@ -22392,8 +22766,8 @@ var $author$project$View$RightSideBar$viewPageChangeButtons = A2(
 		[$author$project$View$RightSideBar$viewPrevPageButton, $author$project$View$RightSideBar$viewNextPageButton]));
 var $author$project$View$RightSideBar$formatPageCounter = F2(
 	function (state, book) {
-		var total = $elm$core$List$length(book.Q);
-		var current = state.am + 1;
+		var total = $elm$core$List$length(book.S);
+		var current = state.ap + 1;
 		return $elm$core$String$fromInt(current) + (' / ' + $elm$core$String$fromInt(total));
 	});
 var $author$project$View$RightSideBar$viewPageCounterValue = F2(
@@ -22458,9 +22832,9 @@ var $author$project$Domain$Helper$getCurrentShelf = function (state) {
 		A2(
 			$elm$core$List$filter,
 			function (shelf) {
-				return _Utils_eq(shelf.z, state.aF);
+				return _Utils_eq(shelf.z, state.aI);
 			},
-			state.R));
+			state.T));
 };
 var $author$project$View$RightSideBar$isDetailView = function (mainViewMode) {
 	if (mainViewMode.$ === 2) {
@@ -22470,7 +22844,7 @@ var $author$project$View$RightSideBar$isDetailView = function (mainViewMode) {
 	}
 };
 var $author$project$View$RightSideBar$getBooksButtonMsg = function (model) {
-	if ($author$project$View$RightSideBar$isDetailView(model.aS)) {
+	if ($author$project$View$RightSideBar$isDetailView(model.aU)) {
 		return $author$project$Type$ChangeMainView($author$project$Type$PageView);
 	} else {
 		var _v0 = $author$project$Domain$Helper$getCurrentShelf(model.x);
@@ -22508,7 +22882,7 @@ var $author$project$View$RightSideBar$viewShelvesButton = function (model) {
 			[
 				$elm$html$Html$Attributes$class('hover:opacity-100 hover:underline cursor-pointer'),
 				$elm$html$Html$Events$onClick(
-				$author$project$View$RightSideBar$getCategoryButtonMsg(model.aS)),
+				$author$project$View$RightSideBar$getCategoryButtonMsg(model.aU)),
 				$elm$html$Html$Attributes$title('本棚一覧へ')
 			]),
 		_List_fromArray(
@@ -22554,7 +22928,7 @@ var $author$project$View$RightSideBar$viewBreadcrumbNav = function (model) {
 };
 var $author$project$View$RightSideBar$bottomStatusArea = F2(
 	function (model, present) {
-		var breadNav = model.aO ? $author$project$View$RightSideBar$miniBreadcrumbNav(model) : $author$project$View$RightSideBar$viewBreadcrumbNav(model);
+		var breadNav = model.aQ ? $author$project$View$RightSideBar$miniBreadcrumbNav(model) : $author$project$View$RightSideBar$viewBreadcrumbNav(model);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -22564,7 +22938,7 @@ var $author$project$View$RightSideBar$bottomStatusArea = F2(
 			_List_fromArray(
 				[
 					breadNav,
-					A2($author$project$View$RightSideBar$bookPageCounter, model.bi, present)
+					A2($author$project$View$RightSideBar$bookPageCounter, model.bk, present)
 				]));
 	});
 var $author$project$Type$CreateNextPage = function (a) {
@@ -22587,7 +22961,7 @@ var $author$project$View$RightSideBar$addPageTextStyle = function (theme) {
 				'opacity-75',
 				'hover:opacity-100',
 				'hover:underline',
-				$author$project$View$Style$basecolors(theme).ba
+				$author$project$View$Style$basecolors(theme).E
 			]));
 };
 var $author$project$View$RightSideBar$viewAddPageTextButton = function (model) {
@@ -22596,13 +22970,13 @@ var $author$project$View$RightSideBar$viewAddPageTextButton = function (model) {
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$class(
-				$author$project$View$RightSideBar$addPageTextStyle(model.bi)),
+				$author$project$View$RightSideBar$addPageTextStyle(model.bk)),
 				A2(
 				$elm$html$Html$Attributes$style,
 				'font-family',
-				$author$project$View$Style$basecolors(model.bi).aI),
+				$author$project$View$Style$basecolors(model.bk).bs),
 				$elm$html$Html$Events$onClick(
-				$author$project$Type$CreateNextPage(model.x.am + 1))
+				$author$project$Type$CreateNextPage(model.x.ap + 1))
 			]),
 		_List_fromArray(
 			[
@@ -22644,14 +23018,14 @@ var $author$project$View$RightSideBar$selectorStyle = function (theme) {
 				'text-sm',
 				'outline-none',
 				'h-10',
-				$author$project$View$Style$basecolors(theme).ce,
-				$author$project$View$Style$basecolors(theme).aD,
-				$author$project$View$Style$basecolors(theme).bU,
-				$author$project$View$Style$basecolors(theme).c$
+				$author$project$View$Style$basecolors(theme).ak,
+				$author$project$View$Style$basecolors(theme).J,
+				$author$project$View$Style$basecolors(theme).cT,
+				$author$project$View$Style$basecolors(theme).c0
 			]));
 };
 var $author$project$View$RightSideBar$sizeSelectorText = function (model) {
-	return (!model.a_) ? 'FONT SIZE' : '';
+	return (!model.a0) ? 'FONT SIZE' : '';
 };
 var $elm$html$Html$option = _VirtualDom_node('option');
 var $elm$html$Html$select = _VirtualDom_node('select');
@@ -22703,7 +23077,7 @@ var $author$project$View$ViewHelper$viewBaseSelector = F6(
 				options));
 	});
 var $author$project$View$RightSideBar$viewFontSizeSelector = function (model) {
-	var theme = model.bi;
+	var theme = model.bk;
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -22732,7 +23106,7 @@ var $author$project$View$RightSideBar$viewFontSizeSelector = function (model) {
 						A2(
 						$elm$html$Html$Attributes$style,
 						'font-family',
-						$author$project$View$Style$basecolors(theme).aI)
+						$author$project$View$Style$basecolors(theme).bs)
 					]),
 				model.cu,
 				_List_fromArray(
@@ -22760,12 +23134,12 @@ var $author$project$View$RightSideBar$modeTextStyle = function (activeClass) {
 };
 var $author$project$View$RightSideBar$modeText = F3(
 	function (model, mode, label) {
-		var theme = model.bi;
+		var theme = model.bk;
 		var isActive = _Utils_eq(model.cD, mode);
 		var activeClass = isActive ? $author$project$View$Style$tw(
 			_List_fromArray(
 				[
-					$author$project$View$Style$basecolors(theme).ba,
+					$author$project$View$Style$basecolors(theme).E,
 					'font-bold'
 				])) : 'opacity-100 hover:opacity-70 bg-transparent';
 		return A2(
@@ -22777,7 +23151,7 @@ var $author$project$View$RightSideBar$modeText = F3(
 					A2(
 					$elm$html$Html$Attributes$style,
 					'font-family',
-					$author$project$View$Style$basecolors(theme).aI),
+					$author$project$View$Style$basecolors(theme).bs),
 					$elm$html$Html$Events$onClick(
 					$author$project$Type$ChangeMode(mode))
 				]),
@@ -22793,7 +23167,7 @@ var $author$project$View$RightSideBar$modeSelectSegment = function (model) {
 			[
 				$elm$html$Html$Attributes$class('p-1.5 mx-2 my-3 border-t border-b'),
 				$elm$html$Html$Attributes$class(
-				$author$project$View$Style$basecolors(model.bi).aD)
+				$author$project$View$Style$basecolors(model.bk).J)
 			]),
 		_List_fromArray(
 			[
@@ -22812,10 +23186,10 @@ var $author$project$View$RightSideBar$rightSideWindowStyle = function (theme) {
 				'flex-shrink-0',
 				'border',
 				'h-auto',
-				$author$project$View$Style$basecolors(theme).cY,
-				$author$project$View$Style$basecolors(theme).aD,
-				$author$project$View$Style$basecolors(theme).bU,
-				$author$project$View$Style$basecolors(theme).c0
+				$author$project$View$Style$basecolors(theme).cZ,
+				$author$project$View$Style$basecolors(theme).J,
+				$author$project$View$Style$basecolors(theme).cT,
+				$author$project$View$Style$basecolors(theme).a9
 			]));
 };
 var $author$project$Type$ToggleLeftSidebar = {$: 55};
@@ -22828,8 +23202,8 @@ var $author$project$View$RightSideBar$sidebarBtnStyle = F2(
 				$author$project$View$Style$basecolors(theme).cm
 			]) : _List_fromArray(
 			[
-				$author$project$View$Style$basecolors(theme).aD,
-				$author$project$View$Style$basecolors(theme).c$,
+				$author$project$View$Style$basecolors(theme).J,
+				$author$project$View$Style$basecolors(theme).c0,
 				'hover:bg-white/25',
 				'bg-transparent'
 			]);
@@ -22839,7 +23213,7 @@ var $author$project$View$RightSideBar$sidebarBtnStyle = F2(
 				'py-1',
 				'text-sm',
 				'font-semibold',
-				$author$project$View$Style$basecolors(theme).bU
+				$author$project$View$Style$basecolors(theme).cT
 			]);
 		return $author$project$View$Style$tw(
 			_Utils_ap(base, state));
@@ -22860,7 +23234,7 @@ var $author$project$View$RightSideBar$leftSidebarToggle = F2(
 					A2(
 					$elm$html$Html$Attributes$style,
 					'font-family',
-					$author$project$View$Style$basecolors(theme).aI),
+					$author$project$View$Style$basecolors(theme).bs),
 					$elm$html$Html$Events$onClick($author$project$Type$ToggleLeftSidebar)
 				]),
 			_List_fromArray(
@@ -22884,7 +23258,7 @@ var $author$project$View$RightSideBar$sidebarToggleBtn = function (theme) {
 				A2(
 				$elm$html$Html$Attributes$style,
 				'font-family',
-				$author$project$View$Style$basecolors(theme).aI),
+				$author$project$View$Style$basecolors(theme).bs),
 				$elm$html$Html$Events$onClick($author$project$Type$ToggleNormalSidebar),
 				$elm$html$Html$Attributes$title('Show Sidebar')
 			]),
@@ -22900,12 +23274,12 @@ var $author$project$View$RightSideBar$sidebarModeSection = function (model) {
 			[
 				$elm$html$Html$Attributes$class('flex flex-col gap-2 mx-3 font-bold border-b pt-1 pb-4'),
 				$elm$html$Html$Attributes$class(
-				$author$project$View$Style$basecolors(model.bi).aD)
+				$author$project$View$Style$basecolors(model.bk).J)
 			]),
 		_List_fromArray(
 			[
-				A2($author$project$View$RightSideBar$leftSidebarToggle, model.bi, model.a_),
-				$author$project$View$RightSideBar$sidebarToggleBtn(model.bi)
+				A2($author$project$View$RightSideBar$leftSidebarToggle, model.bk, model.a0),
+				$author$project$View$RightSideBar$sidebarToggleBtn(model.bk)
 			]));
 };
 var $author$project$Type$CloseRightSideWindow = {$: 57};
@@ -22933,7 +23307,7 @@ var $author$project$View$RightSideBar$windowCloseHeader = function (theme) {
 									'text-xs',
 									'opacity-60',
 									'hover:opacity-100',
-									$author$project$View$Style$basecolors(theme).c$
+									$author$project$View$Style$basecolors(theme).c0
 								]))),
 						$elm$html$Html$Events$onClick($author$project$Type$CloseRightSideWindow),
 						$elm$html$Html$Attributes$title('Close window')
@@ -22951,11 +23325,11 @@ var $author$project$View$RightSideBar$rightSideWindow = F2(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$View$RightSideBar$rightSideWindowStyle(model.bi))
+					$author$project$View$RightSideBar$rightSideWindowStyle(model.bk))
 				]),
 			_List_fromArray(
 				[
-					$author$project$View$RightSideBar$windowCloseHeader(model.bi),
+					$author$project$View$RightSideBar$windowCloseHeader(model.bk),
 					$author$project$View$RightSideBar$modeSelectSegment(model),
 					$author$project$View$RightSideBar$sidebarModeSection(model),
 					$author$project$View$RightSideBar$controlSectionMini(model),
@@ -22966,7 +23340,7 @@ var $author$project$View$Contents$overlaySidebarArea = F2(
 	function (model, present) {
 		return A2(
 			$elm$html$Html$div,
-			$author$project$View$Contents$overlaySidebarAttrs(model.aO),
+			$author$project$View$Contents$overlaySidebarAttrs(model.aQ),
 			_List_fromArray(
 				[
 					A2($author$project$View$RightSideBar$rightSideWindow, model, present)
@@ -22984,10 +23358,10 @@ var $author$project$View$RightSideBar$addPageBtnStyle = function (theme) {
 				'mt-6',
 				'mb-3',
 				'border',
-				$author$project$View$Style$basecolors(theme).be,
-				$author$project$View$Style$basecolors(theme).bU,
-				$author$project$View$Style$basecolors(theme).cc,
-				$author$project$View$Style$basecolors(theme).c$,
+				$author$project$View$Style$basecolors(theme).bg,
+				$author$project$View$Style$basecolors(theme).cT,
+				$author$project$View$Style$basecolors(theme).aE,
+				$author$project$View$Style$basecolors(theme).c0,
 				'hover:bg-white/5'
 			]));
 };
@@ -22997,19 +23371,20 @@ var $author$project$View$RightSideBar$viewAddPageButton = function (model) {
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$class(
-				$author$project$View$RightSideBar$addPageBtnStyle(model.bi)),
+				$author$project$View$RightSideBar$addPageBtnStyle(model.bk)),
 				A2(
 				$elm$html$Html$Attributes$style,
 				'font-family',
-				$author$project$View$Style$basecolors(model.bi).aI),
+				$author$project$View$Style$basecolors(model.bk).bs),
 				$elm$html$Html$Events$onClick(
-				$author$project$Type$CreateNextPage(model.x.am + 1))
+				$author$project$Type$CreateNextPage(model.x.ap + 1))
 			]),
 		_List_fromArray(
 			[
 				$elm$html$Html$text('+ Next Page')
 			]));
 };
+var $author$project$Type$Below = 1;
 var $author$project$Type$ExportPage = function (a) {
 	return {$: 29, a: a};
 };
@@ -23022,12 +23397,127 @@ var $author$project$View$RightSideBar$fileMenuButtonStyle = function (theme) {
 		_List_fromArray(
 			[
 				'w-full py-1.5 px-3 text-xs border flex items-center justify-center font-mono',
-				$author$project$View$Style$basecolors(theme).bU,
-				$author$project$View$Style$basecolors(theme).aD,
-				$author$project$View$Style$basecolors(theme).ce,
+				$author$project$View$Style$basecolors(theme).cT,
+				$author$project$View$Style$basecolors(theme).J,
+				$author$project$View$Style$basecolors(theme).ak,
 				'hover:bg-white/10 transition-colors'
 			]));
 };
+var $author$project$View$ViewHelper$dropdownPositionStyle = function (direction) {
+	if (!direction) {
+		return 'absolute left-0 bottom-full mb-2';
+	} else {
+		return 'absolute right-0 top-full mt-2';
+	}
+};
+var $author$project$View$ViewHelper$dropdownMenuStyle = F2(
+	function (direction, theme) {
+		var themeCard = function () {
+			switch (theme) {
+				case 0:
+					return _List_fromArray(
+						['bg-[#FBF8F5]/95', 'border-[#DCD4C9]', 'shadow-black/10']);
+				case 1:
+					return _List_fromArray(
+						['bg-[#1E1E1D]/95', 'border-[#3A3A36]', 'shadow-black/50']);
+				default:
+					return _List_fromArray(
+						['bg-[#161626]/95', 'border-[#8B7355]/40', 'shadow-black/60']);
+			}
+		}();
+		var base = _List_fromArray(
+			[
+				$author$project$View$ViewHelper$dropdownPositionStyle(direction),
+				'z-50',
+				'flex flex-col',
+				'p-1.5',
+				'min-w-[150px]',
+				'border shadow-xl',
+				'backdrop-blur-sm',
+				'animate-[fadeIn_0.1s_ease-out]',
+				$author$project$View$Style$basecolors(theme).cT
+			]);
+		return $author$project$View$Style$tw(
+			_Utils_ap(base, themeCard));
+	});
+var $author$project$View$ViewHelper$dropdownItemStyle = function (theme) {
+	var themeItem = function () {
+		switch (theme) {
+			case 0:
+				return _List_fromArray(
+					['text-[#4A453E]', 'hover:bg-black/5', 'hover:text-[#C86D51]']);
+			case 1:
+				return _List_fromArray(
+					['text-[#CCCCCC]', 'hover:bg-white/10', 'hover:text-[#C9A84C]']);
+			default:
+				return _List_fromArray(
+					['text-[#E0D5C0]', 'hover:bg-[#8B7355]/30', 'hover:text-[#D9A74A]']);
+		}
+	}();
+	var base = _List_fromArray(
+		['w-full', 'px-3', 'py-1.5', 'text-left', 'text-xs', 'font-medium', 'tracking-wide', 'rounded-md', 'whitespace-nowrap', 'cursor-pointer', 'transition-colors duration-150']);
+	return $author$project$View$Style$tw(
+		_Utils_ap(base, themeItem));
+};
+var $author$project$View$ViewHelper$renderMenuItem = F2(
+	function (theme, _v0) {
+		var label = _v0.a;
+		var msg = _v0.b;
+		return A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(
+					$author$project$View$ViewHelper$dropdownItemStyle(theme)),
+					A2(
+					$elm$html$Html$Attributes$style,
+					'font-family',
+					$author$project$View$Style$basecolors(theme).bs),
+					$author$project$View$ViewHelper$stopClickPropagation(
+					$author$project$Type$SelectMenuItem(msg))
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(label)
+				]));
+	});
+var $author$project$View$ViewHelper$renderMenuList = F3(
+	function (direction, theme, items) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class(
+					A2($author$project$View$ViewHelper$dropdownMenuStyle, direction, theme))
+				]),
+			A2(
+				$elm$core$List$map,
+				$author$project$View$ViewHelper$renderMenuItem(theme),
+				items));
+	});
+var $author$project$View$ViewHelper$renderMenuOverlay = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('fixed inset-0 z-40 cursor-default bg-transparent'),
+			$author$project$View$ViewHelper$stopClickPropagation($author$project$Type$CloseMenu)
+		]),
+	_List_Nil);
+var $author$project$View$ViewHelper$renderDropdownMenu = F3(
+	function (direction, theme, items) {
+		return A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$author$project$View$ViewHelper$renderMenuOverlay,
+					A3($author$project$View$ViewHelper$renderMenuList, direction, theme, items)
+				]));
+	});
+var $author$project$View$ViewHelper$openDropdown = F4(
+	function (isOpen, direction, theme, items) {
+		return isOpen ? A3($author$project$View$ViewHelper$renderDropdownMenu, direction, theme, items) : $elm$html$Html$text('');
+	});
 var $author$project$View$RightSideBar$viewFileMenu = function (model) {
 	var pageId = A2(
 		$elm$core$Maybe$withDefault,
@@ -23055,7 +23545,7 @@ var $author$project$View$RightSideBar$viewFileMenu = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class(
-						$author$project$View$RightSideBar$fileMenuButtonStyle(model.bi)),
+						$author$project$View$RightSideBar$fileMenuButtonStyle(model.bk)),
 						$author$project$View$ViewHelper$stopClickPropagation(
 						$author$project$Type$ToggleMenu(menuId))
 					]),
@@ -23067,7 +23557,7 @@ var $author$project$View$RightSideBar$viewFileMenu = function (model) {
 				$author$project$View$ViewHelper$openDropdown,
 				isOpen,
 				1,
-				model.bi,
+				model.bk,
 				_List_fromArray(
 					[
 						_Utils_Tuple2(
@@ -23136,7 +23626,7 @@ var $author$project$View$RightSideBar$viewRenderStyleSelector = F2(
 							A2(
 							$elm$html$Html$Attributes$style,
 							'font-family',
-							$author$project$View$Style$basecolors(theme).aI)
+							$author$project$View$Style$basecolors(theme).bs)
 						]),
 					current,
 					_List_fromArray(
@@ -23184,7 +23674,7 @@ var $author$project$View$RightSideBar$viewThemeSelector = function (theme) {
 						A2(
 						$elm$html$Html$Attributes$style,
 						'font-family',
-						$author$project$View$Style$basecolors(theme).aI)
+						$author$project$View$Style$basecolors(theme).bs)
 					]),
 				theme,
 				_List_fromArray(
@@ -23192,7 +23682,7 @@ var $author$project$View$RightSideBar$viewThemeSelector = function (theme) {
 			]));
 };
 var $author$project$View$RightSideBar$controlSection = function (model) {
-	var theme = model.bi;
+	var theme = model.bk;
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -23218,9 +23708,9 @@ var $author$project$View$RightSideBar$rightSideStyle = function (theme) {
 				'flex-shrink-0',
 				'border-l',
 				'h-full',
-				$author$project$View$Style$basecolors(theme).cY,
-				$author$project$View$Style$basecolors(theme).cd,
-				$author$project$View$Style$basecolors(theme).c0
+				$author$project$View$Style$basecolors(theme).cZ,
+				$author$project$View$Style$basecolors(theme).ce,
+				$author$project$View$Style$basecolors(theme).a9
 			]));
 };
 var $author$project$View$RightSideBar$scrollableArea = A2(
@@ -23263,12 +23753,12 @@ var $author$project$View$RightSideBar$modeItemStyle = F2(
 				[
 					'flex-1 h-8 py-1 text-xs transition-all text-center leading-none',
 					activeClass,
-					$author$project$View$Style$basecolors(theme).bU
+					$author$project$View$Style$basecolors(theme).cT
 				]));
 	});
 var $author$project$View$RightSideBar$modeItem = F3(
 	function (model, mode, label) {
-		var theme = model.bi;
+		var theme = model.bk;
 		var isActive = _Utils_eq(model.cD, mode);
 		var activeClass = isActive ? $author$project$View$Style$tw(
 			_List_fromArray(
@@ -23286,7 +23776,7 @@ var $author$project$View$RightSideBar$modeItem = F3(
 					A2(
 					$elm$html$Html$Attributes$style,
 					'font-family',
-					$author$project$View$Style$basecolors(theme).aI),
+					$author$project$View$Style$basecolors(theme).bs),
 					$elm$html$Html$Events$onClick(
 					$author$project$Type$ChangeMode(mode))
 				]),
@@ -23302,9 +23792,9 @@ var $author$project$View$RightSideBar$viewModeSegment = function (model) {
 			[
 				$elm$html$Html$Attributes$class('flex p-0.5 mx-3 my-6 border bg-black/5 dark:bg-white/5'),
 				$elm$html$Html$Attributes$class(
-				$author$project$View$Style$basecolors(model.bi).aD),
+				$author$project$View$Style$basecolors(model.bk).J),
 				$elm$html$Html$Attributes$class(
-				$author$project$View$Style$basecolors(model.bi).bU)
+				$author$project$View$Style$basecolors(model.bk).cT)
 			]),
 		_List_fromArray(
 			[
@@ -23320,7 +23810,7 @@ var $author$project$View$RightSideBar$rightSidebarArea = F2(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$View$RightSideBar$rightSideStyle(model.bi))
+					$author$project$View$RightSideBar$rightSideStyle(model.bk))
 				]),
 			_List_fromArray(
 				[
@@ -23354,7 +23844,7 @@ var $author$project$View$SideBar$asideStyle = function (theme) {
 		_List_fromArray(
 			[
 				'w-full h-full border-r flex flex-col',
-				$author$project$View$Style$basecolors(theme).cd
+				$author$project$View$Style$basecolors(theme).ce
 			]));
 };
 var $elm$html$Html$nav = _VirtualDom_node('nav');
@@ -23363,7 +23853,7 @@ var $author$project$View$SideBarContents$sidebarContentStyle = function (theme) 
 		_List_fromArray(
 			[
 				'block flex-1 overflow-y-auto',
-				$author$project$View$Style$basecolors(theme).cY
+				$author$project$View$Style$basecolors(theme).cZ
 			]));
 };
 var $author$project$View$SideBarContents$shelfBookName = function (theme) {
@@ -23376,8 +23866,8 @@ var $author$project$View$SideBarContents$shelfBookName = function (theme) {
 				'border-b',
 				'mx-1',
 				'opacity-80',
-				$author$project$View$Style$basecolors(theme).be,
-				$author$project$View$Style$basecolors(theme).ba
+				$author$project$View$Style$basecolors(theme).bg,
+				$author$project$View$Style$basecolors(theme).E
 			]));
 };
 var $author$project$Domain$Helper$isHit = F2(
@@ -23392,9 +23882,9 @@ var $author$project$Domain$Helper$hasHitInBook = F2(
 		return A2(
 			$elm$core$List$any,
 			function (page) {
-				return A2($author$project$Domain$Helper$isHit, searchText, page.bj);
+				return A2($author$project$Domain$Helper$isHit, searchText, page.bl);
 			},
-			book.Q);
+			book.S);
 	});
 var $author$project$View$SideBookList$viewBookItemTheme = F3(
 	function (theme, isSelected, isSearchHit) {
@@ -23406,27 +23896,27 @@ var $author$project$View$SideBookList$viewBookItemTheme = F3(
 							return _List_fromArray(
 								[
 									'border-l-2',
-									$author$project$View$Style$basecolors(theme).be,
+									$author$project$View$Style$basecolors(theme).bg,
 									$author$project$View$Style$basecolors(theme).cm,
-									$author$project$View$Style$basecolors(theme).bV
+									$author$project$View$Style$basecolors(theme).bX
 								]);
 						case 1:
 							return _List_fromArray(
 								[
 									'border-l-2',
 									'text-slate-800',
-									$author$project$View$Style$basecolors(theme).be,
-									$author$project$View$Style$basecolors(theme).bU,
-									$author$project$View$Style$basecolors(theme).bV
+									$author$project$View$Style$basecolors(theme).bg,
+									$author$project$View$Style$basecolors(theme).cT,
+									$author$project$View$Style$basecolors(theme).bX
 								]);
 						default:
 							return _List_fromArray(
 								[
 									'border-l-2',
 									'bg-[#8B7355]',
-									$author$project$View$Style$basecolors(theme).be,
-									$author$project$View$Style$basecolors(theme).ba,
-									$author$project$View$Style$basecolors(theme).bU
+									$author$project$View$Style$basecolors(theme).bg,
+									$author$project$View$Style$basecolors(theme).E,
+									$author$project$View$Style$basecolors(theme).cT
 								]);
 					}
 				} else {
@@ -23439,13 +23929,13 @@ var $author$project$View$SideBookList$viewBookItemTheme = F3(
 								[
 									'bg-yellow-200/60',
 									'text-slate-900',
-									$author$project$View$Style$basecolors(theme).bU,
+									$author$project$View$Style$basecolors(theme).cT,
 									'hover:opacity-60'
 								]);
 						default:
 							return _List_fromArray(
 								[
-									$author$project$View$Style$basecolors(theme).c$,
+									$author$project$View$Style$basecolors(theme).c0,
 									'bg-[#8B7355]/80',
 									'hover:opacity-60'
 								]);
@@ -23458,31 +23948,31 @@ var $author$project$View$SideBookList$viewBookItemTheme = F3(
 							return _List_fromArray(
 								[
 									'border-l-2',
-									$author$project$View$Style$basecolors(theme).be,
-									$author$project$View$Style$basecolors(theme).ba,
-									$author$project$View$Style$basecolors(theme).ce
+									$author$project$View$Style$basecolors(theme).bg,
+									$author$project$View$Style$basecolors(theme).E,
+									$author$project$View$Style$basecolors(theme).ak
 								]);
 						case 1:
 							return _List_fromArray(
 								[
 									'border-l-2',
 									'bg-white/10',
-									$author$project$View$Style$basecolors(theme).be,
-									$author$project$View$Style$basecolors(theme).ba
+									$author$project$View$Style$basecolors(theme).bg,
+									$author$project$View$Style$basecolors(theme).E
 								]);
 						default:
 							return _List_fromArray(
 								[
 									'border-l-2',
 									'bg-white/10',
-									$author$project$View$Style$basecolors(theme).be,
-									$author$project$View$Style$basecolors(theme).ba
+									$author$project$View$Style$basecolors(theme).bg,
+									$author$project$View$Style$basecolors(theme).E
 								]);
 					}
 				} else {
 					return _List_fromArray(
 						[
-							$author$project$View$Style$basecolors(theme).c$,
+							$author$project$View$Style$basecolors(theme).c0,
 							'opacity-80',
 							'hover:opacity-60'
 						]);
@@ -23498,9 +23988,9 @@ var $author$project$View$SideBookList$viewBookItem = F3(
 	function (model, present, book) {
 		var isSelected = _Utils_eq(
 			$elm$core$Maybe$Just(book.z),
-			present.al);
-		var isSearchHit = A2($author$project$Domain$Helper$hasHitInBook, model.cV, book);
-		var themeClasses = A3($author$project$View$SideBookList$viewBookItemTheme, model.bi, isSelected, isSearchHit);
+			present.ao);
+		var isSearchHit = A2($author$project$Domain$Helper$hasHitInBook, model.cW, book);
+		var themeClasses = A3($author$project$View$SideBookList$viewBookItemTheme, model.bk, isSelected, isSearchHit);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -23527,7 +24017,7 @@ var $author$project$View$SideBookList$viewBookItem = F3(
 								]),
 							_List_fromArray(
 								[
-									$elm$html$Html$text(book.b4)
+									$elm$html$Html$text(book.b6)
 								]))
 						]))
 				]));
@@ -23540,7 +24030,7 @@ var $author$project$View$SideBookList$viewBookList = F2(
 			A2(
 				$elm$core$Maybe$map,
 				function ($) {
-					return $.ah;
+					return $.aj;
 				},
 				$author$project$Domain$Helper$getCurrentShelf(present)));
 		return A2(
@@ -23569,8 +24059,8 @@ var $author$project$View$SideBarContents$addBtnStyle = function (theme) {
 				'text-xs',
 				$author$project$View$Style$basecolors(theme).cO,
 				$author$project$View$Style$basecolors(theme).cm,
-				$author$project$View$Style$basecolors(theme).cd,
-				$author$project$View$Style$basecolors(theme).bU
+				$author$project$View$Style$basecolors(theme).ce,
+				$author$project$View$Style$basecolors(theme).cT
 			]));
 };
 var $author$project$View$SideBarContents$viewSidebarActionButton = F2(
@@ -23584,12 +24074,12 @@ var $author$project$View$SideBarContents$viewSidebarActionButton = F2(
 				A2(
 					$elm$core$Basics$composeR,
 					function ($) {
-						return $.Q;
+						return $.S;
 					},
 					$elm$core$List$length),
 				$author$project$Domain$Helper$getCurrentBook(model.x)));
 		var _v0 = function () {
-			var _v1 = model.cW;
+			var _v1 = model.cX;
 			switch (_v1) {
 				case 0:
 					return _Utils_Tuple2('+ New Shelf', $author$project$Type$CreateShelf);
@@ -23608,7 +24098,7 @@ var $author$project$View$SideBarContents$viewSidebarActionButton = F2(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$View$SideBarContents$addBtnStyle(model.bi)),
+					$author$project$View$SideBarContents$addBtnStyle(model.bk)),
 					$elm$html$Html$Attributes$class(sizeClass),
 					$elm$html$Html$Events$onClick(msg)
 				]),
@@ -23637,11 +24127,11 @@ var $author$project$View$SideBarContents$tabBookList = F2(
 							_List_fromArray(
 								[
 									$elm$html$Html$Attributes$class(
-									$author$project$View$SideBarContents$shelfBookName(model.bi)),
+									$author$project$View$SideBarContents$shelfBookName(model.bk)),
 									A2(
 									$elm$html$Html$Attributes$style,
 									'font-family',
-									$author$project$View$Style$basecolors(model.bi).aI)
+									$author$project$View$Style$basecolors(model.bk).bs)
 								]),
 							_List_fromArray(
 								[
@@ -23668,7 +24158,7 @@ var $author$project$Domain$Helper$hasHitInShelf = F2(
 			function (book) {
 				return A2($author$project$Domain$Helper$hasHitInBook, searchText, book);
 			},
-			shelf.ah);
+			shelf.aj);
 	});
 var $author$project$View$SideShelfList$shelfItemBodyStyle = F3(
 	function (theme, isSelected, isSearchHit) {
@@ -23680,16 +24170,16 @@ var $author$project$View$SideShelfList$shelfItemBodyStyle = F3(
 							return _List_fromArray(
 								[
 									'border',
-									$author$project$View$Style$basecolors(theme).be,
+									$author$project$View$Style$basecolors(theme).bg,
 									$author$project$View$Style$basecolors(theme).cm,
-									$author$project$View$Style$basecolors(theme).bV
+									$author$project$View$Style$basecolors(theme).bX
 								]);
 						case 1:
 							return _List_fromArray(
 								[
 									'border',
 									'border-2',
-									$author$project$View$Style$basecolors(theme).cd,
+									$author$project$View$Style$basecolors(theme).ce,
 									'text-slate-900',
 									$author$project$View$Style$basecolors(theme).cO
 								]);
@@ -23698,8 +24188,8 @@ var $author$project$View$SideShelfList$shelfItemBodyStyle = F3(
 								[
 									'border',
 									'border-2',
-									$author$project$View$Style$basecolors(theme).be,
-									$author$project$View$Style$basecolors(theme).ba,
+									$author$project$View$Style$basecolors(theme).bg,
+									$author$project$View$Style$basecolors(theme).E,
 									'bg-[#8B7355]/80'
 								]);
 					}
@@ -23715,7 +24205,7 @@ var $author$project$View$SideShelfList$shelfItemBodyStyle = F3(
 							return _List_fromArray(
 								[
 									'hover:opacity-100',
-									$author$project$View$Style$basecolors(theme).c$,
+									$author$project$View$Style$basecolors(theme).c0,
 									'bg-[#8B7355]/80'
 								]);
 					}
@@ -23727,14 +24217,14 @@ var $author$project$View$SideShelfList$shelfItemBodyStyle = F3(
 							'border',
 							'bg-white/10',
 							'border-0',
-							$author$project$View$Style$basecolors(theme).ba
+							$author$project$View$Style$basecolors(theme).E
 						]);
 				} else {
 					return _List_fromArray(
 						[
 							'opacity-70',
 							'hover:opacity-100',
-							$author$project$View$Style$basecolors(theme).c$
+							$author$project$View$Style$basecolors(theme).c0
 						]);
 				}
 			}
@@ -23751,16 +24241,16 @@ var $author$project$View$SideShelfList$shelfItemBodyStyle = F3(
 				'text-sm',
 				'group',
 				'font-bold',
-				$author$project$View$Style$basecolors(theme).bU
+				$author$project$View$Style$basecolors(theme).cT
 			]);
 		return $author$project$View$Style$tw(
 			_Utils_ap(common, themeStyles));
 	});
 var $author$project$View$SideShelfList$viewSidebarShelfItem = F3(
 	function (model, present, shelf) {
-		var theme = model.bi;
-		var isSelected = _Utils_eq(shelf.z, present.aF);
-		var isSearchHit = A2($author$project$Domain$Helper$hasHitInShelf, model.cV, shelf);
+		var theme = model.bk;
+		var isSelected = _Utils_eq(shelf.z, present.aI);
+		var isSearchHit = A2($author$project$Domain$Helper$hasHitInShelf, model.cW, shelf);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -23795,7 +24285,7 @@ var $author$project$View$SideShelfList$viewSidebarShelfList = F2(
 			A2(
 				$elm$core$List$map,
 				A2($author$project$View$SideShelfList$viewSidebarShelfItem, model, present),
-				present.R));
+				present.T));
 	});
 var $author$project$View$SideBarContents$tabShelfList = F2(
 	function (model, present) {
@@ -23849,17 +24339,17 @@ var $author$project$View$SideBarContents$headingSelectorStyle = function (theme)
 				'outline-none',
 				'h-8',
 				'w-18',
-				$author$project$View$Style$basecolors(theme).ce,
-				$author$project$View$Style$basecolors(theme).aD,
-				$author$project$View$Style$basecolors(theme).bU,
-				$author$project$View$Style$basecolors(theme).c0
+				$author$project$View$Style$basecolors(theme).ak,
+				$author$project$View$Style$basecolors(theme).J,
+				$author$project$View$Style$basecolors(theme).cT,
+				$author$project$View$Style$basecolors(theme).a9
 			]));
 };
 var $author$project$View$SideBarContents$selectorLabel = function (theme) {
 	var c = $author$project$View$Style$basecolors(theme);
 	return $author$project$View$Style$tw(
 		_List_fromArray(
-			['text-xs', 'flex-1', 'font-semibold', 'uppercase', 'tracking-wide', 'text-right', 'h-8', 'flex', 'items-center', 'justify-end', c.c0]));
+			['text-xs', 'flex-1', 'font-semibold', 'uppercase', 'tracking-wide', 'text-right', 'h-8', 'flex', 'items-center', 'justify-end', c.a9]));
 };
 var $author$project$View$SideBarContents$selectorwrapper = $author$project$View$Style$tw(
 	_List_fromArray(
@@ -23896,7 +24386,7 @@ var $author$project$View$SideBarContents$headingLevelSelector = function (model)
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class(
-						$author$project$View$SideBarContents$selectorLabel(model.bi))
+						$author$project$View$SideBarContents$selectorLabel(model.bk))
 					]),
 				_List_fromArray(
 					[
@@ -23910,11 +24400,11 @@ var $author$project$View$SideBarContents$headingLevelSelector = function (model)
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class(
-						$author$project$View$SideBarContents$headingSelectorStyle(model.bi)),
+						$author$project$View$SideBarContents$headingSelectorStyle(model.bk)),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'font-family',
-						$author$project$View$Style$basecolors(model.bi).aI)
+						$author$project$View$Style$basecolors(model.bk).bs)
 					]),
 				model.c3,
 				_List_fromArray(
@@ -23936,14 +24426,14 @@ var $author$project$Domain$Helper$filterHeadingsData = F2(
 		return _Utils_update(
 			data,
 			{
-				aK: A2(
+				aM: A2(
 					$elm$core$List$filter,
 					function (h) {
 						return _Utils_cmp(
-							h.V,
+							h.X,
 							$author$project$Domain$Helper$headingLevelToInt(level)) < 1;
 					},
-					data.aK)
+					data.aM)
 			});
 	});
 var $author$project$Domain$Helper$extractSectionContent = F2(
@@ -24030,7 +24520,7 @@ var $author$project$View$SideTocList$headingHighlightStyle = F3(
 								'hover:opacity-70',
 								$author$project$View$Style$basecolors(theme).cm,
 								$author$project$View$Style$basecolors(theme).cO,
-								$author$project$View$Style$basecolors(theme).bV
+								$author$project$View$Style$basecolors(theme).bX
 							]);
 					case 1:
 						return _List_fromArray(
@@ -24040,7 +24530,7 @@ var $author$project$View$SideTocList$headingHighlightStyle = F3(
 								'hover:opacity-70',
 								'text-slate-900',
 								$author$project$View$Style$basecolors(theme).cO,
-								$author$project$View$Style$basecolors(theme).be
+								$author$project$View$Style$basecolors(theme).bg
 							]);
 					default:
 						return _List_fromArray(
@@ -24049,7 +24539,7 @@ var $author$project$View$SideTocList$headingHighlightStyle = F3(
 								'border-l-4',
 								'hover:opacity-70',
 								$author$project$View$Style$basecolors(theme).cm,
-								$author$project$View$Style$basecolors(theme).be,
+								$author$project$View$Style$basecolors(theme).bg,
 								'bg-[#8B7355]/80'
 							]);
 				}
@@ -24059,8 +24549,8 @@ var $author$project$View$SideTocList$headingHighlightStyle = F3(
 						'font-bold',
 						'border-l-4',
 						'hover:opacity-70',
-						$author$project$View$Style$basecolors(theme).ba,
-						$author$project$View$Style$basecolors(theme).be
+						$author$project$View$Style$basecolors(theme).E,
+						$author$project$View$Style$basecolors(theme).bg
 					]);
 			}
 		} else {
@@ -24094,16 +24584,16 @@ var $author$project$View$SideTocList$headingHighlightStyle = F3(
 							[
 								'font-bold',
 								'hover:text-slate-700',
-								$author$project$View$Style$basecolors(theme).c0,
-								$author$project$View$Style$basecolors(theme).be
+								$author$project$View$Style$basecolors(theme).a9,
+								$author$project$View$Style$basecolors(theme).bg
 							]);
 					case 1:
 						return _List_fromArray(
 							[
 								'font-bold',
 								'hover:text-slate-100',
-								$author$project$View$Style$basecolors(theme).c0,
-								$author$project$View$Style$basecolors(theme).be
+								$author$project$View$Style$basecolors(theme).a9,
+								$author$project$View$Style$basecolors(theme).bg
 							]);
 					default:
 						return _List_fromArray(
@@ -24111,7 +24601,7 @@ var $author$project$View$SideTocList$headingHighlightStyle = F3(
 								'font-bold',
 								'hover:text-[#E0D5C0]',
 								'text-[#E0D5C0]/70',
-								$author$project$View$Style$basecolors(theme).be
+								$author$project$View$Style$basecolors(theme).bg
 							]);
 				}
 			}
@@ -24123,7 +24613,7 @@ var $author$project$View$SideTocList$headingItemStyle = F2(
 			[
 				'font-bold',
 				'border-b',
-				$author$project$View$Style$basecolors(theme).be,
+				$author$project$View$Style$basecolors(theme).bg,
 				'ml-1',
 				'mb-1',
 				'pl-1'
@@ -24136,15 +24626,15 @@ var $author$project$View$SideTocList$headingItemStyle = F2(
 	});
 var $author$project$Domain$Helper$isCurrentHeading = F3(
 	function (h, currentPageIndex, currentHeading) {
-		return _Utils_eq(h._, currentPageIndex) && A2(
+		return _Utils_eq(h.ab, currentPageIndex) && A2(
 			$elm$core$List$member,
-			$author$project$Domain$Helper$stripEmphasis(h.c$),
+			$author$project$Domain$Helper$stripEmphasis(h.c0),
 			A2($elm$core$List$map, $author$project$Domain$Helper$stripEmphasis, currentHeading));
 	});
 var $author$project$View$SideTocList$buildHeadingItemClass = F5(
 	function (theme, h, currentPageIndex, currentHeading, isSectionHit) {
 		return _Utils_ap(
-			A2($author$project$View$SideTocList$headingItemStyle, theme, h.V),
+			A2($author$project$View$SideTocList$headingItemStyle, theme, h.X),
 			A3(
 				$author$project$View$SideTocList$headingHighlightStyle,
 				theme,
@@ -24167,13 +24657,13 @@ var $author$project$View$SideTocList$viewHeadingItem = F5(
 					$elm$html$Html$Events$onClick(
 					A2(
 						$author$project$Type$JumpToHeading,
-						h._,
-						$elm$core$String$fromInt(h.Y)))
+						h.ab,
+						$elm$core$String$fromInt(h._)))
 				]),
 			_List_fromArray(
 				[
 					$elm$html$Html$text(
-					$author$project$Domain$Helper$stripEmphasis(h.c$))
+					$author$project$Domain$Helper$stripEmphasis(h.c0))
 				]));
 	});
 var $author$project$View$SideTocList$renderHeadingItem = F7(
@@ -24184,11 +24674,11 @@ var $author$project$View$SideTocList$renderHeadingItem = F7(
 			currentPageIndex,
 			currentHeading,
 			h,
-			A4($author$project$Domain$Helper$checkSectionHit, searchText, h.c$, content, allHeadingTexts));
+			A4($author$project$Domain$Helper$checkSectionHit, searchText, h.c0, content, allHeadingTexts));
 	});
 var $author$project$View$SideTocList$renderHeadingList = F6(
 	function (theme, currentPageIndex, currentHeading, content, searchText, data) {
-		return $elm$core$List$isEmpty(data.aK) ? $elm$html$Html$text('') : A2(
+		return $elm$core$List$isEmpty(data.aM) ? $elm$html$Html$text('') : A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
@@ -24196,18 +24686,18 @@ var $author$project$View$SideTocList$renderHeadingList = F6(
 				]),
 			A2(
 				$elm$core$List$map,
-				A6($author$project$View$SideTocList$renderHeadingItem, theme, currentPageIndex, currentHeading, content, searchText, data.ca),
-				data.aK));
+				A6($author$project$View$SideTocList$renderHeadingItem, theme, currentPageIndex, currentHeading, content, searchText, data.cc),
+				data.aM));
 	});
 var $author$project$Domain$Helper$toHeadingData = function (headings) {
 	return {
-		ca: A2(
+		cc: A2(
 			$elm$core$List$map,
 			function ($) {
-				return $.c$;
+				return $.c0;
 			},
 			headings),
-		aK: headings
+		aM: headings
 	};
 };
 var $author$project$View$SideTocList$viewHeadingList = F7(
@@ -24227,7 +24717,7 @@ var $author$project$View$SideTocList$viewHeadingList = F7(
 	});
 var $author$project$View$SideTocList$viewTocSection = F3(
 	function (model, pageIdx, page) {
-		return A7($author$project$View$SideTocList$viewHeadingList, model.bi, model.x.am, pageIdx, page.bj, model.x.cl, model.cV, model.c3);
+		return A7($author$project$View$SideTocList$viewHeadingList, model.bk, model.x.ap, pageIdx, page.bl, model.x.cl, model.cW, model.c3);
 	});
 var $author$project$View$SideTocList$viewToc = F2(
 	function (model, present) {
@@ -24243,7 +24733,7 @@ var $author$project$View$SideTocList$viewToc = F2(
 				A2(
 					$elm$core$List$indexedMap,
 					$author$project$View$SideTocList$viewTocSection(model),
-					book.Q));
+					book.S));
 		} else {
 			return A2(
 				$elm$html$Html$div,
@@ -24281,7 +24771,7 @@ var $author$project$View$SideBarContents$tabTocList = F2(
 								$author$project$View$Style$tw(
 									_List_fromArray(
 										['flex-1', 'overflow-y-auto']))),
-							$author$project$View$Style$scrollbarStyle(model.bi))),
+							$author$project$View$Style$scrollbarStyle(model.bk))),
 					_List_fromArray(
 						[
 							A2($author$project$View$SideTocList$viewToc, model, present)
@@ -24297,12 +24787,12 @@ var $author$project$View$SideBarContents$sidebarContent = F2(
 			A2(
 				$elm$core$List$cons,
 				$elm$html$Html$Attributes$class(
-					$author$project$View$SideBarContents$sidebarContentStyle(model.bi)),
-				$author$project$View$Style$scrollbarStyle(model.bi)),
+					$author$project$View$SideBarContents$sidebarContentStyle(model.bk)),
+				$author$project$View$Style$scrollbarStyle(model.bk)),
 			_List_fromArray(
 				[
 					function () {
-					var _v0 = model.cW;
+					var _v0 = model.cX;
 					switch (_v0) {
 						case 0:
 							return A2($author$project$View$SideBarContents$tabShelfList, model, present);
@@ -24329,10 +24819,10 @@ var $author$project$View$SideBar$footerButton = function (theme) {
 				'tracking-widest',
 				'uppercase',
 				'border',
-				$author$project$View$Style$basecolors(theme).bU,
-				$author$project$View$Style$basecolors(theme).c0,
-				$author$project$View$Style$basecolors(theme).aD,
-				$author$project$View$Style$basecolors(theme).ce,
+				$author$project$View$Style$basecolors(theme).cT,
+				$author$project$View$Style$basecolors(theme).a9,
+				$author$project$View$Style$basecolors(theme).J,
+				$author$project$View$Style$basecolors(theme).ak,
 				'hover:bg-white/5',
 				'active:scale-95',
 				'items-center',
@@ -24376,7 +24866,7 @@ var $author$project$View$SideBar$fileFunctionTrigger = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class(
-						$author$project$View$SideBar$footerButton(model.bi)),
+						$author$project$View$SideBar$footerButton(model.bk)),
 						$author$project$View$ViewHelper$stopClickPropagation(
 						$author$project$Type$ToggleMenu(menuId))
 					]),
@@ -24388,7 +24878,7 @@ var $author$project$View$SideBar$fileFunctionTrigger = function (model) {
 				$author$project$View$ViewHelper$openDropdown,
 				isOpen,
 				0,
-				model.bi,
+				model.bk,
 				_List_fromArray(
 					[
 						_Utils_Tuple2(
@@ -24410,7 +24900,7 @@ var $author$project$View$SideBar$functionButton = function (model) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('relative flex flex-1 h-full')
+				$elm$html$Html$Attributes$class('relative flex flex-1 h-full [&_.absolute]:left-auto [&_.absolute]:right-0')
 			]),
 		_List_fromArray(
 			[
@@ -24419,7 +24909,7 @@ var $author$project$View$SideBar$functionButton = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class(
-						$author$project$View$SideBar$footerButton(model.bi)),
+						$author$project$View$SideBar$footerButton(model.bk)),
 						$author$project$View$ViewHelper$stopClickPropagation(
 						$author$project$Type$ToggleMenu(menuId))
 					]),
@@ -24431,7 +24921,7 @@ var $author$project$View$SideBar$functionButton = function (model) {
 				$author$project$View$ViewHelper$openDropdown,
 				isOpen,
 				0,
-				model.bi,
+				model.bk,
 				_List_fromArray(
 					[
 						_Utils_Tuple2('Reset', $author$project$Type$ResetApp),
@@ -24451,8 +24941,8 @@ var $author$project$View$SideBar$sideFooter = function (theme) {
 				'items-center',
 				'w-full',
 				'gap-2',
-				$author$project$View$Style$basecolors(theme).cY,
-				$author$project$View$Style$basecolors(theme).cd
+				$author$project$View$Style$basecolors(theme).cZ,
+				$author$project$View$Style$basecolors(theme).ce
 			]));
 };
 var $author$project$View$SideBar$sidebarFooter = function (model) {
@@ -24461,12 +24951,12 @@ var $author$project$View$SideBar$sidebarFooter = function (model) {
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$class(
-				$author$project$View$SideBar$sideFooter(model.bi))
+				$author$project$View$SideBar$sideFooter(model.bk))
 			]),
 		_List_fromArray(
 			[
 				$author$project$View$SideBar$fileFunctionTrigger(model),
-				$author$project$View$SideBar$exportButton(model.bi),
+				$author$project$View$SideBar$exportButton(model.bk),
 				$author$project$View$SideBar$functionButton(model)
 			]));
 };
@@ -24477,8 +24967,8 @@ var $author$project$View$SideBar$sideHeaderStyle = function (theme) {
 			[
 				'flex',
 				'flex-col',
-				$author$project$View$Style$basecolors(theme).cY,
-				$author$project$View$Style$basecolors(theme).c0
+				$author$project$View$Style$basecolors(theme).cZ,
+				$author$project$View$Style$basecolors(theme).a9
 			]));
 };
 var $author$project$View$SideBar$sidebarTitle = function (model) {
@@ -24500,7 +24990,7 @@ var $author$project$View$SideBar$sidebarTitle = function (model) {
 						A2(
 						$elm$html$Html$Attributes$style,
 						'font-family',
-						$author$project$View$Style$basecolors(model.bi).aI)
+						$author$project$View$Style$basecolors(model.bk).bs)
 					]),
 				_List_fromArray(
 					[
@@ -24520,8 +25010,8 @@ var $author$project$View$SideBar$undoButtonStyle = function (theme) {
 				'border',
 				'items-center',
 				'justify-center',
-				$author$project$View$Style$basecolors(theme).aD,
-				$author$project$View$Style$basecolors(theme).bU,
+				$author$project$View$Style$basecolors(theme).J,
+				$author$project$View$Style$basecolors(theme).cT,
 				'hover:bg-white/25'
 			]));
 };
@@ -24580,7 +25070,7 @@ var $author$project$View$SideBar$sidebarTitleRow = function (model) {
 		_List_fromArray(
 			[
 				$author$project$View$SideBar$sidebarTitle(model),
-				$author$project$View$SideBar$undoRedoGroup(model.bi)
+				$author$project$View$SideBar$undoRedoGroup(model.bk)
 			]));
 };
 var $author$project$Type$UpdateSearchText = function (a) {
@@ -24594,7 +25084,7 @@ var $author$project$View$SideBar$searchBoxStyle = function (theme) {
 				'relative',
 				'px-3',
 				'py-2',
-				$author$project$View$Style$basecolors(theme).bU
+				$author$project$View$Style$basecolors(theme).cT
 			]));
 };
 var $author$project$View$SideBar$searchClearbuttonStyle = function (theme) {
@@ -24612,7 +25102,7 @@ var $author$project$View$SideBar$searchClearbuttonStyle = function (theme) {
 				'justify-center',
 				'text-xs',
 				'rounded',
-				$author$project$View$Style$basecolors(theme).c0,
+				$author$project$View$Style$basecolors(theme).a9,
 				'hover:bg-white/25'
 			]));
 };
@@ -24629,10 +25119,10 @@ var $author$project$View$SideBar$searchInputStyle = function (theme) {
 				'border',
 				'outline-none',
 				'placeholder:opacity-50',
-				$author$project$View$Style$basecolors(theme).cc,
-				$author$project$View$Style$basecolors(theme).cd,
-				$author$project$View$Style$basecolors(theme).c$,
-				$author$project$View$Style$basecolors(theme).bU
+				$author$project$View$Style$basecolors(theme).aE,
+				$author$project$View$Style$basecolors(theme).ce,
+				$author$project$View$Style$basecolors(theme).c0,
+				$author$project$View$Style$basecolors(theme).cT
 			]));
 };
 var $author$project$View$SideBar$viewSearchInput = F2(
@@ -24700,8 +25190,8 @@ var $author$project$View$SideBar$tabStyle = F2(
 	});
 var $author$project$View$SideBar$viewTabButton = F3(
 	function (model, tab, label) {
-		var searchText = model.cV;
-		var isActive = _Utils_eq(model.cW, tab);
+		var searchText = model.cW;
+		var isActive = _Utils_eq(model.cX, tab);
 		var hasExternalHit = function () {
 			if ($elm$core$String$isEmpty(searchText)) {
 				return false;
@@ -24714,9 +25204,9 @@ var $author$project$View$SideBar$viewTabButton = F3(
 							A2(
 								$elm$core$List$filter,
 								function (s) {
-									return !_Utils_eq(s.z, model.x.aF);
+									return !_Utils_eq(s.z, model.x.aI);
 								},
-								model.x.R));
+								model.x.T));
 					case 1:
 						return A2(
 							$elm$core$List$any,
@@ -24726,19 +25216,19 @@ var $author$project$View$SideBar$viewTabButton = F3(
 								function (b) {
 									return !_Utils_eq(
 										$elm$core$Maybe$Just(b.z),
-										model.x.al);
+										model.x.ao);
 								},
 								A2(
 									$elm$core$List$concatMap,
 									function ($) {
-										return $.ah;
+										return $.aj;
 									},
 									A2(
 										$elm$core$List$filter,
 										function (s) {
-											return _Utils_eq(s.z, model.x.aF);
+											return _Utils_eq(s.z, model.x.aI);
 										},
-										model.x.R))));
+										model.x.T))));
 					default:
 						return false;
 				}
@@ -24756,7 +25246,7 @@ var $author$project$View$SideBar$viewTabButton = F3(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					A2($author$project$View$SideBar$tabStyle, model.bi, isActive)),
+					A2($author$project$View$SideBar$tabStyle, model.bk, isActive)),
 					$elm$html$Html$Events$onClick(
 					$author$project$Type$ChangeSidebarTab(tab))
 				]),
@@ -24775,7 +25265,7 @@ var $author$project$View$SideBar$viewSidebarTabs = function (model) {
 				A2(
 				$elm$html$Html$Attributes$style,
 				'font-family',
-				$author$project$View$Style$basecolors(model.bi).aI)
+				$author$project$View$Style$basecolors(model.bk).bs)
 			]),
 		_List_fromArray(
 			[
@@ -24790,12 +25280,12 @@ var $author$project$View$SideBar$sidebarHeader = function (model) {
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$class(
-				$author$project$View$SideBar$sideHeaderStyle(model.bi))
+				$author$project$View$SideBar$sideHeaderStyle(model.bk))
 			]),
 		_List_fromArray(
 			[
 				$author$project$View$SideBar$sidebarTitleRow(model),
-				A2($author$project$View$SideBar$viewSearchInput, model.bi, model.cV),
+				A2($author$project$View$SideBar$viewSearchInput, model.bk, model.cW),
 				$author$project$View$SideBar$viewSidebarTabs(model)
 			]));
 };
@@ -24806,7 +25296,7 @@ var $author$project$View$SideBar$sidebarArea = F2(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$View$SideBar$asideStyle(model.bi))
+					$author$project$View$SideBar$asideStyle(model.bk))
 				]),
 			_List_fromArray(
 				[
@@ -24817,18 +25307,18 @@ var $author$project$View$SideBar$sidebarArea = F2(
 	});
 var $author$project$View$Contents$viewLayout = F2(
 	function (model, present) {
-		var isRightVisible = !model.a_;
-		var isLeftVisible = (!model.a_) || (model.a_ === 2);
+		var isRightVisible = !model.a0;
+		var isLeftVisible = (!model.a0) || (model.a0 === 2);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					$author$project$View$Contents$layoutContainer(model.bi)),
+					$author$project$View$Contents$layoutContainer(model.bk)),
 					A2(
 					$elm$html$Html$Attributes$style,
 					'font-family',
-					$author$project$View$Style$basecolors(model.bi).ct),
+					$author$project$View$Style$basecolors(model.bk).ct),
 					A2(
 					$elm$html$Html$Events$preventDefaultOn,
 					'dragover',
@@ -24881,13 +25371,13 @@ var $author$project$View$Contents$viewLayout = F2(
 									A2($author$project$View$RightSideBar$rightSidebarArea, model, present)
 								]))
 						])),
-					$author$project$View$Contents$isMiniWindowMode(model.a_) ? A2($author$project$View$Contents$overlaySidebarArea, model, present) : $elm$html$Html$text('')
+					$author$project$View$Contents$isMiniWindowMode(model.a0) ? A2($author$project$View$Contents$overlaySidebarArea, model, present) : $elm$html$Html$text('')
 				]));
 	});
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{
 		cz: $author$project$Main$init,
-		cX: $author$project$Main$subscriptions,
+		cY: $author$project$Main$subscriptions,
 		c1: $author$project$Main$update,
 		c2: function (model) {
 			return A2($author$project$View$Contents$viewLayout, model, model.x);
@@ -24901,7 +25391,7 @@ _Platform_export({'Main':{'init':$author$project$Main$main(
 				$elm$json$Json$Decode$andThen,
 				function (seed) {
 					return $elm$json$Json$Decode$succeed(
-						{at: seed, au: storageData});
+						{aw: seed, ax: storageData});
 				},
 				A2(
 					$elm$json$Json$Decode$field,

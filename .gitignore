@@ -12,7 +12,7 @@ elm-stuff/
 assets/
 Unnecessary/
 oldversion/
-src/converttxt/
+src/converttext/
 src/convert.bat
 # ==========================================
 # 3. OS & エディタの一時ファイル
