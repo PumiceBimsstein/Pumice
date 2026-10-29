@@ -16,35 +16,35 @@ import View.SideTocList exposing (viewToc)
 
 -- MARK:コンテンツ一覧
 
-sidebarContent : Model -> AppState -> Html Msg
-sidebarContent model present =
+sidebarContent : Model -> Html Msg
+sidebarContent model =
     nav
         ((class (sidebarContentStyle model.colorTheme))
             :: scrollbarStyle model.colorTheme
         )
         [ case model.sidebarTab of
             ShelfListTab ->
-                tabShelfList model present
+                tabShelfList model
 
             BookListTab ->
-                tabBookList model present
+                tabBookList model
 
             TocTab ->
-                tabTocList model present
+                tabTocList model
         ]
 
 sidebarContentStyle : ColorTheme -> String
 sidebarContentStyle theme =
         tw ["block flex-1 overflow-y-auto", (basecolors theme).surface]
 
-tabShelfList : Model -> AppState -> Html Msg
-tabShelfList model present =
+tabShelfList : Model -> Html Msg
+tabShelfList model =
     div []
         [ div
             [ class "flex justify-center mt-2"
             ]
             [ viewSidebarActionButton model True ]
-        , viewSidebarShelfList model present
+        , viewSidebarShelfList model
         ]
 
 
@@ -90,8 +90,8 @@ addBtnStyle theme =
 
 
 -- MARK:BookList
-tabBookList : Model -> AppState -> Html Msg
-tabBookList model present =
+tabBookList : Model -> Html Msg
+tabBookList model =
     div []
         [ div
             [ class "flex items-center justify-between p-1 py-3" ]
@@ -100,13 +100,13 @@ tabBookList model present =
                 , style "font-family" (basecolors model.colorTheme).fontDeco
                 ]
                 [ text 
-                    (getCurrentShelf present 
+                    (getCurrentShelf model.present 
                         |> Maybe.map .name 
                         |> Maybe.withDefault "本棚未選択")
                 ]
             , viewSidebarActionButton model False
             ]
-        , viewBookList model present
+        , viewBookList model
         ]
 
 
@@ -121,12 +121,12 @@ shelfBookName theme =
 
 
 -- MARK:TocList
-tabTocList : Model -> AppState -> Html Msg
-tabTocList model present =
+tabTocList : Model -> Html Msg
+tabTocList model =
     div [ class (tw [ "flex", "flex-col", "h-full", "pt-2" ]) ]
         [ div
             (id "toc-area" :: class (tw [ "flex-1", "overflow-y-auto" ]) :: Style.scrollbarStyle model.colorTheme)
-            [ viewToc model present ]
+            [ viewToc model ]
         , viewSidebarActionButton model False
         , headingLevelSelector model
         ]

@@ -8,9 +8,9 @@ import View.Style exposing (..)
 import Domain.Helper exposing (..)
 
 
-viewToc : Model -> AppState -> Html Msg
-viewToc model present =
-    case (getCurrentBook present) of
+viewToc : Model -> Html Msg
+viewToc model =
+    case (getCurrentBook model.present) of
         Just book ->
             div [ class "space-y-1" ] 
                 (List.indexedMap

@@ -18,8 +18,8 @@ import View.TitleEditModal exposing (viewTitleEditModal)
 import View.AlertModal exposing (viewAlertModal)
 import View.ViewHelper exposing (viewEmptyState)
 
-mainContentArea : Model -> AppState -> Html Msg
-mainContentArea model present =
+mainContentArea : Model -> Html Msg
+mainContentArea model =
     div
         [ id "main-content-area"
         , class mainAreaWrapper
@@ -32,7 +32,7 @@ mainContentArea model present =
                 shelfDetailView model shelfId
 
             PageView ->
-                pageContentView model present
+                pageContentView model
         , viewTitleEditModal model
         , viewAlertModal model
         ]
@@ -115,28 +115,16 @@ makeNewShelf theme isGuiding =
 
 shelfListMenuStyle : String
 shelfListMenuStyle =
-    tw  [ "absolute"
-        , "top-6"
-        , "right-8"
-        , "z-10"
-        , "flex"
-        , "items-center"
-        , "gap-3"               -- 横並びの間隔
-        , "font-mono"
+    tw  [ "absolute", "top-6", "right-8", "z-10", "flex"
+        , "items-center", "gap-3", "font-mono"
         ]
 
 
 menuButtonStyle : ColorTheme -> String
 menuButtonStyle theme =
-    tw  [ "text-sm"
-        , "cursor-pointer"
-        , "bg-transparent"      -- 背景なし
-        , "border-0"            -- 枠線なし
-        , "p-0"                 -- 余白なし
-        , "opacity-70"
-        , "hover:opacity-100"
-        , "hover:underline"     -- ホバーで下線
-        , "transition-opacity"
+    tw  [ "text-sm", "cursor-pointer", "bg-transparent"
+        , "border-0", "p-0", "opacity-70"
+        , "hover:opacity-100", "hover:underline", "transition-opacity"
         , (basecolors theme).accent
         ]
 
@@ -249,9 +237,9 @@ makeNewBook theme =
 
 
 -- MARK:ページ閲覧
-pageContentView : Model -> AppState -> Html Msg
-pageContentView model present =
-    case getCurrentBook present of
+pageContentView : Model -> Html Msg
+pageContentView model =
+    case getCurrentBook model.present of
         Nothing ->
             viewEmptyState model
 
@@ -261,8 +249,8 @@ pageContentView model present =
                 ]
                 [ div
                     [ class "flex-1 overflow-y-auto" ]
-                    [ centralArea model present book ]
-                , viewFooter model present book model.colorTheme
+                    [ centralArea model book ]
+                , viewFooter model book model.colorTheme
                 ]
 
 
@@ -276,8 +264,8 @@ mainWrapperStyle theme =
 
 
 -- MARK:文書エリア
-centralArea : Model -> AppState -> Book -> Html Msg
-centralArea model present book =
+centralArea : Model -> Book -> Html Msg
+centralArea model book =
     div
         ([ id "page-view-area"
          , class "flex-1 flex h-full relative overflow-y-auto justify-center"
@@ -285,11 +273,12 @@ centralArea model present book =
          ]
             ++ Style.scrollbarStyle model.colorTheme
         )
-        [ viewContentBody model present book ]
+        [ viewContentBody model book ]
 
-viewContentBody : Model -> AppState -> Book -> Html Msg
-viewContentBody model present book =
+viewContentBody : Model -> Book -> Html Msg
+viewContentBody model book =
     let
+        present = model.present
         currentPage =
             getCurrentPage present
     in
@@ -305,7 +294,7 @@ viewContentBody model present book =
                 viewEditor model currentPage
 
             ReorderMode ->
-                viewReorder model present book
+                viewReorder model book
         ]
 
 

@@ -11,19 +11,14 @@ import Icon exposing (cansel)
 import View.ViewHelper exposing (viewSortableItem, viewButton, stopClickPropagation)
 
 
--- ===================================================
 -- MARK: ツールチップ出現位置の型定義
--- ===================================================
-
 type TooltipSide
     = TooltipRight
     | TooltipLeft
 
 
 
--- ===================================================
 -- MARK: 本棚一覧（Shelf）
--- ===================================================
 
 {-| 本棚一覧グリッド（超広幅画面 2xl: 1536px 以上でのみ3列、通常はゆったり2列） -}
 shelfGrid : Model -> List Shelf -> Html Msg
@@ -76,7 +71,7 @@ viewShelfCard model index shelf =
         ]
 
 
-{-| 本棚カードの上部ヘッダー（カード全幅を使ってタイトルをしっかり表示） -}
+-- 本棚カードのヘッダー
 viewShelfCardHeader : ColorTheme -> Shelf -> Html Msg
 viewShelfCardHeader theme shelf =
     let
@@ -129,7 +124,8 @@ viewShelfCardSlots theme books =
             ]
         , div [ class "h-4 mt-1 flex items-center justify-end" ]
             [ if total > 4 then
-                span [ class (tw [ "text-xs font-mono font-semibold opacity-85 block", (basecolors theme).accent ]) ]
+                span
+                    [ class (tw [ "text-xs font-mono font-semibold opacity-85 block", (basecolors theme).accent ]) ]
                     [ text ("+" ++ String.fromInt (total - 4) ++ " more books →") ]
 
               else
@@ -143,9 +139,11 @@ viewShelfSlotItem : ColorTheme -> Int -> Book -> Html Msg
 viewShelfSlotItem theme index book =
     div
         [ class "flex items-center px-2.5 h-7 min-w-0" ]
-        [ span [ class (tw [ "text-xs font-mono opacity-50 mr-2.5 shrink-0", (basecolors theme).text ]) ]
+        [ span 
+            [ class (tw [ "text-xs font-mono opacity-50 mr-2.5 shrink-0", (basecolors theme).text ]) ]
             [ text (String.padLeft 2 '0' (String.fromInt (index + 1))) ]
-        , span [ class (tw [ "text-xs font-medium truncate flex-1", (basecolors theme).text ]) ]
+        , span
+            [ class (tw [ "text-xs font-medium truncate flex-1", (basecolors theme).text ]) ]
             [ text book.title ]
         ]
 
@@ -158,7 +156,8 @@ viewShelfCardFooter model theme shelf =
             ShelfExportMenu shelf.id
     in
     div [ class (shelfFooterRowStyle theme) ]
-        [ span [ class (tw [ "text-xs opacity-60 font-mono", (basecolors theme).text ]) ]
+        [ span
+            [ class (tw [ "text-xs opacity-60 font-mono", (basecolors theme).text ]) ]
             [ text "クリックで本棚を開く" ]
         , viewCompactExportMenu model theme menuId
             [ ( "JSON", ExportShelfJson shelf )
@@ -294,11 +293,9 @@ viewShelfTooltipArrow theme index =
         []
 
 
--- ===================================================
 -- MARK: 本一覧（Book）
--- ===================================================
 
-{-| 本一覧グリッド -}
+-- 本一覧グリッド
 viewShelfBookGrid : Model -> List Book -> Html Msg
 viewShelfBookGrid model books =
     div [ class (tw
@@ -412,7 +409,7 @@ viewBookCoverContent theme book allHeadings =
         ]
 
 
-{-| 1つの章（H1見出し）プレビュー部品（インデックスに応じて表示ブレークポイントを制御） -}
+-- H1見出しプレビュー
 viewBookChapterItem : ColorTheme -> Int -> Heading -> Html Msg
 viewBookChapterItem theme index heading =
     let
@@ -443,7 +440,8 @@ viewBookCardFooter model theme book =
             BookExportMenu book.id
     in
     div [ class (tw [ "pl-3 pt-2 mt-auto border-t flex items-center justify-between text-xs shrink-0 relative", (basecolors theme).borderUnder ]) ]
-        [ span [ class (tw [ "text-xs font-mono opacity-65", (basecolors theme).text ]) ]
+        [ span
+            [ class (tw [ "text-xs font-mono opacity-65", (basecolors theme).text ]) ]
             [ text (String.fromInt (List.length book.pages) ++ " Pages") ]
         , viewCompactExportMenu model theme menuId
             [ ( "JSON", ExportBookJson book )
@@ -464,9 +462,11 @@ viewBookTooltip theme bookId side allHeadings =
 
     else
         viewTooltipContainer side "w-72"
-            [ div [ class (tooltipBoxStyle theme) ]
+            [ div 
+                [ class (tooltipBoxStyle theme) ]
                 [ viewTooltipHeader theme "Table of Contents"
-                , div (class "max-h-52 overflow-y-auto space-y-1.5 pr-1" :: Style.scrollbarStyle theme)
+                , div
+                    (class "max-h-52 overflow-y-auto space-y-1.5 pr-1" :: Style.scrollbarStyle theme)
                     (List.map (viewBookTooltipItem theme bookId) allHeadings)
                 , viewTooltipArrow theme side
                 ]
@@ -476,19 +476,32 @@ viewBookTooltip theme bookId side allHeadings =
 viewBookTooltipItem : ColorTheme -> String -> Heading -> Html Msg
 viewBookTooltipItem theme bookId heading =
     div
-        [ class (tw [ "text-xs truncate py-1 px-1.5 rounded cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center gap-2"
-                    , (basecolors theme).text
-                    ])
+        [ class (bookTooltipStyle.item theme)
         -- 本IDを指定して見出しジャンプを発行
         , stopClickPropagation (JumpToBookHeading bookId heading.pageIndex (String.fromInt heading.order))
         , title ("P." ++ String.fromInt (heading.pageIndex + 1) ++ " へジャンプ")
         ]
-        [ span [ class (tw [ "text-xs font-mono opacity-60 shrink-0", (basecolors theme).accent ]) ]
+        [ span
+            [ class (bookTooltipStyle.pageIndex theme) ]
             [ text ("P." ++ String.fromInt (heading.pageIndex + 1)) ]
-        , span [ class "truncate flex-1 font-medium" ]
+        , span
+            [ class "truncate flex-1 font-medium" ]
             [ text (stripEmphasis heading.text) ]
         ]
 
+
+bookTooltipStyle :
+    { item : ColorTheme -> String
+    , pageIndex : ColorTheme -> String
+    }
+bookTooltipStyle =
+    { item = \theme -> 
+        tw  [ "text-xs py-1 px-1.5 rounded cursor-pointer hover:bg-black/5 dark:hover:bg-white/10"
+            , "truncate transition-colors flex items-center gap-2"
+            , (basecolors theme).text
+            ]
+    , pageIndex = \theme -> tw [ "text-xs font-mono opacity-60 shrink-0", (basecolors theme).accent ]
+    }
 
 -- ===================================================
 -- MARK: コンパクトExportドロップダウン
@@ -514,10 +527,11 @@ viewCompactExportMenu model theme menuId items =
                     ]
                     []
                 , div
-                    [ class (tw [ "absolute right-0 top-full mt-1.5 z-50 flex flex-col p-1 w-24 border shadow-xl backdrop-blur-md rounded-lg animate-[fadeIn_0.1s_ease-out]"
+                    [ class (tw [ "absolute right-0 top-full mt-1.5 z-50 flex flex-col p-1 w-24 border shadow-xl rounded-lg"
                                 , (basecolors theme).surface
                                 , (basecolors theme).borderBtn
                                 ])
+                    , class "backdrop-blur-md animate-[fadeIn_0.1s_ease-out]"
                     ]
                     (List.map
                         (\( label, msg ) ->
@@ -598,7 +612,8 @@ viewTooltipContainer side widthClass children =
 viewTooltipHeader : ColorTheme -> String -> Html Msg
 viewTooltipHeader theme titleText =
     div [ class (tw [ "flex items-center justify-between pb-2 mb-2 border-b", (basecolors theme).borderUnder ]) ]
-        [ span [ class (tw [ "text-xs font-bold font-mono uppercase tracking-wider", (basecolors theme).text ]) ]
+        [ span
+            [ class (tw [ "text-xs font-bold font-mono uppercase tracking-wider", (basecolors theme).text ]) ]
             [ text titleText ]
         ]
 
@@ -632,9 +647,7 @@ getAllH1Headings book =
         |> List.filter (\h -> h.level == 1)
 
 
--- ===================================================
 -- MARK: スタイル定義
--- ===================================================
 
 shelfCardWrapperStyle : ColorTheme -> Bool -> Bool -> String
 shelfCardWrapperStyle theme isActive isOpen =
@@ -654,7 +667,8 @@ shelfCardWrapperStyle theme isActive isOpen =
                 "z-0 hover:z-50"
     in
     tw
-        [ "group relative w-full h-72 px-5 pt-5 pb-4 rounded-xl border shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between"
+        [ "group relative w-full h-72 px-5 pt-5 pb-4 rounded-xl border shadow-sm"
+        , "hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between"
         , (basecolors theme).surface
         , borderActive
         , stackOrder
@@ -696,7 +710,8 @@ bookCardBodyStyle theme isActive =
                 (basecolors theme).borderBtn
     in
     tw
-        [ "relative w-full min-w-0 aspect-[3/4] p-4 rounded-r-lg rounded-l-xs border shadow-sm hover:shadow-xl transition-all duration-200 group-hover:-translate-y-1 flex flex-col justify-between"
+        [ "relative w-full min-w-0 aspect-[3/4] p-4 rounded-r-lg rounded-l-xs border shadow-sm"
+        , "hover:shadow-xl transition-all duration-200 group-hover:-translate-y-1 flex flex-col justify-between"
         , (basecolors theme).surface
         , borderActive
         ]
@@ -714,6 +729,7 @@ tooltipBoxStyle theme =
 miniExportBtnStyle : ColorTheme -> String
 miniExportBtnStyle theme =
     tw
-        [ "px-1.5 py-0.5 text-xs font-mono font-bold uppercase rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+        [ "px-1.5 py-0.5 text-xs font-mono font-bold uppercase rounded"
+        , "hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
         , (basecolors theme).accent
         ]

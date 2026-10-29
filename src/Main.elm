@@ -33,7 +33,7 @@ main =
         { init = init
         , update = update
         , subscriptions = subscriptions
-        , view = \model -> View.Contents.viewLayout model model.present
+        , view = \model -> View.Contents.viewLayout model
         }
 
 init : Flags -> ( Model, Cmd Msg )
@@ -41,38 +41,6 @@ init flags =
     flags
         |> buildInitialModelFromFlags
         |> withoutCmd
-
--- init : Flags -> ( Model, Cmd Msg )
--- init flags =
---     let
---         initialSeed =
---             flags.seed
---                 |> List.head
---                 |> Maybe.withDefault 0
---                 |> Random.initialSeed
-
---         initialModel =
---             case Decode.decodeValue JsonConverter.decodeModel flags.storageData of
---                 Ok model ->
---                     { model | seed = initialSeed }
-
---                 Err _ ->
---                     flags.storageData
---                         |> restoreFallbackAppState
---                         |> initModelWithAppState initialSeed
---     in
---     ( initialModel, Cmd.none )
-
-
--- Model全体のデコード失敗時に、AppState単体での復元を試みる
--- restoreFallbackAppState : Decode.Value -> AppState
--- restoreFallbackAppState storageData =
---     Decode.decodeValue (Decode.field "present" JsonConverter.decodeAppState) storageData
---         |> Result.toMaybe
---         |> Maybe.withDefault
---             (Decode.decodeValue JsonConverter.decodeAppState storageData
---                 |> Result.withDefault defaultAppState
---             )
 
 
 -- MARK:UPDATE

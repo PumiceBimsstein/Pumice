@@ -8,16 +8,20 @@ import View.Style exposing (..)
 import Domain.Helper exposing (..)
 
 
-viewSidebarShelfList : Model -> AppState -> Html Msg
-viewSidebarShelfList model present =
+viewSidebarShelfList : Model -> Html Msg
+viewSidebarShelfList model =
+    let
+        present = model.present
+    in
     div [ class "space-y-1" ]
-        (List.map (viewSidebarShelfItem model present) present.shelves)
+        (List.map (viewSidebarShelfItem model) present.shelves)
 
 
 -- 本棚アイテム
-viewSidebarShelfItem : Model -> AppState -> Shelf -> Html Msg
-viewSidebarShelfItem model present shelf =
+viewSidebarShelfItem : Model -> Shelf -> Html Msg
+viewSidebarShelfItem model shelf =
     let
+        present = model.present
         isSelected =
             shelf.id == present.currentShelfId
         theme = model.colorTheme

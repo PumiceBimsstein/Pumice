@@ -9,20 +9,21 @@ import Domain.Helper exposing (..)
 import Icon exposing (..)
 
 
-viewBookList : Model -> AppState -> Html Msg
-viewBookList model present =
+viewBookList : Model -> Html Msg
+viewBookList model =
     let
         visibleBooks =
-            getCurrentShelf present
+            getCurrentShelf model.present
                 |> Maybe.map .books
                 |> Maybe.withDefault []
     in
     div [ class "space-y-1" ]
-        (List.map (viewBookItem model present) visibleBooks)
+        (List.map (viewBookItem model) visibleBooks)
 
-viewBookItem : Model -> AppState -> Book -> Html Msg
-viewBookItem model present book =
+viewBookItem : Model -> Book -> Html Msg
+viewBookItem model book =
     let
+        present = model.present
         isSelected = Just book.id == present.currentBookId
         themeClasses = viewBookItemTheme model.colorTheme isSelected isSearchHit
         

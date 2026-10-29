@@ -10,12 +10,12 @@ import Icon exposing (..)
 import View.SideBarContents exposing (sidebarContent)
 import View.ViewHelper exposing (openDropdown, stopClickPropagation)
 
-sidebarArea : Model -> AppState -> Html Msg
-sidebarArea model present =
+sidebarArea : Model -> Html Msg
+sidebarArea model =
     aside
         [ class (asideStyle model.colorTheme) ]
         [ sidebarHeader model
-        , sidebarContent model present
+        , sidebarContent model
         , sidebarFooter model
         ]
 

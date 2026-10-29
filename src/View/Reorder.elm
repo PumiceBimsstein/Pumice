@@ -10,10 +10,9 @@ import Domain.Helper exposing (..)
 import View.ViewHelper exposing ( viewSortableItem, viewButton )
 
 -- MARK:PAGEモード
-viewReorder : Model -> AppState -> Book -> Html Msg
-viewReorder model present book =
-    div
-        [ class reorderStyle.reorderGrid ]
+viewReorder : Model -> Book -> Html Msg
+viewReorder model book =
+    div [ class reorderStyle.reorderGrid ]
         (List.indexedMap
             (\index page ->
                 viewSortableItem 
@@ -22,15 +21,16 @@ viewReorder model present book =
                     DragPage
                     index 
                     False
-                    (viewPageCard model present index page page.id)
+                    (viewPageCard model index page page.id)
             )
             book.pages ++ [ viewAddPageCard model ]
         )
 
 
-viewPageCard : Model -> AppState -> Int -> Page -> String -> Html Msg
-viewPageCard model present index page pageId =
+viewPageCard : Model -> Int -> Page -> String -> Html Msg
+viewPageCard model index page pageId =
     let
+        present = model.present
         isSelected =
             present.currentPageIndex == index
     in

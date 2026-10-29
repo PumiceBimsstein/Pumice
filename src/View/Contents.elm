@@ -16,8 +16,8 @@ import View.RightSideBar exposing (rightSidebarArea, rightSideWindow)
 
 -- 全体レイアウト
 
-viewLayout : Model -> AppState -> Html Msg
-viewLayout model present =
+viewLayout : Model -> Html Msg
+viewLayout model =
     let
         -- 左サイドバーが表示されるモード
         isLeftVisible =
@@ -36,21 +36,21 @@ viewLayout model present =
         [ -- 1. 左サイドバー（左方向へのスライドアニメーション）
           div [ class (leftSidebarWrapperClass isLeftVisible) ]
             [ div [ class (leftSidebarInnerClass isLeftVisible) ]
-                [ sidebarArea model present ]
+                [ sidebarArea model ]
             ]
 
         -- 2. メインコンテンツ領域（左右の伸縮に合わせて追従）
-        , mainContentArea model present
+        , mainContentArea model
 
         -- 3. 右サイドバー（右方向へのスライドアニメーション）
         , div [ class (rightSidebarWrapperClass isRightVisible) ]
             [ div [ class (rightSidebarInnerClass isRightVisible) ]
-                [ rightSidebarArea model present ]
+                [ rightSidebarArea model ]
             ]
 
         -- 4. 右下ミニコントロールウィンドウ
         , if isMiniWindowMode model.sidebarMode then
-            overlaySidebarArea model present
+            overlaySidebarArea model
 
           else
             text ""
@@ -133,11 +133,11 @@ isMiniWindowMode sidebarMode =
     sidebarMode == OverlaySidebar || sidebarMode == LeftSidebar
 
 
-overlaySidebarArea : Model -> AppState -> Html Msg
-overlaySidebarArea model present =
+overlaySidebarArea : Model -> Html Msg
+overlaySidebarArea model =
     div
         (overlaySidebarAttrs model.isRightSideWindowVisible)
-        [ rightSideWindow model present ]
+        [ rightSideWindow model]
 
 
 {-| インラインスタイルを用いて、Tailwindのビルド環境に依存せず確実にアニメーションさせる属性リスト -}

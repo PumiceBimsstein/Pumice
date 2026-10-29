@@ -8,8 +8,8 @@ import View.Style exposing (..)
 import Domain.Helper exposing (..)
 
 -- MARK:フッター
-viewFooter : Model -> AppState -> Book -> ColorTheme -> Html Msg
-viewFooter model state book theme =
+viewFooter : Model -> Book -> ColorTheme -> Html Msg
+viewFooter model book theme =
     let
         total = List.length book.pages
         currentPageId =
@@ -24,7 +24,7 @@ viewFooter model state book theme =
             [ viewBookTitle model book ]
         , div
             [ class "flex-1 min-w-0 flex justify-center px-2" ]
-            [ viewSeekBar model state total ]
+            [ viewSeekBar model total ]
         , div
             [ class "flex-none shrink-0 flex items-center justify-end" ]
             [ viewFooterRightControls model currentPageId theme ]
@@ -119,9 +119,10 @@ viewBookTitle model book =
         [ text (book.title) ]
 
 
-viewSeekBar : Model -> AppState -> Int -> Html Msg
-viewSeekBar model present total =
+viewSeekBar : Model -> Int -> Html Msg
+viewSeekBar model total =
     let
+        present = model.present
         currentVal = present.currentPageIndex
         progress = calcProgress currentVal total
     in

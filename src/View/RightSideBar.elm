@@ -11,15 +11,15 @@ import Domain.Selector exposing (..)
 import View.ViewHelper exposing (openDropdown, stopClickPropagation, viewBaseSelector)
 
 
-rightSidebarArea : Model -> AppState -> Html Msg
-rightSidebarArea model present =
+rightSidebarArea : Model -> Html Msg
+rightSidebarArea model =
     aside
         [ class (rightSideStyle model.colorTheme) ]
         [ topHeader
         , viewModeSegment model
         , controlSection model
         , scrollableArea
-        , bottomStatusArea model present
+        , bottomStatusArea model
         ]
 
 
@@ -152,19 +152,20 @@ scrollableArea =
         , title "Scroll to change page"][]
 
 
-bottomStatusArea : Model -> AppState -> Html Msg
-bottomStatusArea model present =
+bottomStatusArea : Model -> Html Msg
+bottomStatusArea model =
     let
         breadNav = 
-            if model.isRightSideWindowVisible then
-                miniBreadcrumbNav model
-            else
-                viewBreadcrumbNav model
+            case model.sidebarMode of
+                NormalSidebar -> viewBreadcrumbNav model
+                
+                _ -> miniBreadcrumbNav model
+            
     in
     div
         [ class "flex flex-col gap-2 mt-auto pb-3" ]
         [ breadNav
-        , bookPageCounter model.colorTheme present
+        , bookPageCounter model.colorTheme model.present
         ]
 
 
@@ -215,15 +216,15 @@ bookPageCounter theme present =
 
 
 --MARK:ミニサイドバー
-rightSideWindow : Model -> AppState -> Html Msg
-rightSideWindow model present =
+rightSideWindow : Model -> Html Msg
+rightSideWindow model =
     div
         [ class (rightSideWindowStyle model.colorTheme) ]
         [ windowCloseHeader model.colorTheme
         , modeSelectSegment model
         , sidebarModeSection model
         , controlSectionMini model
-        , bottomStatusArea model present
+        , bottomStatusArea model
         ]
 
 modeSelectSegment : Model -> Html Msg
