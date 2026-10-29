@@ -9991,7 +9991,7 @@ var $author$project$View$Contents$leftSidebarInnerClass = function (isVisible) {
 	return $author$project$View$Style$tw(
 		_List_fromArray(
 			[
-				'w-[250px] lg:w-[20vw] h-full',
+				'w-full w-[250px] h-full',
 				'transition-transform duration-300 ease-in-out',
 				isVisible ? 'translate-x-0' : '-translate-x-full'
 			]));
@@ -22389,7 +22389,7 @@ var $author$project$View$MainArea$shelfListTitleStyle = function (theme) {
 			[
 				'text-2xl',
 				'font-bold',
-				'ml-4',
+				'mx-4',
 				'mb-1',
 				'py-1',
 				'w-xs',

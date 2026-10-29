@@ -152,7 +152,7 @@ shelfViewPadding sidebarMode =
 shelfListTitleStyle : ColorTheme -> String
 shelfListTitleStyle theme =
     tw  [ "text-2xl", "font-bold"
-        , "ml-4", "mb-1", "py-1", "w-xs"
+        , "mx-4", "mb-1", "py-1", "w-xs"
         , "opacity-70"
         , (basecolors theme).text
         ]

@@ -88,7 +88,7 @@ leftSidebarWrapperClass isVisible =
 leftSidebarInnerClass : Bool -> String
 leftSidebarInnerClass isVisible =
     tw
-        [ "w-[250px] lg:w-[20vw] h-full"
+        [ "w-full w-[250px] h-full"
         , "transition-transform duration-300 ease-in-out"
         , if isVisible then
             "translate-x-0"
