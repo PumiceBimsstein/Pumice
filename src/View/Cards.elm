@@ -544,7 +544,7 @@ viewCompactExportMenu model theme menuId items =
 
 viewCardDeleteButton : ColorTheme -> Msg -> Html Msg
 viewCardDeleteButton theme deleteMsg =
-    viewButton theme (DeleteButton ( 1, 1 )) deleteMsg (Style.icon Icon.cansel "w-2 h-2")
+    viewButton theme (DeleteButton ( 1, 1 )) deleteMsg (Style.icon cansel "w-2 h-2")
 
 
 viewBookSpineShadow : Html Msg

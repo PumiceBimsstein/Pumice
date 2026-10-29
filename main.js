@@ -7414,14 +7414,60 @@ var $author$project$Domain$Helper$applyPageChange = F2(
 				ao: index
 			});
 	});
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $author$project$Domain$Helper$findShelfByBookId = F2(
+	function (targetBookId, shelves) {
+		return $elm$core$List$head(
+			A2(
+				$elm$core$List$filter,
+				function (shelf) {
+					return A2(
+						$elm$core$List$any,
+						function (b) {
+							return _Utils_eq(b.z, targetBookId);
+						},
+						shelf.aj);
+				},
+				shelves));
+	});
 var $author$project$Domain$Helper$applyBookSelection = F2(
 	function (bookId, model) {
 		var present = model.x;
+		var shelfId = A2(
+			$elm$core$Maybe$withDefault,
+			present.aI,
+			A2(
+				$elm$core$Maybe$map,
+				function ($) {
+					return $.z;
+				},
+				A2($author$project$Domain$Helper$findShelfByBookId, bookId, present.T)));
 		var basePresent = _Utils_update(
 			present,
 			{
 				an: $elm$core$Maybe$Just(bookId),
-				ao: 0
+				ao: 0,
+				aI: shelfId
 			});
 		var newPresent = A2($author$project$Domain$Helper$applyPageChange, 0, basePresent);
 		return _Utils_update(
@@ -8385,27 +8431,6 @@ var $elm$core$String$padLeft = F3(
 			string);
 	});
 var $elm$core$String$map = _String_map;
-var $elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
-				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
-			}
-		}
-	});
 var $elm$core$List$member = F2(
 	function (x, xs) {
 		return A2(

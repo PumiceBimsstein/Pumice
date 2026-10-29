@@ -37,6 +37,13 @@ findBookById targetId shelves =
         |> List.filter (\b -> b.id == targetId)
         |> List.head
 
+-- 特定のIDを持つ本が所属する本棚を探索
+findShelfByBookId : String -> List Shelf -> Maybe Shelf
+findShelfByBookId targetBookId shelves =
+    shelves
+        |> List.filter (\shelf -> List.any (\b -> b.id == targetBookId) shelf.books)
+        |> List.head
+
 -- 現在選択されている本棚を取得
 getCurrentShelf : AppState -> Maybe Shelf
 getCurrentShelf state =
@@ -144,10 +151,17 @@ applyBookSelection bookId model =
     let
         present =
             model.present
+        
+        -- 本が所属している本棚のIDを特定（見つからなければ現在値を維持）
+        shelfId =
+            findShelfByBookId bookId present.shelves
+                |> Maybe.map .id
+                |> Maybe.withDefault present.currentShelfId
 
         basePresent =
             { present
-                | currentBookId = Just bookId
+                | currentShelfId = shelfId
+                , currentBookId = Just bookId
                 , currentPageIndex = 0
             }
 
