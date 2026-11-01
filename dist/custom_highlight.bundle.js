@@ -15276,7 +15276,7 @@
     };
   }
 
-  // src/src_highlight.js
+  // js/src_highlight.js
   common_default.registerLanguage("elm", elm);
   common_default.registerLanguage("haskell", haskell);
   common_default.registerLanguage("ocaml", ocaml);
@@ -15329,6 +15329,18 @@
       this._theme = "";
       this._searchText = "";
     }
+    // ▼▼▼ ここを追加 ▼▼▼
+    get code() {
+      return this._content;
+    }
+    set code(value) {
+      const valStr = value == null ? "" : String(value);
+      const cleanCode = valStr.startsWith("code:") ? valStr.slice(5) : valStr;
+      if (this._content === cleanCode) return;
+      this._content = cleanCode;
+      this.render();
+    }
+    // ▲▲▲ ここまで ▲▲▲
     static get observedAttributes() {
       return ["code", "lang", "theme", "update-key", "search-text"];
     }
@@ -15345,6 +15357,11 @@
       }
     }
     connectedCallback() {
+      if (this.hasOwnProperty("code")) {
+        const initialValue = this.code;
+        delete this.code;
+        this.code = initialValue;
+      }
       this.render();
     }
     render() {
@@ -15408,6 +15425,17 @@
       this._content = "";
       this._searchText = "";
     }
+    // ▼▼▼ ここを追加 ▼▼▼
+    get content() {
+      return this._content;
+    }
+    set content(value) {
+      const valStr = value == null ? "" : String(value);
+      if (this._content === valStr) return;
+      this._content = valStr;
+      this.render();
+    }
+    // ▲▲▲ ここまで ▲▲▲
     static get observedAttributes() {
       return ["content", "search-text"];
     }

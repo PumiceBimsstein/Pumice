@@ -81,6 +81,20 @@ class HighlightCode extends HTMLElement {
         this._searchText = "";
     }
 
+    // ▼▼▼ ここを追加 ▼▼▼
+    get code() {
+        return this._content;
+    }
+
+    set code(value) {
+        const valStr = value == null ? "" : String(value);
+        const cleanCode = valStr.startsWith("code:") ? valStr.slice(5) : valStr;
+        if (this._content === cleanCode) return;
+        this._content = cleanCode;
+        this.render();
+    }
+    // ▲▲▲ ここまで ▲▲▲
+
     static get observedAttributes() {
         return ['code', 'lang', 'theme', 'update-key', 'search-text'];
     }
@@ -101,6 +115,14 @@ class HighlightCode extends HTMLElement {
     }
 
     connectedCallback() {
+        // ▼▼▼ この2行を追加（Elmから渡されたプロパティを確実に救出） ▼▼▼
+        if (this.hasOwnProperty('code')) {
+            const initialValue = this.code;
+            delete this.code;
+            this.code = initialValue;
+        }
+        // ▲▲▲ ここまで ▲▲▲
+        
         this.render();
     }
 
@@ -176,6 +198,19 @@ class HighlightCodeSpan extends HTMLElement {
         this._content = "";
         this._searchText = "";
     }
+
+    // ▼▼▼ ここを追加 ▼▼▼
+    get content() {
+        return this._content;
+    }
+
+    set content(value) {
+        const valStr = value == null ? "" : String(value);
+        if (this._content === valStr) return;
+        this._content = valStr;
+        this.render();
+    }
+    // ▲▲▲ ここまで ▲▲▲
 
     static get observedAttributes() {
         return ['content', 'search-text'];

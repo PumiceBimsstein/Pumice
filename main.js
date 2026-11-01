@@ -10778,7 +10778,10 @@ var $author$project$View$Markdown$customRenderer = F3(
 							'highlight-code',
 							_List_fromArray(
 								[
-									A2($elm$html$Html$Attributes$attribute, 'code', block.aF),
+									A2(
+									$elm$html$Html$Attributes$property,
+									'code',
+									$elm$json$Json$Encode$string('code:' + block.aF)),
 									A2(
 									$elm$html$Html$Attributes$attribute,
 									'lang',
@@ -10814,7 +10817,10 @@ var $author$project$View$Markdown$customRenderer = F3(
 							'highlight-code-span',
 							_List_fromArray(
 								[
-									A2($elm$html$Html$Attributes$attribute, 'content', content),
+									A2(
+									$elm$html$Html$Attributes$property,
+									'content',
+									$elm$json$Json$Encode$string(content)),
 									A2($elm$html$Html$Attributes$attribute, 'search-text', searchText),
 									A2($author$project$View$MarkdownStyles$codeSpanStyle, theme, renderStyle),
 									$elm$html$Html$Attributes$class('not-prose')

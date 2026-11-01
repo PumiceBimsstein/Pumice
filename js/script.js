@@ -113,16 +113,6 @@ window.elmAppPromise.then(app => {
 });
 
 
-// function saveToDB(data) {
-//     const request = indexedDB.open("bookReaderDB", 1);
-//     request.onsuccess = (e) => {
-//         const db = e.target.result;
-//         const tx = db.transaction("kv", "readwrite");
-//         const store = tx.objectStore("kv");
-//         store.put(data, "bookReaderData");
-//     };
-// }
-
 // script.js の saveToDB を更新
 let isWriting = false;
 let pendingData = null;

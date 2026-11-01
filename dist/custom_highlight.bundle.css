@@ -107,7 +107,7 @@ code.hljs {
   font-weight: bold;
 }
 
-/* src/style_highlight.css */
+/* css/style_highlight.css */
 .theme-White .hljs-keyword {
   color: #2D3A8C;
   font-weight: bold;
@@ -129,9 +129,6 @@ highlight-code .theme-White {
 .theme-Dark .hljs-keyword {
   color: #35ac7a;
   font-weight: bold;
-}
-.theme-Dark .hljs-string {
-  color: #e07130;
 }
 .theme-Dark .hljs-comment {
   color: #6B6960;

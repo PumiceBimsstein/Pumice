@@ -17,7 +17,7 @@ var CMEditor = (() => {
   };
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-  // src/codemirror_editor.js
+  // js/codemirror_editor.js
   var codemirror_editor_exports = {};
   __export(codemirror_editor_exports, {
     setupSyncScroll: () => setupSyncScroll
@@ -30384,7 +30384,7 @@ var CMEditor = (() => {
     }
   });
 
-  // src/codemirror_editor.js
+  // js/codemirror_editor.js
   var baseColors = {
     Light: {
       text: "#3a3a3a",
@@ -30527,91 +30527,12 @@ var CMEditor = (() => {
         }, 10);
       }
     }
-    // 数式変換ロジック: $$...$$ を ```math ... ``` に自動置換
-    // _transformMathInput() {
-    //     if (!this._view) return;
-    //     const docText = this._view.state.doc.toString();
-    //     const regex = /\$\$\s*([\s\S]+?)\s*\$\$/g;
-    //     if (!regex.test(docText)) return;
-    //     let changes = [];
-    //     docText.replace(regex, (match, formula, offset) => {
-    //         const replacement = `\n\`\`\`math\n${formula.trim()}\n\`\`\`\n`;
-    //         changes.push({ from: offset, to: offset + match.length, insert: replacement });
-    //     });
-    //     if (changes.length > 0) {
-    //         setTimeout(() => {
-    //             this._view.dispatch({
-    //                 changes: changes,
-    //                 annotations: Transaction.remote.of(true)
-    //             });
-    //         }, 20);
-    //     }
-    // }
-    // 数式変換ロジック: $$...$$ および \[...\] を ```math ... ``` に自動置換
-    // _transformMathInput() {
-    //     if (!this._view) return;
-    //     const docText = this._view.state.doc.toString();
-    //     // 1. ブロック数式 ($$ もしくは \[)
-    //     const blockRegex = /\$\$\s*([\s\S]+?)\s*\$\$|\\\[\s*([\s\S]+?)\s*\\\]/g;
-    //     // 2. インライン数式 ($ もしくは \()
-    //     const inlineRegex = /(?<!\\)\$\s*([^\$\n]+?)\s*\$|\\\(\s*([\s\S]+?)\s*\\\)/g;
-    //     let changes = [];
-    //     // ブロック変換
-    //     let match;
-    //     while ((match = blockRegex.exec(docText)) !== null) {
-    //         const formula = (match[1] || match[2]).trim();
-    //         const replacement = `\n\`\`\`math\n${formula}\n\`\`\`\n`;
-    //         changes.push({ from: match.index, to: match.index + match[0].length, insert: replacement });
-    //     }
-    //     // インライン変換 (既にブロック置換が決まった箇所を避ける簡易処理)
-    //     while ((match = inlineRegex.exec(docText)) !== null) {
-    //         const formula = (match[1] || match[2]).trim();
-    //         const replacement = `\`math ${formula}\``;
-    //         changes.push({ from: match.index, to: match.index + match[0].length, insert: replacement });
-    //     }
-    //     if (changes.length > 0) {
-    //         setTimeout(() => {
-    //             const currentDoc = this._view.state.doc.toString();
-    //             if (currentDoc === docText) {
-    //                 this._view.dispatch({
-    //                     changes: changes,
-    //                     annotations: Transaction.remote.of(true)
-    //                 });
-    //             }
-    //         }, 20);
-    //     }
-    // }
     disconnectedCallback() {
       if (this._view) {
         this._view.destroy();
         this._view = null;
       }
     }
-    // _buildState() {
-    //     const extensions = [
-    //         basicSetup,
-    //         markdown(),
-    //         EditorView.lineWrapping,
-    //         keymap.of([indentWithTab]),
-    //         ...buildTheme(this._theme),
-    //         // 通常の文字入力時（IMEを介さない場合など）の保険としてここにも配置
-    //         EditorView.updateListener.of((update) => {
-    //             if (update.docChanged) {
-    //                 const value = update.state.doc.toString();
-    //                 // IME入力中（composing）でない場合のみ、全角チェックを実行
-    //                 if (!update.view.composing && value.includes("＃")) {
-    //                     this._replaceZenkakuHash();
-    //                 }
-    //                 this.dispatchEvent(new CustomEvent("editor-change", {
-    //                     detail: value,
-    //                     bubbles: true,
-    //                     composed: true,
-    //                 }));
-    //             }
-    //         }),
-    //     ];
-    //     return EditorState.create({ doc: this._content, extensions });
-    // }
     _buildState() {
       const extensions = [
         basicSetup,

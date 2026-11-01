@@ -1,10 +1,11 @@
 module View.Markdown exposing (render)
 
 import Html exposing (Html, div, text, pre, node, h1, h2, h3)
-import Html.Attributes exposing (class, id, attribute, style)
+import Html.Attributes exposing (class, id, attribute, style, property)
 import Markdown.Block
 import Markdown.Parser
 import Markdown.Renderer
+import Json.Encode as Encode
 import Regex
 import Type exposing (ColorTheme, FontSize, RenderStyle)
 import View.MarkdownStyles as Styles
@@ -67,7 +68,8 @@ customRenderer theme renderStyle searchText=
                                 (Maybe.withDefault "none" block.language) ++ "_" ++ block.body
                         in
                         node "highlight-code"
-                            [ attribute "code" block.body
+                            [ --attribute "code" block.body
+                              property "code" (Encode.string ("code:" ++ block.body))
                             , attribute "lang" (Maybe.withDefault "" block.language)
                             , attribute "theme" (colorThemeToString theme)
                             , attribute "update-key" combinedKey
@@ -89,7 +91,8 @@ customRenderer theme renderStyle searchText=
                     node "katex-inline" [ attribute "formula" formula ] []
                 else
                     node "highlight-code-span"
-                        [ attribute "content" content
+                        [ --attribute "content" content
+                          property "content" (Encode.string content)
                         , attribute "search-text" searchText
                         , Styles.codeSpanStyle theme renderStyle
                         , class "not-prose"
