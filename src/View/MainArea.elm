@@ -43,43 +43,83 @@ mainAreaWrapper =
 
 
 -- MARK:本棚一覧ビュー
+
+-- 元のコード
+-- shelfListView : Model -> Html Msg
+-- shelfListView model =
+--     div
+--         (class (shelfListContainerStyle model)
+--             :: Style.scrollbarStyle model.colorTheme
+--         )
+--         [ shelfListTitle model
+--         , shelfGrid model model.present.shelves
+--         , shelfListMenu model
+--         ]
+
+
 shelfListView : Model -> Html Msg
 shelfListView model =
     div
         (class (shelfListContainerStyle model)
             :: Style.scrollbarStyle model.colorTheme
         )
-        [ shelfListTitle model
+        [ shelfListHeader model
         , shelfGrid model model.present.shelves
-        , shelfListMenu model
         ]
 
 
-shelfListTitle : Model -> Html Msg
-shelfListTitle model =
-    div [ class "w-full h-20" ]
-        [ h2
-            [ class (shelfListTitleStyle model.colorTheme)
-            , style "font-family" (basecolors model.colorTheme).fontDeco
+shelfListHeader : Model -> Html Msg
+shelfListHeader model =
+    let
+        shelfCount =
+            List.length model.present.shelves
+
+        isGuiding =
+            shelfCount <= 2
+    in
+    div [ class "flex items-end justify-between mb-10 pb-3 border-b-2 border-black/10 dark:border-white/10" ]
+        [ div [ class "flex items-baseline gap-3" ]
+            [ h2
+                [ class (shelfListTitleStyle model.colorTheme)
+                , style "font-family" (basecolors model.colorTheme).fontDeco
+                ]
+                [ text "Library" ]
+            , span [ class (tw [ "text-xs font-mono font-medium opacity-75 tracking-wider", (basecolors model.colorTheme).text ]) ]
+            -- , span [ class (tw [ "text-xs font-mono opacity-50 tracking-wider", (basecolors model.colorTheme).text ]) ]
+                [ text (String.fromInt shelfCount ++ " Shelves") ]
             ]
-            [ text "Library" ]
-        ]
-
-
-shelfListMenu : Model -> Html Msg
-shelfListMenu model =
-    if model.mainViewMode == ShelfListView then
-        let
-            isGuiding =
-                List.length model.present.shelves <= 2
-        in
-        div [ class shelfListMenuStyle ]
+        , div [ class "flex items-center gap-3 font-mono" ]
             [ shelfFileImport model.colorTheme
-            , p [class (menuButtonStyle model.colorTheme)][text "/"]
+            , p [ class (menuButtonStyle model.colorTheme) ] [ text "/" ]
             , makeNewShelf model.colorTheme isGuiding
             ]
-    else
-        text ""
+        ]
+
+-- shelfListTitle : Model -> Html Msg
+-- shelfListTitle model =
+--     div [ class "w-full h-20" ]
+--         [ h2
+--             [ class (shelfListTitleStyle model.colorTheme)
+--             , style "font-family" (basecolors model.colorTheme).fontDeco
+--             ]
+--             [ text "Library" ]
+--         ]
+
+
+-- shelfListMenu : Model -> Html Msg
+-- shelfListMenu model =
+--     if model.mainViewMode == ShelfListView then
+--         let
+--             isGuiding =
+--                 List.length model.present.shelves <= 2
+--         in
+--         div [ class shelfListMenuStyle ]
+--             [ shelfFileImport model.colorTheme
+--             , p [class (menuButtonStyle model.colorTheme)][text "/"]
+--             , makeNewShelf model.colorTheme isGuiding
+--             ]
+--     else
+--         text ""
 
 
 shelfFileImport : ColorTheme -> Html Msg
@@ -113,11 +153,11 @@ makeNewShelf theme isGuiding =
         ]
         [ text "+ Shelf" ]
 
-shelfListMenuStyle : String
-shelfListMenuStyle =
-    tw  [ "absolute", "top-6", "right-8", "z-10", "flex"
-        , "items-center", "gap-3", "font-mono"
-        ]
+-- shelfListMenuStyle : String
+-- shelfListMenuStyle =
+--     tw  [ "absolute", "top-6", "right-8", "z-10", "flex"
+--         , "items-center", "gap-3", "font-mono"
+--         ]
 
 
 menuButtonStyle : ColorTheme -> String
@@ -148,17 +188,52 @@ shelfViewPadding sidebarMode =
         _ ->
             "px-32"
 
+-- 元のコード
+-- shelfListTitleStyle : ColorTheme -> String
+-- shelfListTitleStyle theme =
+--     tw  [ "text-2xl", "font-bold"
+--         , "mx-4", "mb-1", "py-1", "w-xs"
+--         , "opacity-70"
+--         , (basecolors theme).text
+--         ]
 
+
+-- アプローチ1、2
 shelfListTitleStyle : ColorTheme -> String
 shelfListTitleStyle theme =
-    tw  [ "text-2xl", "font-bold"
-        , "mx-4", "mb-1", "py-1", "w-xs"
-        , "opacity-70"
+    tw  [ "text-2xl font-bold leading-none"
+        , "opacity-85"
         , (basecolors theme).text
         ]
 
 
+
 -- MARK:Bookの一覧
+
+-- 元のコード
+-- shelfDetailView : Model -> String -> Html Msg
+-- shelfDetailView model shelfId =
+--     let
+--         maybeShelf =
+--             model.present.shelves
+--                 |> List.filter (\s -> s.id == shelfId)
+--                 |> List.head
+--     in
+--     case maybeShelf of
+--         Just shelf ->
+--             div
+--                 (class (shelfDetailViewStyle model)
+--                     :: Style.scrollbarStyle model.colorTheme
+--                 )
+--                 [ shelfDetailTitle model shelf.name
+--                 , viewShelfBookGrid model shelf.books
+--                 , bookListMenu model shelfId
+--                 ]
+
+--         Nothing ->
+--             viewEmptyState model
+
+
 shelfDetailView : Model -> String -> Html Msg
 shelfDetailView model shelfId =
     let
@@ -173,13 +248,46 @@ shelfDetailView model shelfId =
                 (class (shelfDetailViewStyle model)
                     :: Style.scrollbarStyle model.colorTheme
                 )
-                [ shelfDetailTitle model shelf.name
+                [ shelfDetailHeader model shelf
                 , viewShelfBookGrid model shelf.books
-                , bookListMenu model shelfId
                 ]
 
         Nothing ->
             viewEmptyState model
+
+
+shelfDetailHeader : Model -> Shelf -> Html Msg
+shelfDetailHeader model shelf =
+    let
+        bookCount =
+            List.length shelf.books
+    in
+    div [ class "flex items-end justify-between mb-10 pb-3 border-b-2 border-black/10 dark:border-white/10" ]
+        [ div [ class "flex flex-col gap-1 min-w-0" ]
+            [ button
+                [ class (tw [ "text-xs font-mono font-medium opacity-85 hover:opacity-100 hover:underline cursor-pointer flex items-center gap-1 text-left w-fit transition-opacity", (basecolors model.colorTheme).accent ])
+                , onClick (ChangeMainView ShelfListView)
+                , title "本棚一覧に戻る"
+                ]
+                [ text "‹ Library" ]
+            , div
+                [ class "flex items-baseline gap-3 mt-1" ]
+                [ h2
+                    [ class (shelfListTitleStyle model.colorTheme)
+                    , style "font-family" (basecolors model.colorTheme).fontDeco
+                    ]
+                    [ text shelf.name ]
+                , span
+                    [ class (tw [ "text-xs font-mono font-medium opacity-75 shrink-0 tracking-wider", (basecolors model.colorTheme).text ]) ]
+                    [ text (String.fromInt bookCount ++ " Books") ]
+                ]
+            ]
+        , div [ class "flex items-center gap-3 font-mono shrink-0 ml-4" ]
+            [ bookFileImport model.colorTheme
+            , p [ class (menuButtonStyle model.colorTheme) ] [ text "/" ]
+            , makeNewBook model.colorTheme
+            ]
+        ]
 
 
 shelfDetailViewStyle : Model -> String
@@ -193,28 +301,28 @@ shelfDetailViewStyle model =
         ]
 
 
-shelfDetailTitle : Model -> String -> Html Msg
-shelfDetailTitle model name =
-    div
-        [ class "relative flex justify-center items-center opacity-70" ]
-        [ h2
-            [ class "text-3xl my-4 mx-4"
-            , style "font-family" (basecolors model.colorTheme).fontDeco
-            ]
-            [ text name ]
-        ]
+-- shelfDetailTitle : Model -> String -> Html Msg
+-- shelfDetailTitle model name =
+--     div
+--         [ class "relative flex justify-center items-center opacity-70" ]
+--         [ h2
+--             [ class "text-3xl my-4 mx-4"
+--             , style "font-family" (basecolors model.colorTheme).fontDeco
+--             ]
+--             [ text name ]
+--         ]
 
 
-bookListMenu : Model -> String -> Html Msg
-bookListMenu model shelfId =
-    if model.mainViewMode == (ShelfDetailView shelfId) then
-        div [ class shelfListMenuStyle ]
-            [ bookFileImport model.colorTheme
-            , p [class (menuButtonStyle model.colorTheme)][text "/"]
-            , makeNewBook model.colorTheme
-            ]
-    else
-        text ""
+-- bookListMenu : Model -> String -> Html Msg
+-- bookListMenu model shelfId =
+--     if model.mainViewMode == (ShelfDetailView shelfId) then
+--         div [ class shelfListMenuStyle ]
+--             [ bookFileImport model.colorTheme
+--             , p [class (menuButtonStyle model.colorTheme)][text "/"]
+--             , makeNewBook model.colorTheme
+--             ]
+--     else
+--         text ""
 
 
 bookFileImport : ColorTheme -> Html Msg
