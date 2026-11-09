@@ -20,8 +20,8 @@ viewFooter model book theme =
     div
         [ class (mainFooter.footerContainer theme) ]
         [ div
-            [ class "flex-none w-[20%] min-w-0 shrink-0" ]
-            [ viewBookTitle model book ]
+            [ class "flex-none min-w-0 shrink-0" ]
+            [ viewFooterNavButtons model theme ]
         , div
             [ class "flex-1 min-w-0 flex justify-center px-2" ]
             [ viewSeekBar model total ]
@@ -29,6 +29,55 @@ viewFooter model book theme =
             [ class "flex-none shrink-0 flex items-center justify-end" ]
             [ viewFooterRightControls model currentPageId theme ]
         ]
+
+
+{-| フッター左側の常時階層移動ボタン群 -}
+viewFooterNavButtons : Model -> ColorTheme -> Html Msg
+viewFooterNavButtons model theme =
+    let
+        maybeShelf =
+            getCurrentShelf model.present
+
+        booksMsg =
+            case maybeShelf of
+                Just shelf ->
+                    ChangeMainView (ShelfDetailView shelf.id)
+
+                Nothing ->
+                    ChangeMainView ShelfListView
+    in
+    div
+        [ class "flex items-center gap-1.5 font-mono text-xs" ]
+        [ button
+            [ class (footerNavBtnStyle theme)
+            , onClick (ChangeMainView ShelfListView)
+            , title "本棚一覧（Library）へ"
+            ]
+            [ text "Library" ]
+        , span
+            [ class (tw [ "opacity-80 select-none", (basecolors theme).text ]) ]
+            [ text "/" ]
+        , button
+            [ class (footerNavBtnStyle theme)
+            , onClick booksMsg
+            , title "本一覧（Books）へ"
+            ]
+            [ text "Books" ]
+        ]
+
+
+footerNavBtnStyle : ColorTheme -> String
+footerNavBtnStyle theme =
+    tw
+        [ "px-1.5 py-0.5"
+        , "rounded"
+        , "opacity-75 hover:opacity-100"
+        , "hover:underline"
+        , "transition-opacity cursor-pointer"
+        , "truncate text-[14px] font-bold"
+        , (basecolors theme).accent
+        ]
+
 
 {-| 右側コントロールの出し分け -}
 viewFooterRightControls : Model -> String -> ColorTheme -> Html Msg
@@ -98,7 +147,7 @@ footerMiniBtnStyle theme =
         [ "px-2.5"
         , "py-1"
         , "text-xs", "opacity-70"
-        , "font-semibold", "whitespace-nowrap"  -- 改行を防止
+        , "font-semibold", "whitespace-nowrap"
         , "shrink-0"
         , "border"
         , (basecolors theme).rounded
@@ -107,16 +156,6 @@ footerMiniBtnStyle theme =
         , "hover:opacity-90"
         , "cursor-pointer"
         ]
-
-viewBookTitle : Model -> Book -> Html Msg
-viewBookTitle model book =
-    h1
-        [ class (mainFooter.bookTitleStyle model.colorTheme)
-        , style "font-family" (basecolors model.colorTheme).fontDeco
-        , onDoubleClick (EditBegin BookTitle book.id book.title)
-        , title book.title -- 省略された時に全文が見えるように
-        ]
-        [ text (book.title) ]
 
 
 viewSeekBar : Model -> Int -> Html Msg
@@ -178,14 +217,11 @@ viewWidthSlider theme currentWidth =
             [ class (tw [ "text-[11px]", "opacity-70", (basecolors theme).text ]) ]
             [ text "Width" ]
         , div
-            -- クリック範囲を確保するコンテナ（h-5）
             [ class (tw [ "relative", "w-24", "h-5", "flex", "items-center", "cursor-pointer" ]) ]
-            [ -- スライダーのトラック（背景の細い線）
-              div
+            [ div
                 [ class (tw [ "absolute", "w-full", "h-0.5", "overflow-hidden", (basecolors theme).primary ]) ]
                 []
-            , -- 現在位置を示すインジケーター（細い縦棒）
-              div
+            , div
                 [ style "left" ("calc(" ++ String.fromInt progress ++ "% - 1px)")
                 , class (tw [ "absolute", "w-1.5", "h-3", (basecolors theme).primary ])
                 ]
@@ -206,7 +242,6 @@ viewWidthSlider theme currentWidth =
 -- MARK:スタイル定義
 mainFooter :
     { footerContainer : ColorTheme -> String
-    , bookTitleStyle : ColorTheme -> String
     , seekBarContainer : String
     , seekBarTrack : String
     , seekBarInputBaseAttrs : Int -> List (Attribute msg)
@@ -220,11 +255,6 @@ mainFooter =
             , (basecolors theme).surface
             , (basecolors theme).border ]
             
-    , bookTitleStyle = \theme ->    -- truncate を追加して、長すぎる場合に ... にする
-        tw  [ "tracking-tight", "min-w-0"
-            , "cursor-pointer", "hover:opacity-70", "truncate"
-            , (basecolors theme).text
-            ]
     , seekBarContainer =
         tw  [ "relative", "w-full", "max-w-4xl", "h-5", "flex"
             , "items-center", "cursor-pointer" ]
@@ -241,7 +271,7 @@ mainFooter =
     , seekBarProgressAttr = \theme percent ->
         [ style "width" (String.fromFloat percent ++ "%")
         , style "background-color" (basecolors theme).scrollThumb
-        , Html.Attributes.class "h-full" -- duration-200
+        , Html.Attributes.class "h-full"
         ]
     , deletebutton =
         tw  [ "border", "rounded", "whitespace-nowrap"

@@ -118,7 +118,7 @@ viewFileMenu model =
         isOpen =
             model.openMenuId == Just menuId
     in
-    div [ class "relative mt-2" ]
+    div [ class "relative mt-2 text-center" ]
         [ button
             [ class (fileMenuButtonStyle model.colorTheme)
             , stopClickPropagation (ToggleMenu menuId)
@@ -134,15 +134,26 @@ viewFileMenu model =
             ]
         ]
 
+
 fileMenuButtonStyle : ColorTheme -> String
 fileMenuButtonStyle theme =
     tw
-        [ "w-full py-1.5 px-3 text-xs border flex items-center justify-center font-mono"
-        , (basecolors theme).rounded
-        , (basecolors theme).borderBtn
-        , (basecolors theme).brightAccent
-        , "hover:bg-white/10 transition-colors"
+        [ "py-1 pt-2 text-sm font-mono cursor-pointer"
+        , "bg-transparent border-0"
+        , "opacity-80 hover:opacity-100 hover:underline transition-opacity"
+        , (basecolors theme).accent
         ]
+
+
+-- fileMenuButtonStyle : ColorTheme -> String
+-- fileMenuButtonStyle theme =
+--     tw
+--         [ "w-full py-1.5 px-3 text-xs border flex items-center justify-center font-mono"
+--         , (basecolors theme).rounded
+--         , (basecolors theme).borderBtn
+--         , (basecolors theme).brightAccent
+--         , "hover:bg-white/10 transition-colors"
+--         ]
 
 
 scrollableArea : Html Msg
@@ -154,54 +165,9 @@ scrollableArea =
 
 bottomStatusArea : Model -> Html Msg
 bottomStatusArea model =
-    let
-        breadNav = 
-            case model.sidebarMode of
-                NormalSidebar -> viewBreadcrumbNav model
-                
-                _ -> miniBreadcrumbNav model
-            
-    in
     div
         [ class "flex flex-col gap-2 mt-auto pb-3" ]
-        [ breadNav
-        , bookPageCounter model.colorTheme model.present
-        ]
-
-
-viewShelvesButton : Model -> Html Msg
-viewShelvesButton model =
-    button
-        [ class "hover:opacity-100 hover:underline cursor-pointer"
-        , onClick (getCategoryButtonMsg model.mainViewMode)
-        , title "本棚一覧へ"
-        ]
-        [ text "Category" ]
-
-viewBooksButton : Model -> Html Msg
-viewBooksButton model =
-    button
-        [ class "hover:opacity-100 hover:underline cursor-pointer"
-        , onClick (getBooksButtonMsg model)
-        , title "本一覧へ"
-        ]
-        [ text "Books" ]
-
-
-miniBreadcrumbNav : Model -> Html Msg
-miniBreadcrumbNav model =
-    div [ class "flex flex-col items-center justify-center gap-1.5 py-1 px-3 text-sm font-mono opacity-100" ]
-        [ viewShelvesButton model
-        , viewBooksButton model
-        ]
-
-viewBreadcrumbNav : Model -> Html Msg
-viewBreadcrumbNav model =
-    div [ class "flex items-center justify-center gap-2 py-1 px-3 text-sm font-mono opacity-100" ]
-        [ viewShelvesButton model
-        , span [ class "opacity-100 select-none" ] [ text "›" ]
-        , viewBooksButton model
-        ]
+        [ bookPageCounter model.colorTheme model.present ]
 
 
 -- ページカウンターの条件分岐ラッパー
@@ -314,7 +280,7 @@ sidebarBtnStyle : ColorTheme -> Bool -> String
 sidebarBtnStyle theme isActive =
     let
         base =
-            [ "w-full", "py-1", "text-sm", "font-semibold"--, "border", "opacity-90"
+            [ "w-full", "py-1", "text-sm", "font-semibold"
             , (basecolors theme).rounded
             ]
         state =
@@ -376,7 +342,7 @@ addPageTextStyle theme =
 viewThemeSelector : ColorTheme -> Html Msg
 viewThemeSelector theme =
     div []
-        [ p [ class "font-mono mb-1 text-[11px] opacity-70" ] [ text "THEME" ]
+        [ p [ class "font-mono mb-1" ] [ text "THEME" ]
         , viewBaseSelector
             ChangeColorTheme
             colorThemeToString
@@ -461,34 +427,6 @@ addPageBtnStyle theme =
         , (basecolors theme).text
         , "hover:bg-white/5" ]
 
-
-getCategoryButtonMsg : MainViewMode -> Msg
-getCategoryButtonMsg mainViewMode =
-    if mainViewMode == ShelfListView then
-        ChangeMainView PageView
-    else
-        ChangeMainView ShelfListView
-
-
-getBooksButtonMsg : Model -> Msg
-getBooksButtonMsg model =
-    if isDetailView model.mainViewMode then
-        ChangeMainView PageView
-    else
-        case getCurrentShelf model.present of
-            Just shelf ->
-                ChangeMainView (ShelfDetailView shelf.id)
-            Nothing ->
-                ChangeMainView ShelfListView
-
-
-isDetailView : MainViewMode -> Bool
-isDetailView mainViewMode =
-    case mainViewMode of
-        ShelfDetailView _ ->
-            True
-        _ ->
-            False
 
 -- MARK:ページ移動関連
 pageCount : ColorTheme -> AppState -> Book -> Html Msg

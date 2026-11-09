@@ -157,7 +157,7 @@ viewSidebarTabs model =
     div [ class "flex mt-3"
         , style "font-family" (basecolors model.colorTheme).fontDeco
         ]
-        [ viewTabButton model ShelfListTab "Category"
+        [ viewTabButton model ShelfListTab "Library"
         , viewTabButton model BookListTab "Books"
         , viewTabButton model TocTab "Contents"
         ]
@@ -226,89 +226,139 @@ sidebarFooter : Model -> Html Msg
 sidebarFooter model =
     div
         [ class (sideFooter model.colorTheme) ]
-        [ fileFunctionTrigger model
-        , exportButton model.colorTheme
-        , functionButton model
+        -- [ fileFunctionTrigger model
+        -- , exportButton model.colorTheme
+        -- , functionButton model
+        -- ]
+        [ quickBackupButton model.colorTheme
+        , systemMenuTrigger model
         ]
 
-
-fileFunctionTrigger : Model -> Html Msg
-fileFunctionTrigger model =
-    let
-        menuId = FileMenu
-        isOpen = model.openMenuId == Just menuId
-    in
-    div
-        [ class "relative flex flex-1 h-full" ]
-        [ button
-            [ class (footerButton model.colorTheme)
-            , stopClickPropagation (ToggleMenu menuId)
-            ]
-            [ text "File ▾" ]
-        , openDropdown
-            isOpen
-            Above
-            model.colorTheme
-            [ ( "Import BackUp Data", RequestImport AllImport )
-            , ( "Download Zip", ExportAllZip )
-            ]
+quickBackupButton : ColorTheme -> Html Msg
+quickBackupButton theme =
+    button
+        [ class (flatFooterButtonStyle theme)
+        , onClick ExportData
+        , title "全データのバックアップJSONをダウンロード"
+        ]
+        [ Style.icon Icon.disk "w-4 h-4"
+        , span [] [ text "Backup" ]
         ]
 
-
-functionButton : Model -> Html Msg
-functionButton model =
+systemMenuTrigger : Model -> Html Msg
+systemMenuTrigger model =
     let
-        menuId = AppMenu
-        isOpen = model.openMenuId == Just menuId
+        menuId =
+            AppMenu
+
+        isOpen =
+            model.openMenuId == Just menuId
     in
     div
         [ class "relative flex flex-1 h-full [&_.absolute]:left-auto [&_.absolute]:right-0" ]
         [ button
-            [ class (footerButton model.colorTheme)
+            [ class (flatFooterButtonStyle model.colorTheme)
             , stopClickPropagation (ToggleMenu menuId)
             ]
-            [ text "etc ▾" ]
+            [ text "Menu ▾" ]
         , openDropdown
             isOpen
             Above
             model.colorTheme
-            [ ( "Reset", ResetApp )
+            [ ( "Import Backup", RequestImport AllImport )
+            , ( "Download Zip", ExportAllZip )
             , ( "Guide Pages", AddGuideShelf )
+            , ( "Reset", ResetApp )
             ]
         ]
 
+-- fileFunctionTrigger : Model -> Html Msg
+-- fileFunctionTrigger model =
+--     let
+--         menuId = FileMenu
+--         isOpen = model.openMenuId == Just menuId
+--     in
+--     div
+--         [ class "relative flex flex-1 h-full" ]
+--         [ button
+--             [ class (footerButton model.colorTheme)
+--             , stopClickPropagation (ToggleMenu menuId)
+--             ]
+--             [ text "File ▾" ]
+--         , openDropdown
+--             isOpen
+--             Above
+--             model.colorTheme
+--             [ ( "Import BackUp Data", RequestImport AllImport )
+--             , ( "Download Zip", ExportAllZip )
+--             ]
+--         ]
 
-exportButton : ColorTheme -> Html Msg
-exportButton theme =
-    button
-        [ class (footerButton theme)
-        , onClick ExportData
-        , title "QUICK BACK UP"
-        ]
-        [ Style.icon Icon.disk "w-5 h-5" ]
+
+-- functionButton : Model -> Html Msg
+-- functionButton model =
+--     let
+--         menuId = AppMenu
+--         isOpen = model.openMenuId == Just menuId
+--     in
+--     div
+--         [ class "relative flex flex-1 h-full [&_.absolute]:left-auto [&_.absolute]:right-0" ]
+--         [ button
+--             [ class (footerButton model.colorTheme)
+--             , stopClickPropagation (ToggleMenu menuId)
+--             ]
+--             [ text "etc ▾" ]
+--         , openDropdown
+--             isOpen
+--             Above
+--             model.colorTheme
+--             [ ( "Reset", ResetApp )
+--             , ( "Guide Pages", AddGuideShelf )
+--             ]
+--         ]
+
+
+-- exportButton : ColorTheme -> Html Msg
+-- exportButton theme =
+--     button
+--         [ class (footerButton theme)
+--         , onClick ExportData
+--         , title "QUICK BACK UP"
+--         ]
+--         [ Style.icon Icon.disk "w-5 h-5" ]
 
 
 sideFooter : ColorTheme -> String
 sideFooter theme =
-    tw  [ "px-3", "py-1.5", "h-10", "border-t", "flex"
-        , "items-center", "w-full", "gap-2"
+    tw  [ "px-3", "py-1", "h-9", "border-t", "flex"
+        , "items-center", "w-full", "justify-between", "gap-2"
         , (basecolors theme).surface
         , (basecolors theme).border
         ]
 
 
-footerButton : ColorTheme -> String
-footerButton theme =
-    tw  [ "flex", "flex-1", "h-full"
-        , "text-[12px]", "font-bold"
-        , "tracking-widest"
-        , "uppercase"
-        , "border"
-        , (basecolors theme).rounded
-        , (basecolors theme).textMuted
-        , (basecolors theme).borderBtn
-        , (basecolors theme).brightAccent
-        , "hover:bg-white/5"
-        , "active:scale-95"
-        , "items-center", "justify-center"
+-- footerButton : ColorTheme -> String
+-- footerButton theme =
+--     tw  [ "flex", "flex-1", "h-full"
+--         , "text-[12px]", "font-bold"
+--         , "tracking-widest"
+--         , "uppercase"
+--         , "border"
+--         , (basecolors theme).rounded
+--         , (basecolors theme).textMuted
+--         , (basecolors theme).borderBtn
+--         , (basecolors theme).brightAccent
+--         , "hover:bg-white/5"
+--         , "active:scale-95"
+--         , "items-center", "justify-center"
+--         ]
+
+flatFooterButtonStyle : ColorTheme -> String
+flatFooterButtonStyle theme =
+    tw
+        [ "flex flex-1 items-center justify-center gap-1.5 h-full"
+        , "text-xs font-mono font-medium"
+        , "bg-transparent border-0 cursor-pointer"
+        , "opacity-70 hover:opacity-100 hover:underline transition-opacity"
+        , (basecolors theme).text
         ]

@@ -44,19 +44,6 @@ mainAreaWrapper =
 
 -- MARK:本棚一覧ビュー
 
--- 元のコード
--- shelfListView : Model -> Html Msg
--- shelfListView model =
---     div
---         (class (shelfListContainerStyle model)
---             :: Style.scrollbarStyle model.colorTheme
---         )
---         [ shelfListTitle model
---         , shelfGrid model model.present.shelves
---         , shelfListMenu model
---         ]
-
-
 shelfListView : Model -> Html Msg
 shelfListView model =
     div
@@ -85,7 +72,6 @@ shelfListHeader model =
                 ]
                 [ text "Library" ]
             , span [ class (tw [ "text-xs font-mono font-medium opacity-75 tracking-wider", (basecolors model.colorTheme).text ]) ]
-            -- , span [ class (tw [ "text-xs font-mono opacity-50 tracking-wider", (basecolors model.colorTheme).text ]) ]
                 [ text (String.fromInt shelfCount ++ " Shelves") ]
             ]
         , div [ class "flex items-center gap-3 font-mono" ]
@@ -94,32 +80,6 @@ shelfListHeader model =
             , makeNewShelf model.colorTheme isGuiding
             ]
         ]
-
--- shelfListTitle : Model -> Html Msg
--- shelfListTitle model =
---     div [ class "w-full h-20" ]
---         [ h2
---             [ class (shelfListTitleStyle model.colorTheme)
---             , style "font-family" (basecolors model.colorTheme).fontDeco
---             ]
---             [ text "Library" ]
---         ]
-
-
--- shelfListMenu : Model -> Html Msg
--- shelfListMenu model =
---     if model.mainViewMode == ShelfListView then
---         let
---             isGuiding =
---                 List.length model.present.shelves <= 2
---         in
---         div [ class shelfListMenuStyle ]
---             [ shelfFileImport model.colorTheme
---             , p [class (menuButtonStyle model.colorTheme)][text "/"]
---             , makeNewShelf model.colorTheme isGuiding
---             ]
---     else
---         text ""
 
 
 shelfFileImport : ColorTheme -> Html Msg
@@ -132,7 +92,6 @@ shelfFileImport theme =
         [ text "Import" ]
 
 
--- 2つ以下のときに animate-pulse（点滅）を付与
 makeNewShelf : ColorTheme -> Bool -> Html Msg
 makeNewShelf theme isGuiding =
     let
@@ -152,12 +111,6 @@ makeNewShelf theme isGuiding =
         , onClick CreateShelf
         ]
         [ text "+ Shelf" ]
-
--- shelfListMenuStyle : String
--- shelfListMenuStyle =
---     tw  [ "absolute", "top-6", "right-8", "z-10", "flex"
---         , "items-center", "gap-3", "font-mono"
---         ]
 
 
 menuButtonStyle : ColorTheme -> String
@@ -188,17 +141,7 @@ shelfViewPadding sidebarMode =
         _ ->
             "px-32"
 
--- 元のコード
--- shelfListTitleStyle : ColorTheme -> String
--- shelfListTitleStyle theme =
---     tw  [ "text-2xl", "font-bold"
---         , "mx-4", "mb-1", "py-1", "w-xs"
---         , "opacity-70"
---         , (basecolors theme).text
---         ]
 
-
--- アプローチ1、2
 shelfListTitleStyle : ColorTheme -> String
 shelfListTitleStyle theme =
     tw  [ "text-2xl font-bold leading-none"
@@ -209,30 +152,6 @@ shelfListTitleStyle theme =
 
 
 -- MARK:Bookの一覧
-
--- 元のコード
--- shelfDetailView : Model -> String -> Html Msg
--- shelfDetailView model shelfId =
---     let
---         maybeShelf =
---             model.present.shelves
---                 |> List.filter (\s -> s.id == shelfId)
---                 |> List.head
---     in
---     case maybeShelf of
---         Just shelf ->
---             div
---                 (class (shelfDetailViewStyle model)
---                     :: Style.scrollbarStyle model.colorTheme
---                 )
---                 [ shelfDetailTitle model shelf.name
---                 , viewShelfBookGrid model shelf.books
---                 , bookListMenu model shelfId
---                 ]
-
---         Nothing ->
---             viewEmptyState model
-
 
 shelfDetailView : Model -> String -> Html Msg
 shelfDetailView model shelfId =
@@ -301,30 +220,6 @@ shelfDetailViewStyle model =
         ]
 
 
--- shelfDetailTitle : Model -> String -> Html Msg
--- shelfDetailTitle model name =
---     div
---         [ class "relative flex justify-center items-center opacity-70" ]
---         [ h2
---             [ class "text-3xl my-4 mx-4"
---             , style "font-family" (basecolors model.colorTheme).fontDeco
---             ]
---             [ text name ]
---         ]
-
-
--- bookListMenu : Model -> String -> Html Msg
--- bookListMenu model shelfId =
---     if model.mainViewMode == (ShelfDetailView shelfId) then
---         div [ class shelfListMenuStyle ]
---             [ bookFileImport model.colorTheme
---             , p [class (menuButtonStyle model.colorTheme)][text "/"]
---             , makeNewBook model.colorTheme
---             ]
---     else
---         text ""
-
-
 bookFileImport : ColorTheme -> Html Msg
 bookFileImport theme =
     button
@@ -383,6 +278,7 @@ centralArea model book =
         )
         [ viewContentBody model book ]
 
+
 viewContentBody : Model -> Book -> Html Msg
 viewContentBody model book =
     let
@@ -395,7 +291,7 @@ viewContentBody model book =
         [ case model.mode of
             ViewMode ->
                 currentPage
-                    |> Maybe.map (viewMarkdownView model)
+                    |> Maybe.map (viewMarkdownView model book)
                     |> Maybe.withDefault (text "")
 
             EditMode ->
@@ -406,10 +302,10 @@ viewContentBody model book =
         ]
 
 
--- MARK:閲覧モード
+-- MARK:閲覧モード（上部にタイトルブレッドクラムを配置）
 
-viewMarkdownView : Model -> Page -> Html Msg
-viewMarkdownView model page =
+viewMarkdownView : Model -> Book -> Page -> Html Msg
+viewMarkdownView model book page =
     let
         paddingClass =
             case model.sidebarMode of
@@ -433,13 +329,52 @@ viewMarkdownView model page =
         [ id "markdown-container"
         , class (tw [ "h-full", "w-full", paddingClass ])
         ]
-        [ View.Markdown.render
+        [ viewDocumentTopBreadcrumb model book
+        , View.Markdown.render
             model.colorTheme
             model.renderStyle
             model.fontSize
             model.searchText
             page.content
         ]
+
+
+{-| 本文の最上部に静かに佇む「本棚タイトル › 本のタイトル」 -}
+viewDocumentTopBreadcrumb : Model -> Book -> Html Msg
+viewDocumentTopBreadcrumb model book =
+    let
+        theme =
+            model.colorTheme
+
+        shelfName =
+            getCurrentShelf model.present
+                |> Maybe.map .name
+                |> Maybe.withDefault "Library"
+
+        shelfId =
+            model.present.currentShelfId
+    in
+    div
+        [ class "pt-8 pb-3 flex items-baseline gap-2 font-mono text-xs md:text-sm border-b border-black/10 dark:border-white/10 opacity-85"
+        , style "font-family" (basecolors theme).fontDeco
+        ]
+        [ button
+            [ class (tw [ "hover:underline hover:opacity-100 transition-opacity cursor-pointer truncate max-w-[200px]", (basecolors theme).accent ])
+            , onClick (ChangeMainView (ShelfDetailView shelfId))
+            , title (shelfName ++ "（本一覧へ）")
+            ]
+            [ text shelfName ]
+        , span
+            [ class (tw [ "opacity-40 select-none", (basecolors theme).text ]) ]
+            [ text "›" ]
+        , h1
+            [ class (tw [ "font-bold text-sm md:text-base truncate cursor-pointer hover:opacity-100 transition-opacity", (basecolors theme).text ])
+            , onDoubleClick (EditBegin BookTitle book.id book.title)
+            , title "ダブルクリックで本の名前を変更"
+            ]
+            [ text book.title ]
+        ]
+
 
 -- MARK:編集モード
 

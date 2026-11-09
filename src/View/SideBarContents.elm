@@ -39,96 +39,27 @@ sidebarContentStyle theme =
 
 tabShelfList : Model -> Html Msg
 tabShelfList model =
-    div []
-        [ div
-            [ class "flex justify-center mt-2"
-            ]
-            [ viewSidebarActionButton model True ]
-        , viewSidebarShelfList model
-        ]
-
-
--- 各種アイテム作成ボタン
-viewSidebarActionButton : Model -> Bool -> Html Msg
-viewSidebarActionButton model isFullSize =
-    let
-        page =
-            getCurrentBook model.present
-                |> Maybe.map (.pages >> List.length)
-                |> Maybe.withDefault 0
-
-        ( label, msg ) =
-            case model.sidebarTab of
-                ShelfListTab -> ( "+ New Shelf", CreateShelf )
-                BookListTab  -> ( "+ Book", CreateBook )
-                TocTab       -> ( "+ Page", CreatePage page )
-        sizeClass =
-            if isFullSize then
-                "w-1/2 py-0.5 px-2 text-xs"
-            else
-                "w-auto py-0.5 px-2 text-xs"
-    in
-    button
-        [ class (addBtnStyle model.colorTheme)
-        , class sizeClass
-        , onClick msg
-        ]
-        [ text label ]
-
-
-addBtnStyle : ColorTheme -> String
-addBtnStyle theme =
-    tw  [ "uppercase", "border"
-        , "items-center", "justify-center"
-        , "w-1/2", "mx-auto"
-        , "py-1", "px-4", "text-xs"
-        , (basecolors theme).primary
-        , (basecolors theme).deco
-        , (basecolors theme).border
-        , (basecolors theme).rounded
+    div [class "pt-2"]
+        [ viewSidebarShelfList model
         ]
 
 
 -- MARK:BookList
 tabBookList : Model -> Html Msg
 tabBookList model =
-    div []
-        [ div
-            [ class "flex items-center justify-between p-1 py-3" ]
-            [ span
-                [ class (shelfBookName model.colorTheme)
-                , style "font-family" (basecolors model.colorTheme).fontDeco
-                ]
-                [ text 
-                    (getCurrentShelf model.present 
-                        |> Maybe.map .name 
-                        |> Maybe.withDefault "本棚未選択")
-                ]
-            , viewSidebarActionButton model False
-            ]
-        , viewBookList model
-        ]
-
-
-shelfBookName : ColorTheme -> String
-shelfBookName theme =
-    tw  [ "truncate text-sm font-bold"
-        , "flex-1", "text-center", "border-b", "mx-1"
-        , "opacity-80"
-        , (basecolors theme).borderStrong
-        , (basecolors theme).accent
+    div [ class "pt-2" ]
+        [ viewBookList model
         ]
 
 
 -- MARK:TocList
 tabTocList : Model -> Html Msg
 tabTocList model =
-    div [ class (tw [ "flex", "flex-col", "h-full", "pt-2" ]) ]
-        [ div
-            (id "toc-area" :: class (tw [ "flex-1", "overflow-y-auto" ]) :: Style.scrollbarStyle model.colorTheme)
+    div [ class (tw [ "flex", "flex-col", "h-full" ]) ]
+        [ headingLevelSelector model
+        , div
+            (id "toc-area" :: class (tw [ "flex-1", "overflow-y-auto", "pt-1" ]) :: Style.scrollbarStyle model.colorTheme)
             [ viewToc model ]
-        , viewSidebarActionButton model False
-        , headingLevelSelector model
         ]
 
 
@@ -154,13 +85,13 @@ headingLevelSelector model =
 selectorwrapper : String
 selectorwrapper =
         tw  [ "w-full", "h-8", "shrink-0", "flex"
-            , "items-center", "gap-2", "px-3", "py-2" ]
+            , "border-b", "border-black/5", "dark:border-white/5"
+            , "items-center", "gap-2"
+            , "px-3", "py-2", "mt-4", "mb-2"
+            ]
 
 selectorLabel : ColorTheme -> String
 selectorLabel theme =
-    let
-        c = basecolors theme
-    in
     tw
         [ "text-xs", "flex-1"
         , "font-semibold"
@@ -171,7 +102,7 @@ selectorLabel theme =
         , "flex"
         , "items-center"
         , "justify-end"
-        , c.textMuted
+        , (basecolors theme).textMuted
         ]
 
 setHeadingLevel : String -> Msg
