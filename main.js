@@ -19805,7 +19805,7 @@ var $author$project$View$MainArea$viewDocumentTopBreadcrumb = F2(
 							$elm$html$Html$text('›')
 						])),
 					A2(
-					$elm$html$Html$h1,
+					$elm$html$Html$span,
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class(

@@ -22,3 +22,6 @@ Thumbs.db
 .vscode/
 .idea/
 
+extract-elm-licenses.js
+THIRD-PARTY-LICENSES-elm.txt
+THIRD-PARTY-LICENSES-npm.txt

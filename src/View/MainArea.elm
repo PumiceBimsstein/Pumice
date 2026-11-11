@@ -367,7 +367,7 @@ viewDocumentTopBreadcrumb model book =
         , span
             [ class (tw [ "opacity-40 select-none", (basecolors theme).text ]) ]
             [ text "›" ]
-        , h1
+        , span
             [ class (tw [ "font-bold text-sm md:text-base truncate cursor-pointer hover:opacity-100 transition-opacity", (basecolors theme).text ])
             , onDoubleClick (EditBegin BookTitle book.id book.title)
             , title "ダブルクリックで本の名前を変更"
