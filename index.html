@@ -1,33 +1,531 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Markdown対応のドキュメント作成・閲覧ツール「Pumice」。本棚・本・ページの3階層で文書を管理でき、LaTeX形式の数式レンダリングやシンタックスハイライトにも対応しています。">
-    <meta property="og:title" content="Pumice">
-    <meta property="og:description" content="Markdown対応のドキュメント作成・閲覧ツール。LaTeX形式の数式レンダリングやシンタックスハイライトに対応した「Pumice」。">    <meta property="og:type" content="website">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pumice — Markdown Viewer</title>
+  <meta name="description" content="Pumiceは、Markdown文書を本棚のように整理して読むためのシンプルなビューアです。">
 
-    <title>Pumice</title>
-    <!-- <script src="https://cdn.tailwindcss.com?plugins=typography"></script> -->
-    <link rel="stylesheet" href="dist/output.css">
-    <link rel="stylesheet" href="dist/custom_highlight.bundle.css">
-    <link rel="stylesheet" href="css/searchHighlight.css">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .hero {
+      padding: 104px 0 96px;
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+    }
+
+    h1 {
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      line-height: 1.2;
+      letter-spacing: -0.06em;
+      margin: 20px 0;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .hero-description {
+      color: var(--muted);
+      max-width: 440px;
+      margin-bottom: 32px;
+    }
+
+    /* プレビュー */
+    .preview {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+
+    .preview-window {
+      background: var(--bg);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 84px 1fr 64px;
+      min-height: 276px;
+    }
+
+    /* 共通スケルトンバー */
+    .sk-line {
+      height: 5px;
+      background: var(--surface);
+      border-radius: 3px;
+    }
+    .sk-line.dark { background: #CFC8BD; }
+    .sk-line.accent { height: 3px; background: var(--accent); opacity: 0.85; }
+    .sk-line.thin { height: 3px; }
+
+    /* 左サイドバー */
+    .pv-left {
+      background: #F2EDE6;
+      border-right: 1px solid var(--border-strong);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .pv-left-body { padding: 10px 8px; }
+
+    .pv-left-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .pv-logo-mini {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 9px;
+      color: var(--muted);
+      line-height: 1;
+    }
+
+    .pv-dots { display: flex; gap: 3px; }
+    .pv-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+    }
+
+    .pv-search-box {
+      height: 13px;
+      background: #FFFFFF;
+      border-radius: 3px;
+      margin-bottom: 10px;
+    }
+
+    .pv-tabs-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .pv-tab-item {
+      height: 10px;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pv-tab-item::after {
+      content: "";
+      width: 65%;
+      height: 2.5px;
+      background: #BEB7AC;
+      border-radius: 2px;
+    }
+    .pv-tab-item.active { background: var(--accent); }
+    .pv-tab-item.active::after { background: #FFFFFF; }
+
+    .pv-list-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .pv-list-bars .indent {
+      margin-left: 8px;
+    }
+
+    .pv-left-foot {
+      border-top: 1px solid var(--border-strong);
+      padding: 7px 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* 中央文章エリア */
+    .pv-center {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .pv-doc-meta {
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-strong);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pv-doc {
+      color: var(--text);
+    }
+
+    .pv-doc-title {
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+      margin: 0 0 10px;
+    }
+
+    .pv-doc p {
+      font-size: 0.65rem;
+      line-height: 1.7;
+      margin: 0 0 10px;
+    }
+
+    .pv-doc h4 {
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin: 12px 0 5px;
+    }
+
+    .pv-doc ul {
+      font-size: 0.63rem;
+      line-height: 1.65;
+      padding-left: 14px;
+      margin: 0 0 12px;
+    }
+
+    .pv-doc li + li {
+      margin-top: 2px;
+    }
+
+    .pv-doc-block {
+      background: #F4EFE8;
+      border-left: 2px solid var(--border-strong);
+      padding: 6px 10px;
+      border-radius: 0 3px 3px 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.6rem;
+      line-height: 1.5;
+    }
+
+    /* 右サイドバー */
+    .pv-right {
+      background: #F2EDE6;
+      border-left: 1px solid var(--border-strong);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .pv-right-body { padding: 10px 7px; }
+
+    .pv-mode-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 3px;
+      padding: 2px;
+      margin: 10px 0 14px;
+      height: 14px;
+    }
+
+    .pv-mode-bar span.active {
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .pv-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .pv-control-box {
+      height: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 2px;
+      margin-top: 3px;
+    }
+
+    .pv-btn-outline {
+      height: 16px;
+      background: var(--bg);
+      border: 1px solid var(--accent);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pv-btn-outline::after {
+      content: "";
+      width: 50%;
+      height: 3px;
+      background: var(--muted);
+      border-radius: 2px;
+    }
+
+    .pv-right-foot {
+      border-top: 1px solid var(--border-strong);
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .pv-pager-arrows {
+      display: flex;
+      gap: 10px;
+      font-size: 9px;
+      color: var(--muted);
+      line-height: 1;
+    }
+
+    /* 機能・クロージングセクション */
+    .section {
+      padding: 76px 0;
+      border-top: 1px solid var(--border-strong);
+    }
+
+    .section-heading {
+      margin-bottom: 36px;
+    }
+
+    .section-heading h2 {
+      font-size: 1.8rem;
+      letter-spacing: -0.04em;
+      margin: 8px 0;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .feature {
+      padding: 24px;
+      background: var(--surface);
+      border-radius: var(--radius);
+    }
+
+    .feature-number {
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.75rem;
+    }
+
+    .feature h3 {
+      font-size: 1rem;
+      margin: 16px 0 8px;
+    }
+
+    .feature p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .closing {
+      padding: 72px 24px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .closing h2 {
+      font-size: 1.8rem;
+      margin: 0 0 12px;
+    }
+
+    .closing p {
+      color: var(--muted);
+      margin: 0 0 24px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 820px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 72px 0;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .preview { padding: 16px; }
+      .preview-window {
+        grid-template-columns: 70px 1fr 54px;
+        min-height: 240px;
+      }
+      .pv-center { padding: 12px 14px; }
+      .features { grid-template-columns: 1fr; }
+      .section { padding: 56px 0; }
+      .closing { padding: 56px 20px; }
+    }
+  </style>
 </head>
-<body class="h-screen overflow-hidden bg-gray-50">
 
-    <div id="app"></div>
-    
-    <script src="dist/custom_highlight.bundle.js"></script>
-    <script src="js/katex_renderer.js"></script>
-    <script src="dist/codemirror_editor.bundle.js"></script>
-    <script src="js/file_handler.js"></script>
-    <script src="lib/jszip.min.js"></script>
-    <!-- <script src="lib/FileSaver.min.js"></script> -->
+<body>
+  <header>
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Pumice<span>.</span></a>
+      <nav>
+        <!-- <a href="index.html#features">機能</a> -->
+        <a href="guide.html">使い方</a>
+        <a href="about.html">About</a>
+      </nav>
+    </div>
+  </header>
 
-    <script src="main.js"></script>
-    <script src="js/startElm.js"></script>
-    <script src="js/script.js"></script>
-    
+  <main>
+    <section class="container hero">
+      <div>
+        <div class="eyebrow">MARKDOWN VIEWER</div>
+        <h1>本のように整理する。<br><span>そして静かに読む。</span></h1>
+        <p class="hero-description">
+          Pumiceは、Markdown文書を本棚のように整理できるシンプルなビューアです。
+        </p>
+        <a href="app/index.html" target="_blank" rel="noopener noreferrer" class="button">アプリを開く →</a>
+      </div>
+
+      <div class="preview">
+        <div class="preview-window">
+          <!-- 左サイドバー -->
+          <aside class="pv-left" aria-hidden="true">
+            <div class="pv-left-body">
+              <div class="pv-left-head">
+                <span class="pv-logo-mini">Pumice</span>
+                <div class="pv-dots"><span></span><span></span></div>
+              </div>
+              <div class="pv-search-box"></div>
+              <div class="pv-tabs-bar">
+                <span class="pv-tab-item"></span>
+                <span class="pv-tab-item"></span>
+                <span class="pv-tab-item active"></span>
+              </div>
+              <div class="pv-list-bars">
+                <div class="sk-line dark" style="width: 68%;"></div>
+                <div class="sk-line dark indent" style="width: 56%;"></div>
+                <div class="sk-line dark indent" style="width: 62%;"></div>
+                <div class="sk-line dark" style="width: 74%;"></div>
+                <div class="sk-line dark indent" style="width: 50%;"></div>
+              </div>
+            </div>
+            <div class="pv-left-foot">
+              <div class="sk-line dark thin" style="width: 36%;"></div>
+              <div class="sk-line dark thin" style="width: 32%;"></div>
+            </div>
+          </aside>
+
+          <!-- 中央文章エリア -->
+          <div class="pv-center">
+            <div class="pv-doc-meta" aria-hidden="true">
+              <div class="sk-line accent" style="width: 24px;"></div>
+              <div class="sk-line thin" style="width: 28px;"></div>
+            </div>
+
+            <article class="pv-doc">
+              <h3 class="pv-doc-title">古典力学の基礎</h3>
+              <p>
+                質点の運動は、時間に対する位置の変化として記述される。外力が働かない限り、物体はその運動状態を保ち続ける。
+              </p>
+              <h4>運動方程式</h4>
+              <ul>
+                <li>慣性の法則：外力が働かなければ速度は一定</li>
+                <li>運動の法則：加速度は作用する力に比例する</li>
+              </ul>
+              <div class="pv-doc-block">F = m (d²r / dt²)</div>
+            </article>
+          </div>
+
+          <!-- 右サイドバー -->
+          <aside class="pv-right" aria-hidden="true">
+            <div class="pv-right-body">
+              <div class="sk-line dark thin" style="width: 45%; margin-left: auto;"></div>
+              <div class="pv-mode-bar">
+                <span class="active"></span><span></span><span></span>
+              </div>
+              <div class="pv-controls">
+                <div>
+                  <div class="sk-line dark thin" style="width: 40%;"></div>
+                  <div class="pv-control-box"></div>
+                </div>
+                <div>
+                  <div class="sk-line dark thin" style="width: 36%;"></div>
+                  <div class="pv-control-box"></div>
+                </div>
+                <div>
+                  <div class="sk-line dark thin" style="width: 52%;"></div>
+                  <div class="pv-control-box"></div>
+                </div>
+              </div>
+              <div class="pv-btn-outline"></div>
+            </div>
+            <div class="pv-right-foot">
+              <div class="pv-pager-arrows"><span>‹</span><span>›</span></div>
+              <div class="sk-line dark thin" style="width: 36%;"></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-heading">
+          <div class="eyebrow">FEATURES</div>
+          <h2>必要な機能だけを、シンプルに。</h2>
+          <p>読むことに集中するための、基本的な機能を備えています。</p>
+        </div>
+
+        <div class="features">
+          <article class="feature">
+            <div class="feature-number">01 / ORGANIZE</div>
+            <h3>本と本棚で整理</h3>
+            <p>Markdown文書を本としてまとめ、本棚ごとに分類できます。</p>
+          </article>
+
+          <article class="feature">
+            <div class="feature-number">02 / RENDER</div>
+            <h3>Markdownを美しく表示</h3>
+            <p>見出しやリスト、数式、コードなどを読みやすく表示します。</p>
+          </article>
+
+          <article class="feature">
+            <div class="feature-number">03 / EDIT</div>
+            <h3>文書を編集</h3>
+            <p>簡単な編集機能を備えています。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="container closing">
+      <h2>読むためのアプリ、Pumice</h2>
+      <p>ノイズから逃れ、集中力を維持しよう。</p>
+      <a href="app/index.html" target="_blank" rel="noopener noreferrer" class="button">Pumiceを開く →</a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>Pumice</span>
+      <span>© 2026 Pumice</span>
+    </div>
+  </footer>
 </body>
 </html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philosophy — Pumice</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .about-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 8vh 1.5rem 15vh;
+        }
+
+        article {
+            max-width: 620px;
+            width: 100%;
+        }
+
+        .article-header {
+            margin-bottom: 5rem;
+            border-bottom: 1px solid var(--border-strong);
+            padding-bottom: 2rem;
+        }
+
+        .brand-eyebrow {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.85rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 500;
+            line-height: 1.5;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            margin: 0;
+        }
+
+        .section-statement {
+            margin-bottom: 4rem;
+        }
+
+        p {
+            font-size: 1rem;
+            margin-bottom: 1.8rem;
+            word-break: break-word;
+        }
+
+        .rejections {
+            margin: 3.5rem 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .rejections li {
+            position: relative;
+            margin-bottom: 2.4rem;
+            padding-left: 1.8rem;
+        }
+
+        .rejections li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--accent);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            opacity: 0.8;
+        }
+
+        .rejections strong {
+            display: block;
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.02em;
+        }
+
+        .rejections span {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.9;
+            display: block;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border-strong);
+            margin: 4.5rem 0;
+        }
+
+        .manifesto-core {
+            font-size: 1.02rem;
+        }
+
+        .manifesto-core p {
+            margin-bottom: 2rem;
+        }
+
+        .features-pill {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.82rem;
+            color: var(--muted);
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border-strong);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .highlight-quote {
+            margin: 2.5rem 0;
+            padding: 1.2rem 1.8rem;
+            border-left: 2px solid var(--accent);
+            font-style: normal;
+            color: var(--text);
+            background: rgba(0, 0, 0, 0.015);
+        }
+
+        .conclusion {
+            margin-top: 5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-strong);
+        }
+
+        .conclusion p {
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .manifesto-core .sub {
+            font-size: 0.68rem;
+            color: var(--muted);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            letter-spacing: 0.05em;
+        }
+
+        .about-launch-area {
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .about-footer-note {
+            margin-top: 4rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header>
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Pumice<span>.</span></a>
+      <nav>
+        <a href="index.html">ホーム</a>
+        <a href="guide.html">使い方</a>
+        <a href="about.html" class="active">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="about-wrapper">
+    <article>
+        <div class="article-header">
+            <span class="brand-eyebrow">Pumice / Manifesto</span>
+            <h1>静かに読んで理解するために</h1>
+        </div>
+
+        <div class="section-statement">
+            <p>
+                私たちは集中できる環境を奪われている。
+                他人の動向を気にして、通知に気を取られ、広告に邪魔をされる。
+            </p>
+            <p>
+                ノイズを排して集中するために、Pumiceを作りました。
+            </p>
+        </div>
+
+        <ul class="rejections">
+            <li>
+                <strong>どこにも登録したくない。</strong>
+                <span>パスワードが増えるたびに、自分を縛る見えない鎖がまたひとつ増えていく気がする。</span>
+            </li>
+            <li>
+                <strong>何もインストールしたくない。</strong>
+                <span>使い続けるかわからないのにわざわざインストールしたくない。アンインストールしてもきれいに消えてくれるかわからない。</span>
+            </li>
+            <li>
+                <strong>機能が多すぎるアプリは使いたくない。</strong>
+                <span>初期状態のままで充分であっても、使っていないたくさんの機能が存在しているだけでモヤモヤする。</span>
+            </li>
+            <li>
+                <strong>データを外に出したくない。</strong>
+                <span>公開すると自分で決めたもの以外は誰にも見られたくない。見られる可能性を残したくない。</span>
+            </li>
+        </ul>
+
+        <hr>
+
+        <div class="manifesto-core">
+            <p>
+                だからPumiceは、アカウント登録の必要もなく、サーバー通信を行わないウェブアプリにしました。
+            </p>
+            <p>
+                設定項目はほとんどありません。アプリ自体に取られる時間は少ないほうがいい。<br>
+            </p>
+            <p>
+                流行りのAI機能もありません。自分で書くことでより理解を深められるはず。<br>
+                <span class="sub">でもAIを拒絶しているわけではありません。元々はAIの出力を保持して編集するために作り始めました。</span>
+            </p>
+        </div>
+
+        <div class="conclusion">
+            <p>集中を維持し、深く理解したい。</p>
+        </div>
+
+        <div class="about-launch-area">
+            <a href="app/index.html" target="_blank" rel="noopener noreferrer" class="button">Pumiceを開く →</a>
+        </div>
+
+        <div class="about-footer-note">
+            Pumice — A distraction-free local notebook
+        </div>
+    </article>
+  </div>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>Pumice</span>
+      <span>© 2026 Pumice</span>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使い方ガイド — Pumice</title>
+  <meta name="description" content="Markdownビューア「Pumice」の機能紹介と使い方ガイドです。">
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .guide-hero {
+      padding: 72px 0 48px;
+      border-bottom: 1px solid var(--border-strong);
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    strong {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
+      line-height: 1.2;
+      letter-spacing: -0.05em;
+      margin: 12px 0;
+    }
+
+    h1 span {
+      color: var(--accent);
+    }
+
+    .guide-lead {
+      color: var(--muted);
+      max-width: 680px;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .guide-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 64px;
+      padding: 56px 0 96px;
+      align-items: start;
+    }
+
+    .guide-toc {
+      position: sticky;
+      top: 104px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px;
+      font-size: 0.85rem;
+    }
+
+    .guide-toc-title {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+
+    .guide-toc ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .guide-toc a {
+      color: var(--muted);
+      display: block;
+      transition: color 0.15s;
+    }
+
+    .guide-toc a:hover {
+      color: var(--accent);
+    }
+
+    .guide-section {
+      padding-bottom: 64px;
+      margin-bottom: 64px;
+      border-bottom: 1px solid var(--border-strong);
+      scroll-margin-top: 100px;
+    }
+
+    .guide-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .guide-section h2 {
+      font-size: 1.6rem;
+      letter-spacing: -0.03em;
+      margin: 0 0 16px;
+    }
+
+    .guide-section p {
+      color: var(--text);
+      margin: 0 0 20px;
+      font-size: 0.95rem;
+    }
+
+    .guide-section h3 {
+      font-size: 1.15rem;
+      margin: 36px 0 12px;
+      color: var(--text);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .card-tag {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .card h4 {
+      margin: 0 0 8px;
+      font-size: 0.95rem;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .callout {
+      background: #F3EFE9;
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 24px 0;
+      font-size: 0.88rem;
+    }
+
+    .callout p {
+      margin: 0;
+    }
+
+    .callout p + p {
+      margin-top: 8px;
+    }
+
+    kbd {
+      display: inline-block;
+      padding: 2px 7px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.06);
+      margin: 0 2px;
+    }
+
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 16px 0 24px;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.85em;
+      background: var(--surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-strong);
+    }
+
+    th {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      background: var(--surface);
+    }
+
+    td:first-child {
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    /* ガイドページ下部のアプリ起動エリア */
+    .guide-launch-box {
+      margin-top: 64px;
+      padding: 40px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+    .guide-launch-box h3 {
+      margin: 0 0 10px;
+      font-size: 1.4rem;
+    }
+
+    .guide-launch-box p {
+      color: var(--muted);
+      margin: 0 0 20px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 860px) {
+      .guide-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .guide-toc {
+        position: static;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .guide-hero { padding: 48px 0 32px; }
+      .guide-layout { padding: 32px 0 64px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ヘッダー -->
+  <header>
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Pumice<span>.</span></a>
+      <nav>
+        <a href="index.html">ホーム</a>
+        <a href="guide.html" class="active">使い方</a>
+        <a href="about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- タイトル部 -->
+    <div class="guide-hero">
+      <div class="container">
+        <div class="eyebrow">USER GUIDE</div>
+        <h1>Pumiceの<span>使い方。</span></h1>
+        <p class="guide-lead">
+          Pumiceの基本操作、数式やコードの書き方、データの整理・エクスポートを説明します。
+        </p>
+      </div>
+    </div>
+
+    <!-- コンテンツレイアウト -->
+    <div class="container guide-layout">
+      <!-- 目次ナビゲーション -->
+      <aside class="guide-toc">
+        <div class="guide-toc-title">INDEX</div>
+        <ol>
+          <li><a href="#structure">1. 基本の3層構造</a></li>
+          <li><a href="#screens">2. 画面と移動方法</a></li>
+          <li><a href="#modes">3. 3つの閲覧・編集モード</a></li>
+          <li><a href="#page-nav">4. ページ送りと追加</a></li>
+          <li><a href="#manage">5. 本棚と本の整理</a></li>
+          <li><a href="#sidebar">6. 目次と全文検索</a></li>
+          <li><a href="#writing">7. Markdownと数式記法</a></li>
+          <li><a href="#custom">8. 見た目のカスタマイズ</a></li>
+          <li><a href="#backup">9. 保存と入出力</a></li>
+          <li><a href="#shortcuts">10. 操作早見表</a></li>
+        </ol>
+      </aside>
+
+      <!-- ガイド本文 -->
+      <div class="guide-content">
+
+        <!-- 1. 基本の3層構造 -->
+        <section class="guide-section" id="structure">
+          <div class="eyebrow">01 / CONCEPT</div>
+          <h2>基本の3層構造</h2>
+          <p>
+            Pumiceは、文書を「本棚」「本」「ページ」の3つの階層で整理します。
+          </p>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-tag">PAGE</div>
+              <h4>ページ</h4>
+              <p>Markdown文書そのもの。</p>
+            </div>
+            <div class="card">
+              <div class="card-tag">BOOK</div>
+              <h4>本</h4>
+              <p>ページをまとめたもの。特定のテーマやプロジェクトをまとめて1冊の本とします。</p>
+            </div>
+            <div class="card">
+              <div class="card-tag">SHELF / CATEGORY</div>
+              <h4>本棚</h4>
+              <p>本をまとめたもの。「数学」「物理」「日記」などのテーマごとに本棚を作ります。</p>
+            </div>
+          </div>
+
+          <div class="callout">
+            <p><strong>安心の完全ローカル設計</strong></p>
+            <p>外部サーバーとの通信やAIによるテキスト送信は一切行われません。書いた内容はすべてお使いのブラウザ内部に自動で保存されます。</p>
+          </div>
+        </section>
+
+        <!-- 2. 画面と移動方法 -->
+        <section class="guide-section" id="screens">
+          <div class="eyebrow">02 / NAVIGATION</div>
+          <h2>画面と移動方法</h2>
+          <p>
+            Pumiceには目的に応じた3つの主要な画面があります。
+          </p>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-tag">LIBRARY</div>
+              <h4>本棚一覧画面</h4>
+              <p>すべての本棚が内容の一部とともに並びます。</p>
+            </div>
+            <div class="card">
+              <div class="card-tag">BOOKS</div>
+              <h4>本一覧画面</h4>
+              <p>選択した本棚の内容です。その本棚に収められている本が並びます。</p>
+            </div>
+            <div class="card">
+              <div class="card-tag">PAGE VIEW</div>
+              <h4>ドキュメント画面</h4>
+              <p>本を開き、ページを閲覧・編集するための画面です。</p>
+            </div>
+          </div>
+
+          <h3>画面を行き来する</h3>
+          <p>
+            各ページの上部から本の一覧へ、また本の一覧から本棚の一覧へと、階層を上がることができます。
+            また、フッターのボタンから本の一覧と本棚の一覧へ移動できます。
+          </p>
+        </section>
+
+        <!-- 3. 3つの閲覧・編集モード -->
+        <section class="guide-section" id="modes">
+          <div class="eyebrow">03 / MODES</div>
+          <h2>3つの閲覧・編集モード</h2>
+          <p>
+            ドキュメント画面（PageView）には、右上の切り替えボタンから選べる3つのモードが用意されています。
+          </p>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-tag">VIEW MODE</div>
+              <h4>VIEW（閲覧）</h4>
+              <p>整形されたMarkdownを読むための標準モードです。</p>
+            </div>
+            <div class="card">
+              <div class="card-tag">EDIT MODE</div>
+              <h4>EDIT（編集）</h4>
+              <p>文章を直接編集するモードです。入力内容は自動的に保存されます。</p>
+            </div>
+            <div class="card">
+              <div class="card-tag">PAGES MODE</div>
+              <h4>PAGES（構成管理）</h4>
+              <p>マウスのドラッグでページの並べ替えや、ページの複製と削除が行えます。</p>
+            </div>
+          </div>
+
+          <div class="callout">
+            <p>閲覧と編集のスクロール同期</p>
+            <p>VIEWモードとEDITモードを切り替えても、読んでいたスクロール位置が保たれるため、長文でも迷わず続きを編集できます。</p>
+          </div>
+        </section>
+
+        <!-- 4. ページ送りと追加 -->
+        <section class="guide-section" id="page-nav">
+          <div class="eyebrow">04 / PAGES</div>
+          <h2>ページ送りと追加・削除</h2>
+          <p>
+            本をめくるようにページを切り替えることができます。
+          </p>
+
+          <h3>ページをめくる</h3>
+          <ul>
+            <li><strong>画面下のシークバー:</strong> クリックして特定の位置にジャンプできるほか、<strong>シークバーの上でマウスホイールを回転</strong>させるだけで前後のページへ素早く送れます。</li>
+            <li><strong>キーボード矢印キー:</strong> VIEWモード時、キーボードの <kbd>←</kbd>（前のページ）/ <kbd>→</kbd>（次のページ）でページをめくることができます。</li>
+            <li><strong>右サイドバーのアイコン:</strong> 下部の左右矢印アイコンをクリック、またはその周辺でマウスホイールを回転させます。</li>
+          </ul>
+
+          <h3>ページの追加・複製・削除</h3>
+          <ul>
+            <li><strong>追加:</strong> 右サイドバーの「<strong>+ Next Page</strong>」を押すと、現在読んでいるページの直後に新しい白紙ページが挿入されます。</li>
+            <li><strong>複製:</strong> 「PAGES」モードに切り替え、複製したいカードの「<strong>copy</strong>」ボタンを押すと内容を丸ごと複製できます。</li>
+            <li><strong>削除:</strong> EDITモード中のフッターにある「<strong>Delete This Page</strong>」、またはPAGESモードのカード右上にある「<strong>×</strong>」ボタンから削除できます。</li>
+          </ul>
+        </section>
+
+        <!-- 5. 本棚と本の整理 -->
+        <section class="guide-section" id="manage">
+          <div class="eyebrow">05 / ORGANIZE</div>
+          <h2>本棚と本の整理</h2>
+
+          <h3>タイトルを変更する</h3>
+          <p>
+            本棚の名前や本のタイトルは、カードの文字部分やページ上部でタイトル部分をダブルクリックすると入力ウィンドウが開き、いつでも名前を変更できます。
+          </p>
+
+          <h3>ドラッグ＆ドロップで並べ替える</h3>
+          <p>
+            一覧画面に並んでいる本棚カードや本カードは、マウスでドラッグして好きな順序に並べ替えることができます。PAGESモードでのページ順の入れ替えも同様に行えます。
+          </p>
+
+          <h3>目次プレビュー</h3>
+          <p>
+            一覧画面で各本棚にマウスカーソルを乗せると「本棚に含まれる本の一覧」が、本に乗せると「本の中の見出し（H1）一覧」がポップアップ表示されます。項目をクリックすれば、その本やページへ直接ジャンプできます。
+          </p>
+        </section>
+
+        <!-- 6. 目次と全文検索 -->
+        <section class="guide-section" id="sidebar">
+          <div class="eyebrow">06 / SIDEBAR & SEARCH</div>
+          <h2>目次と全文検索</h2>
+          <p>
+            画面左側のサイドバーは、ドキュメントの探索・ナビゲーションに特化しています。
+          </p>
+
+          <h3>サイドバーの3つのタブ</h3>
+          <ul>
+            <li><strong>Library:</strong> すべての本棚を一覧表示。</li>
+            <li><strong>Books:</strong> 選択している本棚の中の本を表示。</li>
+            <li><strong>Contents（目次）:</strong> 開いている本全体の目次を表示します。見出しをクリックすると該当するページと場所へ瞬時にスクロールします。上部の「HEADING LEVEL」セレクターで表示する見出しレベル（H1〜H3）を絞り込めます。</li>
+          </ul>
+
+          <h3>全文検索</h3>
+          <p>
+            左サイドバー上部の検索ボックスに文字を入力すると、本棚全体を横断して検索を行います。
+          </p>
+          <div class="callout">
+            <p><strong>通知サイン</strong></p>
+            <p>選択中ではない本棚や本に検索ヒットがある場合、LibraryタブやBooksタブの上に<strong>黄色い丸（●）</strong>が点灯してヒットの存在を教えてくれます。本文内でも一致したキーワードがハイライトされます。</p>
+          </div>
+        </section>
+
+        <!-- 7. Markdownと数式記法 -->
+        <section class="guide-section" id="writing">
+          <div class="eyebrow">07 / WRITING</div>
+          <h2>Markdownと数式記法</h2>
+          <p>
+            Pumiceは標準的なMarkdown構文に対応しています。見出し、リスト、太字、表（テーブル）、引用などを直感的に記述できます。
+          </p>
+
+          <h3>ページの自動タイトル付け</h3>
+          <p>
+            ページの本文1行目を <code># 見出し</code> で始めると、その文字列が自動的にページのタイトルとして反映されます。
+            ページのタイトルはテキストファイル(.txt)やマークダウンファイル(.md)として出力する際のファイル名として使用されます。
+          </p>
+
+          <h3>コードブロック</h3>
+          <p>
+            バッククォート3つ（<code>```言語名</code>）で囲むと、プログラミング言語の構文が自動でハイライトされます。
+          </p>
+
+          <h3>数式（LaTeX）の記述</h3>
+          <p>
+            ブロック数式・インライン数式の両方に対応しています。ChatGPTやClaudeなど各種AIが出力する記法にも対応しています。
+          </p>
+
+          <p><strong>独立した数式ブロック（中央揃え）:</strong></p>
+<pre><code>```math
+G_{\mu\nu} + \Lambda g_{\mu\nu} = \frac{8\pi G}{c^4} T_{\mu\nu}
+```</code></pre>
+
+<pre><code>$$
+G_{\mu\nu} + \Lambda g_{\mu\nu} = \frac{8\pi G}{c^4} T_{\mu\nu}
+$$</code></pre>
+        </section>
+
+        <!-- 8. 見た目のカスタマイズ -->
+        <section class="guide-section" id="custom">
+          <div class="eyebrow">08 / CUSTOMIZE</div>
+          <h2>見た目のカスタマイズ</h2>
+          <ul>
+            <li><strong>THEME：</strong> ライトモードとダークモードの切り替え。</li>
+            <li><strong>STYLE：</strong> 文書の表示スタイルの切り替え。</li>
+            <li><strong>FONT SIZE：</strong> 画面全体の文字サイズを微調整。</li>
+            <li><strong>Width：</strong> 本文の幅。フッターから調整可能。</li>
+          </ul>
+          <h3>サイドバーの非表示</h3>
+          <ul>
+            <li>右側サイドバーの最上部の<strong>Hide Sidebar</strong>をクリックするとサイドバーが非表示になります。</li>
+            <li>非表示中は、右下のコントローラーの<strong>Normal</strong>ボタンで再表示。</li>
+            <li>コントローラーの<strong>Left Menu</strong>ボタンで左側サイドバーだけを表示できます。</li>
+          </ul>
+        </section>
+
+        <!-- 9. 保存と入出力 -->
+        <section class="guide-section" id="backup">
+          <div class="eyebrow">09 / BACKUP</div>
+          <h2>保存と入出力</h2>
+          <p>
+            データはブラウザのストレージに常時自動保存されますが、バックアップや別端末への移行も簡単に行えます。
+          </p>
+          <h3>全データのバックアップとインポート</h3>
+          <ul>
+            <li>画面左下のアイコンをクリックすると、全データのバックアップファイル(.json)がダウンロードされます。</li>
+            <li>バックアップファイルはMenuの<strong>Import Backup</strong>でインポートできます。</li>
+            <li>Menuの<strong>Download ZIP</strong>で全文書をマークダウンとテキストファイルにしてZIPファイルで出力します。</li>
+          </ul>
+
+          <h3>本棚や本のデータ</h3>
+          <ul>
+            <li>各一覧画面で本棚や本の<strong>EXPORT</strong>からJSONかZIPを選択するとダウンロードされます。</li>
+            <li>一覧画面の上部にある<strong>Import</strong>からJSONファイルをインポートできます。</li>
+            <li>ドラッグアンドドロップでもインポートが可能です。</li>
+            <li>形式が合わないファイルは無視されます。</li>
+          </ul>
+
+          <h3>ページ単位でのインポートとエクスポート</h3>
+          <ul>
+            <li>右側サイドバーの<strong>EXPORT</strong>ボタンで表示中のページをエクスポートできます。</li>
+            <li>同じ場所の<strong>Import</strong>でページをインポートできます。</li>
+            <li>ドラッグアンドドロップでもインポートが可能です。</li>
+          </ul>
+
+          <div class="callout">
+            <p><strong>バックアップは必須</strong></p>
+            <p>ブラウザに保存されたデータはディスクの空き容量が少なくなったり、ブラウザのキャッシュクリアで消えてしまう可能性があります。定期的にバックアップを取ることをおすすめします。</p>
+          </div>
+        </section>
+
+        <!-- 10. 操作早見表 -->
+        <section class="guide-section" id="shortcuts">
+          <div class="eyebrow">10 / REFERENCE</div>
+          <h2>操作早見表</h2>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>操作</th>
+                  <th>ショートカット / 方法</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ページめくり（前/次）</td>
+                  <td><kbd>←</kbd> / <kbd>→</kbd> または シークバーでホイール回転</td>
+                </tr>
+                <tr>
+                  <td>新規ページ追加</td>
+                  <td>右サイドバーの「+ Next Page」</td>
+                </tr>
+                <tr>
+                  <td>タイトル変更</td>
+                  <td>タイトル部分をダブルクリック</td>
+                </tr>
+                <tr>
+                  <td>モード切り替え</td>
+                  <td>画面右上のタブ（VIEW / EDIT / PAGES）</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ガイド下部のアプリ起動ボタンエリア -->
+        <div class="guide-launch-box">
+          <h3>準備はできましたか？</h3>
+          <p>ガイドを確認したら、さっそくPumiceで本棚を作ってみましょう。</p>
+          <a href="app/index.html" target="_blank" rel="noopener noreferrer" class="button">アプリを開く →</a>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>Pumice</span>
+      <span>© 2026 Pumice</span>
+    </div>
+  </footer>
+</body>
+</html>
