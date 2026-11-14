@@ -1,0 +1,279 @@
+/* =========================================
+   1. Mystical スタイル（全テーマ共通のフォント・文字組）
+   ========================================= */
+
+.style-mystical {
+  font-family: 'Spectral', 'Kaisei Opti', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  line-height: 1.85;
+  letter-spacing: 0.04em;
+}
+
+.style-mystical :is(h1, h2, h3, h4, h5, h6) {
+  font-family: 'Cormorant Garamond', 'Kaisei Decol', serif;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+}
+
+/* 引用内の英文を Aref Ruqaa（日本語は Kaisei Opti）に */
+.style-mystical blockquote {
+  font-family: 'Aref Ruqaa', 'Kaisei Opti', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+}
+
+.style-mystical h1 {
+  position: relative;
+  padding-bottom: 18px;
+}
+
+/* 中央70%のグラデーション下線（テーマごとの見出し色 --md-heading に追従） */
+.style-mystical h1::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 15%;
+  width: 70%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--md-heading), transparent);
+  opacity: 0.85;
+}
+
+.style-mystical p {
+  text-align: justify;
+}
+
+.style-mystical highlight-code,
+.style-mystical highlight-code-span,
+.style-mystical pre,
+.style-mystical code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+
+/* =========================================
+   2. Magical テーマ（常に羊皮紙を適用）
+   ========================================= */
+
+/* --- 引用部分【罫線付き羊皮紙（罫線のみ短縮・位置調整版）】 --- */
+.theme-magical blockquote {
+  margin: 2.25rem 0;
+  padding: 1.5em 2em;
+
+  background-color: #ebdcb9;
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at center, transparent 40%, rgba(115, 75, 25, 0.3) 85%, rgba(60, 35, 10, 0.5) 100%);
+
+  line-height: 1.85em;
+  background-attachment: local;
+
+  box-shadow:
+    inset 0 0 50px rgba(100, 60, 20, 0.4),
+    inset 0 0 8px rgba(50, 25, 5, 0.5),
+    0 8px 30px rgba(0, 0, 0, 0.6);
+
+  border: 1px solid #b89558;
+  border-radius: 3px;
+
+  color: #332011;
+  font-style: normal;
+  text-shadow: 0.2px 0.2px 0.5px rgba(56, 37, 21, 0.35);
+  position: relative;
+  quotes: none;
+}
+
+/* ★ 罫線専用のレイヤー（ブロックより左右を狭くし、位置を上に微調整） */
+.theme-magical blockquote::before {
+  content: "";
+  position: absolute;
+  top: 1.2em;       /* ブロック上部からの距離（位置を上に調整する場合はここを減らす） */
+  bottom: 1.2em;    /* ブロック下部からの距離 */
+  left: 2.0em;      /* 左側の余白（大きくすると線が短くなる） */
+  right: 2.0em;     /* 右側の余白（大きくすると線が短くなる） */
+  
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(1.85em - 1px),
+    rgba(125, 95, 50, 0.28) calc(1.85em - 1px),
+    rgba(125, 95, 50, 0.28) 1.85em
+  );
+  
+  /* 罫線を少し上に微調整したい場合は transform を使えます（例: -2px） */
+  transform: translateY(2px);
+  
+  pointer-events: none; /* クリックや選択を邪魔しないようにする */
+  z-index: 0;
+}
+
+/* 文字や作者表記が罫線レイヤーの下に隠れないように手前に出す */
+.theme-magical blockquote > * {
+  position: relative;
+  z-index: 1;
+}
+/* Tailwind Typography の自動引用符（“ ”）を無効化 */
+.theme-magical blockquote p::before,
+.theme-magical blockquote p::after {
+  content: none;
+}
+
+.theme-magical blockquote p,
+.theme-magical blockquote li {
+  line-height: 1.85em;
+  margin-top: 0;
+  margin-bottom: 0;
+  text-align: justify;
+}
+
+.theme-magical blockquote p + p {
+  margin-top: 1.85em;
+}
+
+.theme-magical blockquote strong {
+  color: #26160a;
+}
+
+.theme-magical blockquote a {
+  color: #6e2c14;
+}
+
+.theme-magical blockquote .author {
+  display: block;
+  text-align: right;
+  font-size: 0.9em;
+  margin-top: 1em;
+  color: #5c3c1e;
+  font-style: italic;
+}
+
+
+
+
+
+
+/* --- 引用部分【罫線付き羊皮紙】 --- */
+/* .theme-magical blockquote {
+  margin: 2.25rem 0;
+  padding: 28px 36px;
+
+  background-color: #ebdcb9;
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 31px,
+      rgba(125, 95, 50, 0.24) 31px,
+      rgba(125, 95, 50, 0.24) 32px
+    ),
+    radial-gradient(ellipse at center, transparent 40%, rgba(115, 75, 25, 0.3) 85%, rgba(60, 35, 10, 0.5) 100%);
+
+  line-height: 32px;
+  background-attachment: local;
+
+  box-shadow:
+    inset 0 0 50px rgba(100, 60, 20, 0.4),
+    inset 0 0 8px rgba(50, 25, 5, 0.5),
+    0 8px 30px rgba(0, 0, 0, 0.6);
+
+  border: 1px solid #b89558;
+  border-radius: 3px;
+
+  color: #332011;
+  font-style: normal;
+  text-shadow: 0.2px 0.2px 0.5px rgba(56, 37, 21, 0.35);
+  position: relative;
+  quotes: none;
+} */
+
+/* Tailwind Typography の自動引用符（“ ”）を無効化 */
+/* .theme-magical blockquote p::before,
+.theme-magical blockquote p::after {
+  content: none;
+} */
+
+/* 罫線（32px）とテキストのベースラインを維持 */
+/* .theme-magical blockquote p,
+.theme-magical blockquote li {
+  line-height: 32px;
+  margin-top: 0;
+  margin-bottom: 0;
+  text-align: justify;
+} */
+
+/* 引用内の複数段落は32px単位で余白を空けて罫線ズレを防ぐ */
+/* .theme-magical blockquote p + p {
+  margin-top: 32px;
+}
+
+.theme-magical blockquote strong {
+  color: #26160a;
+}
+
+.theme-magical blockquote a {
+  color: #6e2c14;
+} */
+
+/* --- コードブロック【罫線なし羊皮紙】 --- */
+.theme-magical highlight-code {
+  display: block;
+  margin: 2.25rem 0;
+  padding: 26px 30px;
+  overflow-x: auto;
+
+  background-color: #e8d8b5;
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.09'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at center, transparent 50%, rgba(115, 75, 25, 0.35) 85%, rgba(60, 35, 10, 0.6) 100%),
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(130, 85, 35, 0.18) 0%, transparent 50%);
+
+  box-shadow:
+    inset 0 0 50px rgba(100, 60, 20, 0.45),
+    inset 0 0 10px rgba(50, 25, 5, 0.55),
+    0 8px 30px rgba(0, 0, 0, 0.6);
+
+  border: 1px solid #b89558;
+  border-radius: 3px;
+
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: #2e1d0f;
+  text-shadow: 0.2px 0.2px 0.4px rgba(46, 29, 15, 0.3);
+}
+
+/* highlight-code 内部の要素が背景や枠線を上書きしないようリセット */
+.theme-magical highlight-code pre,
+.theme-magical highlight-code code {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  border: none;
+  color: inherit;
+  box-shadow: none;
+}
+
+/* --- インラインコード【小さな羊皮紙の破片風】 ---
+   ※インラインコードを従来の暗色デザインに戻したい場合はこのブロックを削除してください */
+.theme-magical highlight-code-span {
+  font-family: 'JetBrains Mono', monospace;
+  background-color: #e5d3aa;
+  color: #3b2818;
+  border: 1px solid #b89558;
+  padding: 2px 7px;
+  margin: 0 4px;
+  font-size: 0.85em;
+  border-radius: 2px;
+  box-shadow: inset 0 0 4px rgba(100, 60, 20, 0.3);
+}
+
+.theme-magical highlight-code-span code {
+  font-family: inherit;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border: none;
+}
