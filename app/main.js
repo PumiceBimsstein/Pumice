@@ -24978,26 +24978,36 @@ var $author$project$View$SideBar$sideHeaderStyle = function (theme) {
 				$author$project$View$Style$basecolors(theme).dm
 			]));
 };
+var $elm$html$Html$Attributes$rel = _VirtualDom_attribute('rel');
+var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
 var $author$project$View$SideBar$sidebarTitle = function (model) {
 	return A2(
 		$elm$html$Html$h1,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('flex-1 cursor-pointer select-none'),
-				$elm$html$Html$Events$onClick(
-				$author$project$Type$ChangeMainView($author$project$Type$ShelfListView))
+				$elm$html$Html$Attributes$class('flex-1 select-none')
 			]),
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$span,
+				$elm$html$Html$a,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('font-medium tracking-widest w-full flex justify-center'),
+						$elm$html$Html$Attributes$href('https://pumicebimsstein.github.io/Pumice/'),
+						$elm$html$Html$Attributes$target('_blank'),
+						$elm$html$Html$Attributes$rel('noopener noreferrer'),
+						$elm$html$Html$Attributes$class(
+						$author$project$View$Style$tw(
+							_List_fromArray(
+								[
+									'font-medium tracking-widest w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity',
+									$author$project$View$Style$basecolors(model.bE).dl
+								]))),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'font-family',
-						$author$project$View$Style$basecolors(model.bE).cO)
+						$author$project$View$Style$basecolors(model.bE).cO),
+						$elm$html$Html$Attributes$title('Pumiceについて（新しいタブで開く）')
 					]),
 				_List_fromArray(
 					[

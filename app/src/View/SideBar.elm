@@ -49,15 +49,30 @@ sidebarTitleRow model =
         , undoRedoGroup model.colorTheme
         ]
 
+-- sidebarTitle : Model -> Html Msg
+-- sidebarTitle model =
+--     h1
+--         [ class "flex-1 cursor-pointer select-none"
+--         , onClick (ChangeMainView ShelfListView)
+--         ]
+--         [ span
+--             [ class "font-medium tracking-widest w-full flex justify-center"
+--             , style "font-family" (basecolors model.colorTheme).fontDeco
+--             ]
+--             [ text "Pumice" ]
+--         ]
+
 sidebarTitle : Model -> Html Msg
 sidebarTitle model =
     h1
-        [ class "flex-1 cursor-pointer select-none"
-        , onClick (ChangeMainView ShelfListView)
-        ]
-        [ span
-            [ class "font-medium tracking-widest w-full flex justify-center"
+        [ class "flex-1 select-none" ]
+        [ a
+            [ href "https://pumicebimsstein.github.io/Pumice/" -- ★ここにランディングページのURLを指定してください
+            , target "_blank"
+            , rel "noopener noreferrer"
+            , class (tw [ "font-medium tracking-widest w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity", (basecolors model.colorTheme).text ])
             , style "font-family" (basecolors model.colorTheme).fontDeco
+            , title "Pumiceについて（新しいタブで開く）"
             ]
             [ text "Pumice" ]
         ]
@@ -272,61 +287,6 @@ systemMenuTrigger model =
             ]
         ]
 
--- fileFunctionTrigger : Model -> Html Msg
--- fileFunctionTrigger model =
---     let
---         menuId = FileMenu
---         isOpen = model.openMenuId == Just menuId
---     in
---     div
---         [ class "relative flex flex-1 h-full" ]
---         [ button
---             [ class (footerButton model.colorTheme)
---             , stopClickPropagation (ToggleMenu menuId)
---             ]
---             [ text "File ▾" ]
---         , openDropdown
---             isOpen
---             Above
---             model.colorTheme
---             [ ( "Import BackUp Data", RequestImport AllImport )
---             , ( "Download Zip", ExportAllZip )
---             ]
---         ]
-
-
--- functionButton : Model -> Html Msg
--- functionButton model =
---     let
---         menuId = AppMenu
---         isOpen = model.openMenuId == Just menuId
---     in
---     div
---         [ class "relative flex flex-1 h-full [&_.absolute]:left-auto [&_.absolute]:right-0" ]
---         [ button
---             [ class (footerButton model.colorTheme)
---             , stopClickPropagation (ToggleMenu menuId)
---             ]
---             [ text "etc ▾" ]
---         , openDropdown
---             isOpen
---             Above
---             model.colorTheme
---             [ ( "Reset", ResetApp )
---             , ( "Guide Pages", AddGuideShelf )
---             ]
---         ]
-
-
--- exportButton : ColorTheme -> Html Msg
--- exportButton theme =
---     button
---         [ class (footerButton theme)
---         , onClick ExportData
---         , title "QUICK BACK UP"
---         ]
---         [ Style.icon Icon.disk "w-5 h-5" ]
-
 
 sideFooter : ColorTheme -> String
 sideFooter theme =
@@ -336,22 +296,6 @@ sideFooter theme =
         , (basecolors theme).border
         ]
 
-
--- footerButton : ColorTheme -> String
--- footerButton theme =
---     tw  [ "flex", "flex-1", "h-full"
---         , "text-[12px]", "font-bold"
---         , "tracking-widest"
---         , "uppercase"
---         , "border"
---         , (basecolors theme).rounded
---         , (basecolors theme).textMuted
---         , (basecolors theme).borderBtn
---         , (basecolors theme).brightAccent
---         , "hover:bg-white/5"
---         , "active:scale-95"
---         , "items-center", "justify-center"
---         ]
 
 flatFooterButtonStyle : ColorTheme -> String
 flatFooterButtonStyle theme =
