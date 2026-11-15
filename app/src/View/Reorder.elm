@@ -50,7 +50,7 @@ viewPageCard model index page pageId =
     button
         [ class (reorderStyle.pageCard model.colorTheme isSelected)
         , onClick (SelectPage index)
-        , onDoubleClick (ChangeMode EditMode)
+        , onDoubleClick (ChangeMode ViewMode)
         ]
         [ viewPageCardHeader model index pageId
         , viewPageCardBody model meta

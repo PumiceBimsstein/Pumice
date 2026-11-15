@@ -68,6 +68,8 @@ type alias Palette =
     , thBg : String
     , thBorder : String
     , tdBorder : String
+    , olNumber : String
+    , ulDot : String
     }
 
 
@@ -84,6 +86,8 @@ palette theme =
             , thBg = "#f3efe6"
             , thBorder = "rgba(74,69,62,0.12)"
             , tdBorder = "rgba(74,69,62,0.12)"
+            , olNumber = "#b85d41"
+            , ulDot = "#b85d41"
             }
 
         Dark ->
@@ -96,6 +100,8 @@ palette theme =
             , thBg = "#171716"
             , thBorder = "#444444"
             , tdBorder = "#2A2A27"
+            , olNumber = "#C9A84C"
+            , ulDot = "#C9A84C"
             }
 
         Magical ->
@@ -108,6 +114,8 @@ palette theme =
             , thBg = "transparent"
             , thBorder = "rgba(139,115,85,0.4)"
             , tdBorder = "rgba(139,115,85,0.2)"
+            , olNumber = "#d9a74a"
+            , ulDot = "#d9a74a"
             }
 
 
@@ -128,6 +136,8 @@ paletteVariables p =
             , "--md-th-bg:" ++ p.thBg
             , "--md-th-border:" ++ p.thBorder
             , "--md-td-border:" ++ p.tdBorder
+            , "--md-ol-number:" ++ p.olNumber
+            , "--md-ul-dot:" ++ p.ulDot
             ]
 
 
@@ -180,6 +190,8 @@ elementClasses =
     , "[&_th]:bg-[color:var(--md-th-bg)]"
     , "[&_th]:border-[color:var(--md-th-border)]"
     , "[&_td]:border-[color:var(--md-td-border)]"
+    , "[&_ol_li::marker]:text-[color:var(--md-ol-number)]"
+    , "[&_ul_li::marker]:text-[color:var(--md-ul-dot)]"
     ]
 
 

@@ -110,7 +110,8 @@ update msg model =
             model
                 |> commitTypingSession
                 |> applyPageSelection index
-                |> notifyAndSaveWithCmd (scrollToTop ())
+                |> notifyAndSave
+                -- |> notifyAndSaveWithCmd (scrollToTop ())
 
         DuplicatePage targetIndex ->
             model
