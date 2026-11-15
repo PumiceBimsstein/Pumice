@@ -49,25 +49,13 @@ sidebarTitleRow model =
         , undoRedoGroup model.colorTheme
         ]
 
--- sidebarTitle : Model -> Html Msg
--- sidebarTitle model =
---     h1
---         [ class "flex-1 cursor-pointer select-none"
---         , onClick (ChangeMainView ShelfListView)
---         ]
---         [ span
---             [ class "font-medium tracking-widest w-full flex justify-center"
---             , style "font-family" (basecolors model.colorTheme).fontDeco
---             ]
---             [ text "Pumice" ]
---         ]
 
 sidebarTitle : Model -> Html Msg
 sidebarTitle model =
     h1
         [ class "flex-1 select-none" ]
         [ a
-            [ href "https://pumicebimsstein.github.io/Pumice/" -- ★ここにランディングページのURLを指定してください
+            [ href "../" -- ランディングページのURL
             , target "_blank"
             , rel "noopener noreferrer"
             , class (tw [ "font-medium tracking-widest w-full flex justify-center cursor-pointer hover:opacity-80 transition-opacity", (basecolors model.colorTheme).text ])
@@ -241,10 +229,6 @@ sidebarFooter : Model -> Html Msg
 sidebarFooter model =
     div
         [ class (sideFooter model.colorTheme) ]
-        -- [ fileFunctionTrigger model
-        -- , exportButton model.colorTheme
-        -- , functionButton model
-        -- ]
         [ quickBackupButton model.colorTheme
         , systemMenuTrigger model
         ]
