@@ -256,9 +256,28 @@
       font-size: 0.9rem;
     }
 
+/* はみ出し防止の基本設定 */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    .guide-content {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .guide-section p,
+    .guide-section li {
+      overflow-wrap: break-word;
+    }
+
     @media (max-width: 860px) {
       .guide-layout {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         gap: 40px;
       }
       .guide-toc {
@@ -269,6 +288,9 @@
     @media (max-width: 720px) {
       .guide-hero { padding: 48px 0 32px; }
       .guide-layout { padding: 32px 0 64px; }
+      .guide-launch-box { padding: 24px 16px; }
+      .callout { padding: 14px 16px; }
+      pre { padding: 12px 14px; }
     }
   </style>
 </head>
