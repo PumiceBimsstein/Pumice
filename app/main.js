@@ -9980,7 +9980,7 @@ var $author$project$View$Contents$layoutContainer = function (theme) {
 			[
 				'flex',
 				'w-screen',
-				'h-screen',
+				'h-svh',
 				'overflow-hidden',
 				$author$project$View$Style$basecolors(theme).bB
 			]));
@@ -20798,7 +20798,7 @@ var $author$project$View$MainArea$mainWrapperStyle = function (theme) {
 				'relative',
 				'flex',
 				'flex-col',
-				'min-h-screen',
+				'min-h-svh',
 				'w-full',
 				'h-full',
 				'overflow-hidden',

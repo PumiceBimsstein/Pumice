@@ -260,7 +260,9 @@ pageContentView model =
 mainWrapperStyle : ColorTheme -> String
 mainWrapperStyle theme =
     tw  [ "relative", "flex", "flex-col"
-        , "min-h-screen", "w-full", "h-full"
+        , "min-h-svh"
+        --, "min-h-screen"
+        , "w-full", "h-full"
         , "overflow-hidden"
         , (basecolors theme).bg 
         ]

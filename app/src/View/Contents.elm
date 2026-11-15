@@ -65,7 +65,10 @@ dropDecoder =
 
 layoutContainer : ColorTheme -> String
 layoutContainer theme =
-    tw [ "flex", "w-screen", "h-screen", "overflow-hidden", (basecolors theme).bg ]
+    tw  [ "flex", "w-screen"
+        , "h-svh"
+        --, "h-screen"
+        , "overflow-hidden", (basecolors theme).bg ]
 
 
 -- MARK: 左サイドバーのアニメーションスタイル
